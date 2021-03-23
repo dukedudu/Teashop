@@ -149,38 +149,6 @@ public class DatabaseConnect {
 			return false;
 		}
 	}
-
-	public void insertUser(User user) {
-		try {
-			PreparedStatement statement = connection.prepareStatement("INSERT INTO User VALUES (?,?,?,?,?,?)");
-
-			statement.setInt(1, user.getId());
-			statement.setString(2, user.getName());
-			if (!user.getStreet().isEmpty()) { statement.setString(3, user.getStreet()); }
-			else { statement.setNull(3, Types.CHAR); }
-			if (!user.getHouse().isEmpty()) { statement.setString(4, user.getHouse()); }
-			else { statement.setNull(4, Types.CHAR); }
-			if (!user.getCity().isEmpty()) { statement.setString(5, user.getCity()); }
-			else { statement.setNull(5, Types.CHAR); }
-			if (!user.getCity().isEmpty()) { statement.setString(6, user.getHouse()); }
-			else { statement.setNull(6, Types.CHAR); }
-
-			statement.executeUpdate();
-			connection.commit();
-			statement.close();
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-			rollbackConnection();
-		}
-	}
-
-	private void rollbackConnection() {
-		try  {
-			connection.rollback();	
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-		}
-	}
 	
 	public void databaseSetup() {
 		dropBranchTableIfExists();
@@ -214,6 +182,100 @@ public class DatabaseConnect {
 			
 			rs.close();
 			stmt.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+		}
+	}
+
+
+	//login view:
+	public boolean checkPassword(String UserId, String enterPassword){
+		/**
+		 * input: UserId and password from login view
+		 * return: true if entered password equals with password from DB, false otherwise.
+		 * */
+		String truthPassword = "";
+		boolean correct = false;
+		ArrayList<Integer> UidPool = new ArrayList<>();
+		try {
+			Statement stmt1 = connection.createStatement();
+			ResultSet rs1 = stmt1.executeQuery("SELECT UserId FROM User");
+			while(rs1.next()){
+				UidPool.add(Integer.parseInt(rs1.getString("UserId")));
+			}
+			rs1.close();
+			stmt1.close();
+			if(UidPool.contains(UserId)){
+				Statement stmt2 = connection.createStatement();
+				ResultSet rs2 = stmt2.executeQuery("SELECT Password FROM User WHERE UserId="+UserId);
+				truthPassword = rs2.getString("Password");
+				correct = (truthPassword.equals(enterPassword));
+				rs2.close();
+				stmt2.close();
+			}
+			else{
+				System.out.println("Uid not exists");
+			}
+
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+		return correct;
+	}
+
+	public void changePassword(String UserId, String newPassword, String confirmPassword){
+		ArrayList<Integer> UidPool = new ArrayList<>();
+		if (!newPassword.equals(confirmPassword)){
+			System.out.println("confirmPassword should be same as newPassword.");
+			return;
+		}
+		try {
+			PreparedStatement ps = connection.prepareStatement("UPDATE User SET Password = ? WHERE UserId = ?");
+			ps.setString(1,UserId);
+			ps.setString(2,newPassword);
+
+			int rowCount = ps.executeUpdate();
+			if (rowCount == 0) {
+				//MainMenu.makeWarningDialog(WARNING_TAG + " Resident " + sin + " does not exist!");
+				System.out.println(WARNING_TAG + " User does not exist!");
+			}
+			connection.commit();
+			ps.close();
+
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+	public void insertUser(User user) {
+		try {
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO User VALUES (?,?,?,?,?,?)");
+
+			statement.setInt(1, user.getId());
+			statement.setString(2, user.getName());
+			if (!user.getStreet().isEmpty()) { statement.setString(3, user.getStreet()); }
+			else { statement.setNull(3, Types.CHAR); }
+			if (!user.getHouse().isEmpty()) { statement.setString(4, user.getHouse()); }
+			else { statement.setNull(4, Types.CHAR); }
+			if (!user.getCity().isEmpty()) { statement.setString(5, user.getCity()); }
+			else { statement.setNull(5, Types.CHAR); }
+			if (!user.getCity().isEmpty()) { statement.setString(6, user.getHouse()); }
+			else { statement.setNull(6, Types.CHAR); }
+
+			statement.executeUpdate();
+			connection.commit();
+			statement.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+	private void rollbackConnection() {
+		try  {
+			connection.rollback();
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}

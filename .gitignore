@@ -6,3 +6,5 @@
 .project
 *.iml
 *.xml
+*.class
+/bin
