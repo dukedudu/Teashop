@@ -1,19 +1,15 @@
 package ca.ubc.cs304.database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.User;
 
 /**
  * This class handles all database related transactions
  */
-public class DatabaseConnectionHandler {
+public class DatabaseConnect {
 	// Use this version of the ORACLE_URL if you are running the code off of the server
 //	private static final String ORACLE_URL = "jdbc:oracle:thin:@dbhost.students.cs.ubc.ca:1522:stu";
 	// Use this version of the ORACLE_URL if you are tunneling into the undergrad servers
@@ -23,7 +19,7 @@ public class DatabaseConnectionHandler {
 	
 	private Connection connection = null;
 	
-	public DatabaseConnectionHandler() {
+	public DatabaseConnect() {
 		try {
 			// Load the Oracle JDBC driver
 			// Note that the path could change for new drivers
@@ -141,20 +137,40 @@ public class DatabaseConnectionHandler {
 		}	
 	}
 	
-	public boolean login(String username, String password) {
+	public boolean login(String name, String password) {
 		try {
-			if (connection != null) {
-				connection.close();
-			}
-	
-			connection = DriverManager.getConnection(ORACLE_URL, username, password);
+			if (connection != null) { connection.close(); }
+			connection = DriverManager.getConnection(ORACLE_URL, name, password);
 			connection.setAutoCommit(false);
-	
-			System.out.println("\nConnected to Oracle!");
+			System.out.println("Logged in\n");
 			return true;
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 			return false;
+		}
+	}
+
+	public void insertUser(User user) {
+		try {
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO User VALUES (?,?,?,?,?,?)");
+
+			statement.setInt(1, user.getId());
+			statement.setString(2, user.getName());
+			if (!user.getStreet().isEmpty()) { statement.setString(3, user.getStreet()); }
+			else { statement.setNull(3, Types.CHAR); }
+			if (!user.getHouse().isEmpty()) { statement.setString(4, user.getHouse()); }
+			else { statement.setNull(4, Types.CHAR); }
+			if (!user.getCity().isEmpty()) { statement.setString(5, user.getCity()); }
+			else { statement.setNull(5, Types.CHAR); }
+			if (!user.getCity().isEmpty()) { statement.setString(6, user.getHouse()); }
+			else { statement.setNull(6, Types.CHAR); }
+
+			statement.executeUpdate();
+			connection.commit();
+			statement.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
 		}
 	}
 
