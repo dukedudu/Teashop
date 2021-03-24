@@ -1,6 +1,6 @@
 package frontend.model;
 
-import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
+//import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
 public class Recipe {
     private final int id, pearl, jelly, lemon, orange, calories;
