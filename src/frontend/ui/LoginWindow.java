@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import backend.database.DatabaseConnect;
+import frontend.controller.Teashop;
 
 public class LoginWindow extends JFrame implements ActionListener {
 	private JPanel panel;
@@ -89,17 +89,6 @@ public class LoginWindow extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		name = field_name.getText();
 		password = String.valueOf(field_pwd.getPassword());
-		login(name, password);
-	}
-
-	public void login(String name, String password) {
-		DatabaseConnect database = new DatabaseConnect();
-		boolean connected = database.login(name, password);
-		if (connected) { this.dispose(); }
-		else { failed(); }
-	}
-
-	public void failed() {
-		field_pwd.setText("");
+		Teashop.login(name, password, field_pwd);
 	}
 }

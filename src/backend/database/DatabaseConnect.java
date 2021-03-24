@@ -1,6 +1,7 @@
 package backend.database;
 
 import frontend.model.BranchModel;
+import frontend.model.Recipe;
 import frontend.model.User;
 
 import java.sql.*;
@@ -352,6 +353,14 @@ public class DatabaseConnect {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
+    }
+
+    public void insertRecipe(Recipe recipe) {
+
+    }
+
+    public Recipe[] selectAllRecipe() {
+        return new Recipe[0];
     }
 
     private void rollbackConnection() {

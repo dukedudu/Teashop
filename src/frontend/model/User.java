@@ -1,34 +1,29 @@
 package frontend.model;
 
 public class User {
-	private final int id, house, budget;
-	private final String name;
-	private final String street;
-	private String Password;
-	private final String code;
-	private final String certificate;
+	private final int id;
+	private int house, budget;
+	private String name, password, street, code, certificate;
 	public  User() {
 		this.id = 0;
+		this.password = "";
 		this.name = "";
 		this.street = "";
 		this.house = 0;
-		//this.city = "";
 		this.code = "";
 		this.budget = 0;
 		this.certificate = "";
-		this.Password = "";
 	}
 
 	public User(int id, String name, String password, String code, String street, int house, String certificate, int budget ) {
 		this.id = id;
+		this.password = password;
 		this.name = name;
 		this.street = street;
 		this.house = house;
-		//this.city = city;
 		this.code = code;
 		this.budget = budget;
 		this.certificate = certificate;
-		this.Password = password;
 	}
 	
 	public int getId() {
@@ -36,6 +31,14 @@ public class User {
 	}
 
 	public String getName() { return name; }
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password){
+		password = password;
+	}
 
 	public void setName(String name) { name = name; }
 
@@ -50,12 +53,6 @@ public class User {
 	}
 
 	public void setHouse(int house) { house = house; }
-
-//	public String getCity() {
-//		return city;
-//	}
-
-	public void setCity(String city) { city = city; }
 
 	public String getCode() {
 		return code;
@@ -74,12 +71,4 @@ public class User {
 	}
 
 	public void setCertificate(String certificate) { certificate = certificate; }
-
-	public String getPassword() {
-		return Password;
-	}
-
-	public void setPassword(String password){
-		Password = password;
-	}
 }

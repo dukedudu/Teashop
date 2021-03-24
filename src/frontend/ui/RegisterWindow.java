@@ -17,6 +17,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import backend.database.DatabaseConnect;
+import frontend.controller.Teashop;
 import frontend.model.User;
 
 public class RegisterWindow extends JFrame implements ActionListener {
@@ -24,8 +25,8 @@ public class RegisterWindow extends JFrame implements ActionListener {
 	private JPanel panel;
 	private GridBagLayout layout;
 	private GridBagConstraints constraints;
-	private JLabel label_name, label_pwd, label_street, label_house, label_city, label_code, label_budget, label_ctf;
-	private JTextField field_name, field_street, field_house, field_city, field_code, field_budget, field_ctf;
+	private JLabel label_name, label_pwd, label_street, label_house, label_code, label_budget, label_ctf;
+	private JTextField field_name, field_street, field_house, field_code, field_budget, field_ctf;
 	private JPasswordField field_pwd;
 	private JButton button;
 
@@ -47,8 +48,6 @@ public class RegisterWindow extends JFrame implements ActionListener {
 		field_street = new JTextField(10);
 		label_house = new JLabel("House Number: ");
 		field_house = new JTextField(10);
-		label_city = new JLabel("City: ");
-		field_city = new JTextField(10);
 		label_code = new JLabel("Postal Code: ");
 		field_code = new JTextField(10);
 		field_pwd.setEchoChar('*');
@@ -96,16 +95,6 @@ public class RegisterWindow extends JFrame implements ActionListener {
 		constraints.insets = new Insets(5, 0, 5, 10);
 		layout.setConstraints(field_house, constraints);
 		panel.add(field_house);
-
-		constraints.gridwidth = GridBagConstraints.RELATIVE;
-		constraints.insets = new Insets(5, 10, 5, 0);
-		layout.setConstraints(label_city, constraints);
-		panel.add(label_city);
-
-		constraints.gridwidth = GridBagConstraints.REMAINDER;
-		constraints.insets = new Insets(5, 0, 5, 10);
-		layout.setConstraints(field_city, constraints);
-		panel.add(field_city);
 
 		constraints.gridwidth = GridBagConstraints.RELATIVE;
 		constraints.insets = new Insets(5, 10, 5, 0);
@@ -158,20 +147,12 @@ public class RegisterWindow extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		user = new User();
 		user.setName(field_name.getText());
+		user.setPassword(String.valueOf(field_pwd.getPassword()));
 		user.setStreet(field_street.getText());
 		user.setHouse(Integer.parseInt(field_house.getText()));
-		user.setCity(field_city.getText());
 		user.setCode(field_code.getText());
 		user.setBudget(Integer.parseInt(field_budget.getText()));
 		user.setCode(field_code.getText());
-		register();
-		this.dispose();
-	}
-
-	public void register() {
-		DatabaseConnect database = new DatabaseConnect();
-		database.insertUser(user);
-		LoginWindow window = new LoginWindow();
-		window.showFrame();
+		Teashop.register(user);
 	}
 }
