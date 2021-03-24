@@ -1,4 +1,4 @@
-package ca.ubc.cs304.ui;
+package frontend.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import ca.ubc.cs304.database.DatabaseConnect;
+import backend.database.DatabaseConnect;
 
 public class LoginWindow extends JFrame implements ActionListener {
 	private JPanel panel;
@@ -80,21 +80,21 @@ public class LoginWindow extends JFrame implements ActionListener {
 				System.exit(0);
 			}
 		});
-		this.setVisible(true);
 		this.setLocation(850, 450);
+		this.setVisible(true);
 		this.pack();
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent event) {
 		name = field_name.getText();
 		password = String.valueOf(field_pwd.getPassword());
 		login(name, password);
 	}
 
 	public void login(String name, String password) {
-		DatabaseConnect datacase = new DatabaseConnect();
-		boolean connected = datacase.login(name, password);
+		DatabaseConnect database = new DatabaseConnect();
+		boolean connected = database.login(name, password);
 		if (connected) { this.dispose(); }
 		else { failed(); }
 	}

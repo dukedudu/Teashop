@@ -1,4 +1,4 @@
-package ca.ubc.cs304.ui;
+package frontend.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,16 +16,16 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import ca.ubc.cs304.database.DatabaseConnect;
-import ca.ubc.cs304.model.User;
+import backend.database.DatabaseConnect;
+import frontend.model.User;
 
 public class RegisterWindow extends JFrame implements ActionListener {
 	private User user;
 	private JPanel panel;
 	private GridBagLayout layout;
 	private GridBagConstraints constraints;
-	private JLabel label_name, label_pwd, label_street, label_house, label_city, label_code;
-	private JTextField field_name, field_street, field_house, field_city, field_code;
+	private JLabel label_name, label_pwd, label_street, label_house, label_city, label_code, label_budget, label_ctf;
+	private JTextField field_name, field_street, field_house, field_city, field_code, field_budget, field_ctf;
 	private JPasswordField field_pwd;
 	private JButton button;
 
@@ -117,6 +117,26 @@ public class RegisterWindow extends JFrame implements ActionListener {
 		layout.setConstraints(field_code, constraints);
 		panel.add(field_code);
 
+		constraints.gridwidth = GridBagConstraints.RELATIVE;
+		constraints.insets = new Insets(5, 10, 5, 0);
+		layout.setConstraints(label_budget, constraints);
+		panel.add(label_code);
+
+		constraints.gridwidth = GridBagConstraints.REMAINDER;
+		constraints.insets = new Insets(5, 0, 5, 10);
+		layout.setConstraints(field_budget, constraints);
+		panel.add(field_code);
+
+		constraints.gridwidth = GridBagConstraints.RELATIVE;
+		constraints.insets = new Insets(5, 10, 5, 0);
+		layout.setConstraints(label_ctf, constraints);
+		panel.add(label_code);
+
+		constraints.gridwidth = GridBagConstraints.REMAINDER;
+		constraints.insets = new Insets(5, 0, 5, 10);
+		layout.setConstraints(field_ctf, constraints);
+		panel.add(field_code);
+
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.insets = new Insets(10, 10, 10, 10);
 		constraints.anchor = GridBagConstraints.CENTER;
@@ -129,21 +149,23 @@ public class RegisterWindow extends JFrame implements ActionListener {
 				System.exit(0);
 			}
 		});
-		this.setVisible(true);
 		this.setLocation(850, 450);
+		this.setVisible(true);
 		this.pack();
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent event) {
 		user = new User();
-		user.setId(0);
 		user.setName(field_name.getText());
 		user.setStreet(field_street.getText());
-		user.setHouse(field_house.getText());
+		user.setHouse(Integer.parseInt(field_house.getText()));
 		user.setCity(field_city.getText());
 		user.setCode(field_code.getText());
+		user.setBudget(Integer.parseInt(field_budget.getText()));
+		user.setCode(field_code.getText());
 		register();
+		this.dispose();
 	}
 
 	public void register() {
