@@ -124,9 +124,9 @@ public class DatabaseConnect {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
-        User u1 = new User(1, "Sam", "123", "V6S1H6", "23rd W Ave", 2341, "Beverage Maker", 500);
+        User u1 = new User("Sam", "123", "V6S1H6", "23rd W Ave", 2341, "Beverage Maker", 500);
         insertUser(u1);
-        User u2 = new User(2, "Lily", "234", "V6S1H6", "23rd W Ave", 2341, "Beverage Maker", 400);
+        User u2 = new User("Lily", "234", "V6S1H6", "23rd W Ave", 2341, "Beverage Maker", 400);
 //        BranchModel branch1 = new BranchModel("123 Charming Ave", "Vancouver", 1, "First Branch", 1234567);
 //        insertBranch(branch1);
 //        BranchModel branch2 = new BranchModel("123 Coco Ave", "Vancouver", 2, "Second Branch", 1234568);
@@ -306,46 +306,14 @@ public class DatabaseConnect {
 
     public void insertUser(User user) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO User VALUES (?,?,?,?,?,?,?,?)" );
-            statement.setInt(1, user.getId());
-            statement.setString(2, user.getName());
-            statement.setString(3, user.getPassword());
-            statement.setString(4, user.getCode());
-            statement.setString(5, user.getStreet());
-            statement.setInt(6, user.getHouse());
-            statement.setString(7, user.getCertificate());
-            statement.setInt(8, user.getBudget());
-//            if (!user.getStreet().isEmpty()) {
-//                statement.setString(3, user.getStreet());
-//            } else {
-//                statement.setNull(3, Types.CHAR);
-//            }
-//            if (user.getHouse() == 0) {
-//                statement.setInt(4, user.getHouse());
-//            } else {
-//                statement.setNull(4, Types.INTEGER);
-//            }
-////            if (!user.getCity().isEmpty()) {
-////                statement.setString(5, user.getCity());
-////            } else {
-////                statement.setNull(5, Types.CHAR);
-////            }
-//            if (!user.getCode().isEmpty()) {
-//                statement.setString(6, user.getCode());
-//            } else {
-//                statement.setNull(6, Types.CHAR);
-//            }
-//            if (user.getBudget() == 0) {
-//                statement.setInt(7, user.getBudget());
-//            } else {
-//                statement.setNull(7, Types.INTEGER);
-//            }
-//            if (!user.getCertificate().isEmpty()) {
-//                statement.setString(8, user.getCertificate());
-//            } else {
-//                statement.setNull(8, Types.CHAR);
-//            }
-
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO User VALUES (?,?,?,?,?,?,?)" );
+            statement.setString(1, user.getName());
+            statement.setString(2, user.getPassword());
+            statement.setString(3, user.getCode());
+            statement.setString(4, user.getStreet());
+            statement.setInt(5, user.getHouse());
+            statement.setString(6, user.getCertificate());
+            statement.setInt(7, user.getBudget());
             statement.executeUpdate();
             connection.commit();
             statement.close();
