@@ -8,7 +8,6 @@ import frontend.ui.RecipeWindow;
 import frontend.ui.RegisterWindow;
 
 import javax.swing.*;
-import java.util.ArrayList;
 
 //ssh -l username -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
 
@@ -29,6 +28,7 @@ public class Teashop {
 		boolean connected = database.login(name, password);
 		if (connected) { loginWindow.dispose(); }
 		else { failed(field); }
+		//database.checkPassword --use this to login
 	}
 
 	public static void failed(JPasswordField field) {
@@ -39,6 +39,12 @@ public class Teashop {
 		database.insertUser(user);
 		registerWindow.dispose();
 		loginWindow.showFrame();
+	}
+
+	public static void forgotPassword(String Name, String newPassword, String confirmPassword) {
+		database.changePassword(Name, newPassword, confirmPassword);
+		//registerWindow.dispose();
+		//loginWindow.showFrame();
 	}
 
 	public static Recipe[] getAllRecipe() {

@@ -28,7 +28,7 @@ public class DatabaseConnect {
             Statement stmt = connection.createStatement();
             //stmt.executeUpdate("CREATE TABLE branch (branch_id integer PRIMARY KEY, branch_name varchar2(20) not null, branch_addr varchar2(50), branch_city varchar2(20) not null, branch_phone integer)");
             stmt.executeUpdate("CREATE TABLE User " +
-                    "( Id INT PRIMARY KEY, Name CHAR(20) NOT NULL, StreetName CHAR(20), HouseNumber INT, City CHAR(20), PostalCode CHAR(20), Certificate CHAR(20), Budget INT,\n" +
+                    "( Name CHAR(20) PRIMARY KEY, StreetName CHAR(20), HouseNumber INT, City CHAR(20), PostalCode CHAR(20), Certificate CHAR(20), Budget INT,\n" +
                     "FOREIGN KEY(PostalCode) REFERENCES Address(PostalCode) ON DELETE CASCADE,\n" +
                     "FOREIGN KEY(StreetName) REFERENCES Address(StreetName) ON DELETE CASCADE,\n" +
                     "FOREIGN KEY(House#) REFERENCES Address(House#) ON DELETE CASCADE));\n" );
@@ -124,9 +124,9 @@ public class DatabaseConnect {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
-        User u1 = new User(1, "Sam", "123", "V6S1H6", "23rd W Ave", 2341, "Beverage Maker", 500);
+        User u1 = new User("Sam", "123", "V6S1H6", "23rd W Ave", 2341, "Beverage Maker", 500);
         insertUser(u1);
-        User u2 = new User(2, "Lily", "234", "V6S1H6", "23rd W Ave", 2341, "Beverage Maker", 400);
+        User u2 = new User("Lily", "234", "V6S1H6", "23rd W Ave", 2341, "Beverage Maker", 400);
 //        BranchModel branch1 = new BranchModel("123 Charming Ave", "Vancouver", 1, "First Branch", 1234567);
 //        insertBranch(branch1);
 //        BranchModel branch2 = new BranchModel("123 Coco Ave", "Vancouver", 2, "Second Branch", 1234568);
@@ -245,7 +245,7 @@ public class DatabaseConnect {
     }
 
     //login view:
-    public boolean checkPassword(String UserId, String enterPassword) {
+    public boolean checkPassword(String UserName, String enterPassword) {
         /**
          * input: UserId and password from login view
          * return: true if entered password equals with password from DB, false otherwise.
@@ -255,15 +255,15 @@ public class DatabaseConnect {
         ArrayList<Integer> UidPool = new ArrayList<>();
         try {
             Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT UserId FROM User" );
+            ResultSet rs1 = stmt1.executeQuery("SELECT Name FROM User" );
             while (rs1.next()) {
                 UidPool.add(Integer.parseInt(rs1.getString("UserId" )));
             }
             rs1.close();
             stmt1.close();
-            if (UidPool.contains(UserId)) {
+            if (UidPool.contains(UserName)) {
                 Statement stmt2 = connection.createStatement();
-                ResultSet rs2 = stmt2.executeQuery("SELECT Password FROM User WHERE UserId=" + UserId);
+                ResultSet rs2 = stmt2.executeQuery("SELECT Password FROM User WHERE Name=" + UserName);
                 truthPassword = rs2.getString("Password" );
                 correct = (truthPassword.equals(enterPassword));
                 rs2.close();
@@ -279,7 +279,7 @@ public class DatabaseConnect {
         return correct;
     }
 
-    public void changePassword(String UserId, String newPassword, String confirmPassword) {
+    public void changePassword(String UserName, String newPassword, String confirmPassword) {
         ArrayList<Integer> UidPool = new ArrayList<>();
         if (!newPassword.equals(confirmPassword)) {
             System.out.println("confirmPassword should be same as newPassword." );
@@ -287,7 +287,7 @@ public class DatabaseConnect {
         }
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE User SET Password = ? WHERE UserId = ?" );
-            ps.setString(1, UserId);
+            ps.setString(1, UserName);
             ps.setString(2, newPassword);
 
             int rowCount = ps.executeUpdate();
@@ -306,46 +306,14 @@ public class DatabaseConnect {
 
     public void insertUser(User user) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO User VALUES (?,?,?,?,?,?,?,?)" );
-            statement.setInt(1, user.getId());
-            statement.setString(2, user.getName());
-            statement.setString(3, user.getPassword());
-            statement.setString(4, user.getCode());
-            statement.setString(5, user.getStreet());
-            statement.setInt(6, user.getHouse());
-            statement.setString(7, user.getCertificate());
-            statement.setInt(8, user.getBudget());
-//            if (!user.getStreet().isEmpty()) {
-//                statement.setString(3, user.getStreet());
-//            } else {
-//                statement.setNull(3, Types.CHAR);
-//            }
-//            if (user.getHouse() == 0) {
-//                statement.setInt(4, user.getHouse());
-//            } else {
-//                statement.setNull(4, Types.INTEGER);
-//            }
-////            if (!user.getCity().isEmpty()) {
-////                statement.setString(5, user.getCity());
-////            } else {
-////                statement.setNull(5, Types.CHAR);
-////            }
-//            if (!user.getCode().isEmpty()) {
-//                statement.setString(6, user.getCode());
-//            } else {
-//                statement.setNull(6, Types.CHAR);
-//            }
-//            if (user.getBudget() == 0) {
-//                statement.setInt(7, user.getBudget());
-//            } else {
-//                statement.setNull(7, Types.INTEGER);
-//            }
-//            if (!user.getCertificate().isEmpty()) {
-//                statement.setString(8, user.getCertificate());
-//            } else {
-//                statement.setNull(8, Types.CHAR);
-//            }
-
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO User VALUES (?,?,?,?,?,?,?)" );
+            statement.setString(1, user.getName());
+            statement.setString(2, user.getPassword());
+            statement.setString(3, user.getCode());
+            statement.setString(4, user.getStreet());
+            statement.setInt(5, user.getHouse());
+            statement.setString(6, user.getCertificate());
+            statement.setInt(7, user.getBudget());
             statement.executeUpdate();
             connection.commit();
             statement.close();
@@ -381,3 +349,34 @@ public class DatabaseConnect {
         }
     }
 }
+//  check
+//            if (!user.getStreet().isEmpty()) {
+//                statement.setString(3, user.getStreet());
+//            } else {
+//                statement.setNull(3, Types.CHAR);
+//            }
+//            if (user.getHouse() == 0) {
+//                statement.setInt(4, user.getHouse());
+//            } else {
+//                statement.setNull(4, Types.INTEGER);
+//            }
+////            if (!user.getCity().isEmpty()) {
+////                statement.setString(5, user.getCity());
+////            } else {
+////                statement.setNull(5, Types.CHAR);
+////            }
+//            if (!user.getCode().isEmpty()) {
+//                statement.setString(6, user.getCode());
+//            } else {
+//                statement.setNull(6, Types.CHAR);
+//            }
+//            if (user.getBudget() == 0) {
+//                statement.setInt(7, user.getBudget());
+//            } else {
+//                statement.setNull(7, Types.INTEGER);
+//            }
+//            if (!user.getCertificate().isEmpty()) {
+//                statement.setString(8, user.getCertificate());
+//            } else {
+//                statement.setNull(8, Types.CHAR);
+//            }

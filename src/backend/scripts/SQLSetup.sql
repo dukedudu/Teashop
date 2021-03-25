@@ -6,8 +6,7 @@ City CHAR(20),
 PRIMARY KEY(PostalCode, StreetName, House#));
 
 CREATE TABLE User(
-UserId INT,
-Name CHAR(20) NOT NULL,
+Name CHAR(20) PRIMARY KEY,
 Password CHAR(20) NOT NULL,
 PostalCode CHAR(20) NOT NULL,
 StreetName CHAR(20) NOT NULL,
@@ -18,7 +17,7 @@ FOREIGN KEY(PostalCode) REFERENCES Address(PostalCode) ON DELETE CASCADE,
 FOREIGN KEY(StreetName) REFERENCES Address(StreetName) ON DELETE CASCADE,
 FOREIGN KEY(House#) REFERENCES Address(House#) ON DELETE CASCADE));
 
-CREATE TABLES Grocery(
+CREATE TABLE Grocery(
 GName CHAR(20) PRIMARY KEY,
 Amount INT DEFAULT 0,
 BuyingDate DATE,
@@ -26,13 +25,13 @@ Duration INT,
 FOREIGN KEY BuyingDate REFERENCES GroceryDate(BuyingDate) ON DELETE CASCADE,
 FOREIGN KEY Duration REFERENCES GroceryDate(Duration) ON DELETE CASCADE);
 
-CREATE TABLES GroceryDate(
+CREATE TABLE GroceryDate(
 BuyingDate DATE,
 Duration INT,
 ExpiryDate DATE,
 PRIMARY KEY(BuyingDate, Duration));
 
-CREATE TABLES Buys(
+CREATE TABLE Buys(
 UserId INT,
 GName CHAR(20),
 BuyingDate DATE,
@@ -41,7 +40,7 @@ FOREIGN KEY(UserId) REFERENCES User(UserId) ON DELETE CASCADE,
 FOREIGN KEY(GName) REFERENCES Grocery(GName) ON DELETE CASCADE,
 FOREIGN KEY(BuyingDate) REFERENCES Grocery(BuyingDate) ON DELETE CASCADE);
 
-CREATE TABLES Recipe(
+CREATE TABLE Recipe(
 RecipeId INT PRIMARY KEY,
 Name CHAR(20),
 Tea CHAR(20) NOT NULL,
