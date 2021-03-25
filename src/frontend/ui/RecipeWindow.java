@@ -4,30 +4,30 @@ import frontend.controller.Teashop;
 import frontend.model.Recipe;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class RecipeWindow extends JFrame implements ActionListener, ListSelectionListener, ChangeListener {
+public class RecipeWindow extends JFrame implements ActionListener, TableModelListener, ChangeListener {
     private Recipe recipe;
     private JSplitPane panel;
     private JPanel panel_left, panel_right;
     private GridBagLayout layout_left, layout_right;
     private GridBagConstraints constraints;
-    private DefaultListModel<String> model_recipe;
-    private JList<String> list;
-    private JTextField name;
+    private JTable table;
+    private DefaultTableModel model_recipe;
+    private JTextField field;
     private SpinnerListModel model_tea;
     private JLabel label_name, label_tea, label_pearl, label_jelly, label_lemon, label_orange;
     private SpinnerNumberModel model_pearl, model_jelly, model_lemon, model_orange;
     private JSpinner spin_tea, spin_pearl, spin_jelly, spin_lemon, spin_orange;
-    private JButton button;
+    private JButton button_add, button_update;
+    private String[] columns = {"Name"};
+    private Object[][] recipes = {{"Bubble tea"}, {"Fruit tea"}};
     private String[] teas = {"Red tea", "Green tea"};
 
     public RecipeWindow() { super("Recipe"); };
@@ -38,19 +38,19 @@ public class RecipeWindow extends JFrame implements ActionListener, ListSelectio
         panel_left = new JPanel();
         panel_right = new JPanel();
         this.setContentPane(panel);
-        panel.setDividerLocation(getWidth()/2);
         panel.setLeftComponent(panel_left);
         panel.setRightComponent(panel_right);
         layout_left = new GridBagLayout();
         layout_right = new GridBagLayout();
         constraints = new GridBagConstraints();
 
-        model_recipe = new DefaultListModel<>();
-//        model_recipe.addElement("Bubble tea");
-//        model_recipe.addElement("Fruit tea");
-        list = new JList<>(model_recipe);
+        model_recipe = new DefaultTableModel();
+        model_recipe.setDataVector(recipes, columns);
+        table = new JTable(model_recipe);
+        table.setRowSelectionAllowed(true);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         label_name = new JLabel("Name: ");
-        name = new JTextField(10);
+        field = new JTextField(10);
         model_tea = new SpinnerListModel(teas);
         label_tea = new JLabel("Tea: ");
         spin_tea = new JSpinner(model_tea);
@@ -66,7 +66,8 @@ public class RecipeWindow extends JFrame implements ActionListener, ListSelectio
         spin_lemon = new JSpinner(model_lemon);
         label_orange = new JLabel("Orange: ");
         spin_orange = new JSpinner(model_orange);
-        button = new JButton("Add");
+        button_add = new JButton("Add");
+        button_update = new JButton("Update");
 
         panel_left.setLayout(layout_left);
         panel_left.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
@@ -75,8 +76,8 @@ public class RecipeWindow extends JFrame implements ActionListener, ListSelectio
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.insets = new Insets(5, 10, 5, 0);
-        layout_left.setConstraints(list, constraints);
-        panel_left.add(list);
+        layout_left.setConstraints(table, constraints);
+        panel_left.add(table);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
@@ -85,8 +86,8 @@ public class RecipeWindow extends JFrame implements ActionListener, ListSelectio
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.insets = new Insets(5, 0, 5, 10);
-        layout_right.setConstraints(name, constraints);
-        panel_right.add(name);
+        layout_right.setConstraints(field, constraints);
+        panel_right.add(field);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
@@ -140,12 +141,16 @@ public class RecipeWindow extends JFrame implements ActionListener, ListSelectio
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.insets = new Insets(5, 10, 5, 0);
-        layout_right.setConstraints(button, constraints);
-        panel_right.add(button);
+        layout_right.setConstraints(button_add, constraints);
+        panel_right.add(button_add);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 5, 0);
+        layout_right.setConstraints(button_update, constraints);
+        panel_right.add(button_update);
 
         listAllRecipe(Teashop.getAllRecipe());
-
-        list.addListSelectionListener(this);
+        model_recipe.addTableModelListener(this);
         spin_tea.addChangeListener(this);
         spin_pearl.addChangeListener(this);
         spin_jelly.addChangeListener(this);
@@ -161,21 +166,21 @@ public class RecipeWindow extends JFrame implements ActionListener, ListSelectio
         this.pack();
     }
 
-    private void listAllRecipe(Recipe[] recipes) {
-        for (Recipe recipe : recipes) {
-            model_recipe.addElement(recipe.getName());
+    @Override
+    public void tableChanged(TableModelEvent event) {
+        int id = (int)recipes[table.getSelectedRow()][0];
+    }
+
+    private void listAllRecipe(Recipe[] data) {
+        for (int i = 0; i < data.length; i++) {
+            recipes[i] = new Object[]{data[i].getName()};
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        recipe.setName(name.getText());
+        recipe.setName(field.getText());
         Teashop.addRecipe(recipe);
-    }
-
-    @Override
-    public void valueChanged(ListSelectionEvent event) {
-        // Display info of selected recipe here
     }
 
     @Override

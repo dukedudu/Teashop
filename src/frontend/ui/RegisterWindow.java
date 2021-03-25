@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import backend.database.DatabaseConnect;
 import frontend.controller.Teashop;
 import frontend.model.User;
 

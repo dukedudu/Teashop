@@ -1,11 +1,10 @@
 package frontend.model;
 
 public class Recipe {
-    private final int id, pearl, jelly, lemon, orange, calories;
-    private final String name, tea;
+    private int pearl, jelly, lemon, orange, calories;
+    private String name, tea;
 
     public Recipe() {
-        this.id = 0;
         this.name = "";
         this.tea = "";
         this.pearl = 0;
@@ -16,7 +15,6 @@ public class Recipe {
     }
 
     public Recipe(int id, String name, String tea, int pearl, int jelly, int lemon, int orange, int calories) {
-        this.id = id;
         this.name = name;
         this.tea = tea;
         this.pearl = pearl;
@@ -26,29 +24,27 @@ public class Recipe {
         this.calories = calories;
     }
 
-    public int getId() { return id; }
-
     public String getName() { return name; }
 
-    public void setName(String name) { name = name; }
+    public void setName(String name) { this.name = name; }
 
     public String getTea() { return tea; }
 
-    public void setTea(String tea) { tea = tea; }
+    public void setTea(String tea) { this.tea = tea; }
 
     public int getPearl() { return pearl; }
 
-    public void setPearl(int pearl) { pearl = pearl; }
+    public void setPearl(int pearl) { this.pearl = pearl; }
 
     public int getJelly() { return jelly; }
 
-    public void setJelly(int jelly) { jelly = jelly; }
+    public void setJelly(int jelly) { this.jelly = jelly; }
 
     public int getLemon() { return lemon; }
 
-    public void setLemon(int lemon) { lemon = lemon; }
+    public void setLemon(int lemon) { this.lemon = lemon; }
 
     public int getOrange() { return orange; }
 
-    public void setOrange(int orange) { orange = orange; }
+    public void setOrange(int orange) { this.orange = orange; }
 }

@@ -1,2 +1,2 @@
-# DB_project
+# Teashop
 Tea Shop Inventory Management System
