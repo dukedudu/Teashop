@@ -1,6 +1,7 @@
 package backend.database;
 
 import frontend.model.BranchModel;
+import frontend.model.Grocery;
 import frontend.model.Recipe;
 import frontend.model.User;
 
@@ -229,6 +230,7 @@ public class DatabaseConnect {
         }
     }
 
+<<<<<<< HEAD
     public boolean login(String name, String password) {
         try {
             if (connection != null) {
@@ -272,13 +274,39 @@ public class DatabaseConnect {
                 System.out.println("Uid not exists");
             }
 
+=======
+//    public boolean login(String name, String password) {
+//        try {
+//            if (connection != null) {
+//                connection.close();
+//            }
+//            connection = DriverManager.getConnection(ORACLE_URL, name, password);
+//            connection.setAutoCommit(false);
+//            System.out.println("Logged in\n" );
+//            return true;
+//        } catch (SQLException e) {
+//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//            return false;
+//        }
+//    }
+
+    public boolean login(String name, String password) {
+        boolean result = false;
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT Password FROM User WHERE Name=" + name);
+            result = (rs.equals(password));
+            rs.close();
+            stmt.close();
+>>>>>>> 7cf1208207a4bfef3cfee96c85340be9b5049893
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
-        return correct;
+        return result;
     }
 
+<<<<<<< HEAD
     public void changePassword(String UserName, String newPassword, String confirmPassword) {
         ArrayList<Integer> UidPool = new ArrayList<>();
         if (!newPassword.equals(confirmPassword)) {
@@ -303,6 +331,32 @@ public class DatabaseConnect {
             rollbackConnection();
         }
     }
+=======
+//    public void changePassword(String UserName, String newPassword, String confirmPassword) {
+//        ArrayList<Integer> UidPool = new ArrayList<>();
+//        if (!newPassword.equals(confirmPassword)) {
+//            System.out.println("confirmPassword should be same as newPassword." );
+//            return;
+//        }
+//        try {
+//            PreparedStatement ps = connection.prepareStatement("UPDATE User SET Password = ? WHERE UserId = ?" );
+//            ps.setString(1, UserName);
+//            ps.setString(2, newPassword);
+//
+//            int rowCount = ps.executeUpdate();
+//            if (rowCount == 0) {
+//                //MainMenu.makeWarningDialog(WARNING_TAG + " Resident " + sin + " does not exist!");
+//                System.out.println(WARNING_TAG + " User does not exist!" );
+//            }
+//            connection.commit();
+//            ps.close();
+//
+//        } catch (SQLException e) {
+//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//            rollbackConnection();
+//        }
+//    }
+>>>>>>> 7cf1208207a4bfef3cfee96c85340be9b5049893
 
     public void insertUser(User user) {
         try {
@@ -323,6 +377,7 @@ public class DatabaseConnect {
         }
     }
 
+<<<<<<< HEAD
     public void insertRecipe(Recipe recipe) {
         //Recipe(String name, String tea, int pearl, int jelly, int lemon, int orange, int calories)
         try {
@@ -342,6 +397,17 @@ public class DatabaseConnect {
             rollbackConnection();
         }
     }
+=======
+    public void insertRecipe(Recipe recipe) { }
+
+    public void updateRecipe(Recipe recipe) { }
+
+    public void deleteRecipe(String name) { }
+
+    public Recipe selectRecipeByName(String name) { return new Recipe(); }
+
+    public Recipe[] selectRecipeByKind(String kind) { return new Recipe[0]; }
+>>>>>>> 7cf1208207a4bfef3cfee96c85340be9b5049893
 
     public ArrayList<Recipe> selectAllRecipe() {
         ArrayList<Recipe> recipes = new ArrayList<>();
@@ -368,6 +434,20 @@ public class DatabaseConnect {
         return recipes;
     }
 
+    public void insertGrocery(Grocery grocery) { }
+
+    public void updateGrocery(Grocery grocery) { }
+
+    public Grocery[] orderGroceryByAmount() { return new Grocery[0]; }
+
+    public Grocery[] orderGroceryByDate() { return new Grocery[0]; }
+
+    public Grocery selectGrocery(String name) { return new Grocery(); }
+
+    public Grocery[] selectAllGrocery() { return new Grocery[0]; }
+
+    public void insertUsage(String name, Date date) {};
+
     private void rollbackConnection() {
         try {
             connection.rollback();
@@ -386,34 +466,3 @@ public class DatabaseConnect {
         }
     }
 }
-//  check
-//            if (!user.getStreet().isEmpty()) {
-//                statement.setString(3, user.getStreet());
-//            } else {
-//                statement.setNull(3, Types.CHAR);
-//            }
-//            if (user.getHouse() == 0) {
-//                statement.setInt(4, user.getHouse());
-//            } else {
-//                statement.setNull(4, Types.INTEGER);
-//            }
-////            if (!user.getCity().isEmpty()) {
-////                statement.setString(5, user.getCity());
-////            } else {
-////                statement.setNull(5, Types.CHAR);
-////            }
-//            if (!user.getCode().isEmpty()) {
-//                statement.setString(6, user.getCode());
-//            } else {
-//                statement.setNull(6, Types.CHAR);
-//            }
-//            if (user.getBudget() == 0) {
-//                statement.setInt(7, user.getBudget());
-//            } else {
-//                statement.setNull(7, Types.INTEGER);
-//            }
-//            if (!user.getCertificate().isEmpty()) {
-//                statement.setString(8, user.getCertificate());
-//            } else {
-//                statement.setNull(8, Types.CHAR);
-//            }

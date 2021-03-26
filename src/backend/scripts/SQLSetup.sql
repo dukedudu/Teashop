@@ -6,7 +6,7 @@ City CHAR(20),
 PRIMARY KEY(PostalCode, StreetName, House#));
 
 CREATE TABLE User(
-Name CHAR(20) PRIMARY KEY,
+UName CHAR(20) PRIMARY KEY,
 Password CHAR(20) NOT NULL,
 PostalCode CHAR(20) NOT NULL,
 StreetName CHAR(20) NOT NULL,
@@ -42,7 +42,7 @@ FOREIGN KEY(BuyingDate) REFERENCES Grocery(BuyingDate) ON DELETE CASCADE);
 
 CREATE TABLE Recipe(
 RecipeId INT PRIMARY KEY,
-Name CHAR(20),
+RName CHAR(20),
 Tea CHAR(20) NOT NULL,
 Calories INT DEFAULT 0,
 Perl INT DEFAULT 0,
@@ -116,14 +116,6 @@ FOREIGN KEY (SListId) REFERENCES ShoppingList ON DELETE CASCADE,
 FOREIGN KEY (GName) REFERENCES Grocery ON DELETE CASCADE,
 FOREIGN KEY (UseId) REFERENCES Usage ON DELETE CASCADE);
 
--- CREATE TABLE User (
---     Id INT PRIMARY KEY,
---     Name CHAR(20) NOT NULL,
---     StreetName CHAR(20),
---     HouseNumber INT,
---     City CHAR(20),
---     PostalCode CHAR(20)
--- );
 
-INSERT INTO branch VALUES (1, "ABC", "123 Charming Ave", "Vancouver", "6041234567");
-INSERT INTO branch VALUES (2, "DEF", "123 Coco Ave", "Vancouver", "6044567890");
+-- INSERT INTO branch VALUES (1, "ABC", "123 Charming Ave", "Vancouver", "6041234567");
+-- INSERT INTO branch VALUES (2, "DEF", "123 Coco Ave", "Vancouver", "6044567890");

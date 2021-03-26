@@ -25,7 +25,7 @@ public class LoginWindow extends JFrame implements ActionListener {
 	private JLabel label_name, label_pwd;
 	private JTextField field_name;
 	private JPasswordField field_pwd;
-	private JButton button;
+	private JButton button_login, button_register;
 	private String name, password;
 
 	public LoginWindow() {
@@ -43,7 +43,8 @@ public class LoginWindow extends JFrame implements ActionListener {
 		label_pwd = new JLabel("Password: ");
 		field_pwd = new JPasswordField(10);
 		field_pwd.setEchoChar('*');
-		button = new JButton("Log In");
+		button_login = new JButton("Log In");
+		button_register = new JButton("Register");
 
 		panel.setLayout(layout);
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -71,10 +72,17 @@ public class LoginWindow extends JFrame implements ActionListener {
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.insets = new Insets(5, 10, 10, 10);
 		constraints.anchor = GridBagConstraints.CENTER;
-		layout.setConstraints(button, constraints);
-		panel.add(button);
+		layout.setConstraints(button_login, constraints);
+		panel.add(button_login);
 
-		button.addActionListener(this);
+		constraints.gridwidth = GridBagConstraints.REMAINDER;
+		constraints.insets = new Insets(5, 10, 10, 10);
+		constraints.anchor = GridBagConstraints.CENTER;
+		layout.setConstraints(button_register, constraints);
+		panel.add(button_register);
+
+		button_login.addActionListener(this);
+		button_register.addActionListener(this);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
@@ -87,8 +95,15 @@ public class LoginWindow extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		name = field_name.getText();
-		password = String.valueOf(field_pwd.getPassword());
-		Teashop.login(name, password, field_pwd);
+		if (event.getSource() == button_login) {
+			name = field_name.getText();
+			password = String.valueOf(field_pwd.getPassword());
+			Teashop.login(name, password, field_pwd);
+		}
+		else {
+			this.dispose();
+			RegisterWindow registerWindow = new RegisterWindow();
+			registerWindow.showFrame();
+		}
 	}
 }
