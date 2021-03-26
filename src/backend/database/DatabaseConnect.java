@@ -23,7 +23,7 @@ public class DatabaseConnect {
     }
 
     public void setup() {
-        dropBranchTableIfExists();
+        //dropBranchTableIfExists();
         try {
             Statement stmt = connection.createStatement();
             //stmt.executeUpdate("CREATE TABLE branch (branch_id integer PRIMARY KEY, branch_name varchar2(20) not null, branch_addr varchar2(50), branch_city varchar2(20) not null, branch_phone integer)");
@@ -31,20 +31,20 @@ public class DatabaseConnect {
                     "( Name CHAR(20) PRIMARY KEY, StreetName CHAR(20), HouseNumber INT, City CHAR(20), PostalCode CHAR(20), Certificate CHAR(20), Budget INT,\n" +
                     "FOREIGN KEY(PostalCode) REFERENCES Address(PostalCode) ON DELETE CASCADE,\n" +
                     "FOREIGN KEY(StreetName) REFERENCES Address(StreetName) ON DELETE CASCADE,\n" +
-                    "FOREIGN KEY(House#) REFERENCES Address(House#) ON DELETE CASCADE));\n" );
+                    "FOREIGN KEY(House#) REFERENCES Address(House#) ON DELETE CASCADE));\n");
             stmt.executeUpdate("CREATE TABLE Address(PostalCode CHAR(20),StreetName CHAR(20),House# INT,City CHAR(20),\n" +
-                    "PRIMARY KEY(PostalCode, StreetName, House#));\n" );
+                    "PRIMARY KEY(PostalCode, StreetName, House#));\n");
             stmt.executeUpdate("CREATE TABLES Grocery(\n" +
                     "GName CHAR(20) PRIMARY KEY,Amount INT DEFAULT 0, \n" +
                     "BuyingDate DATE, \n" +
                     "Duration INT,\n" +
                     "FOREIGN KEY BuyingDate REFERENCES GroceryDate(BuyingDate) ON DELETE CASCADE,\n" +
-                    "FOREIGN KEY Duration REFERENCES GroceryDate(Duration) ON DELETE CASCADE)" );
+                    "FOREIGN KEY Duration REFERENCES GroceryDate(Duration) ON DELETE CASCADE)");
             stmt.executeUpdate("CREATE TABLES GroceryDate(\n" +
                     "BuyingDate DATE, \n" +
                     "Duration INT,\n" +
                     "ExpiryDate DATE,\n" +
-                    "PRIMARY KEY(BuyingDate, Duration));\n" );
+                    "PRIMARY KEY(BuyingDate, Duration));\n");
             stmt.executeUpdate("CREATE TABLES Buys(\n" +
                     "UserId INT,\n" +
                     "GName CHAR(20),\n" +
@@ -52,7 +52,7 @@ public class DatabaseConnect {
                     "PRIMARY(UserId, GName, BuyingDate),\n" +
                     "FOREIGN KEY(UserId) REFERENCES User(UserId) ON DELETE CASCADE,\n" +
                     "FOREIGN KEY(GName) REFERENCES Grocery(GName) ON DELETE CASCADE,\n" +
-                    "FOREIGN KEY(BuyingDate) REFERENCES Grocery(BuyingDate) ON DELETE CASCADE);\n" );
+                    "FOREIGN KEY(BuyingDate) REFERENCES Grocery(BuyingDate) ON DELETE CASCADE);\n");
             stmt.executeUpdate("CREATE TABLES Recipe(\n" +
                     "RecipeId INT PRIMARY KEY,\n" +
                     "Name CHAR(20),\n" +
@@ -61,7 +61,7 @@ public class DatabaseConnect {
                     "Perl INT DEFAULT 0, \n" +
                     "Jelly INT DEFAULT 0, \n" +
                     "Lemon INT DEFAULT 0, \n" +
-                    "Orange INT DEFAULT 0);\n" );
+                    "Orange INT DEFAULT 0);\n");
             stmt.executeUpdate("CREATE TABLE Usage(\n" +
                     "UseID INT PRIMARY KEY, \n" +
                     "RecipeId INT,\n" +
@@ -72,13 +72,13 @@ public class DatabaseConnect {
                     "Jelly INT DEFAULT 0, \n" +
                     "Lemon INT DEFAULT 0, \n" +
                     "Orange INT DEFAULT 0,\n" +
-                    "FOREIGN KEY RecipeId REFERENCES Recipe(RecipeId) ON DELETE SET NULL);\n" );
+                    "FOREIGN KEY RecipeId REFERENCES Recipe(RecipeId) ON DELETE SET NULL);\n");
             stmt.executeUpdate("CREATE TABLE Generates(\n" +
                     "RecipeId INT,\n" +
                     "UseID INT,\n" +
                     "PRIMARY KEY(RecipeId, UseID),\n" +
                     "FOREIGN KEY RecipeId REFERENCES Recipe ON DELETE CASCADE,\n" +
-                    "FOREIGN KEY UseId REFERENCES Usage ON DELETE CASCADE);\n" );
+                    "FOREIGN KEY UseId REFERENCES Usage ON DELETE CASCADE);\n");
             stmt.executeUpdate("CREATE TABLE DailyReport (\n" +
                     "ReportID INT,\n" +
                     "UseID INT,\n" +
@@ -91,19 +91,19 @@ public class DatabaseConnect {
                     "PRIMARY KEY(UseID, ReportID),\n" +
                     "FOREIGN KEY (UserID) REFERENCES User ON DELETE CASCADE,\n" +
                     "FOREIGN KEY (Date) REFERENCES ReportWeekDay ON DELETE CASCADE,\n" +
-                    "FOREIGN KEY (Weekday) REFERENCES ReportWeekDay ON DELETE CASCADE);" );
+                    "FOREIGN KEY (Weekday) REFERENCES ReportWeekDay ON DELETE CASCADE);");
             stmt.executeUpdate("CREATE TABLE ReportWeekDay (\n" +
                     "Date DATE PRIMARY KEY, \n" +
-                    "Weekday INT);\n" );
+                    "Weekday INT);\n");
             stmt.executeUpdate("CREATE TABLE Supplier (\n" +
                     "SupplierId INT PRIMARY KEY,\n" +
-                    "CompanyName CHAR(20) NOT NULL UNIQUE);\n" );
+                    "CompanyName CHAR(20) NOT NULL UNIQUE);\n");
             stmt.executeUpdate("CREATE TABLE Supplies (\n" +
                     "SupplierId INT,\n" +
                     "GName CHAR(20),\n" +
                     "PRIMARY KEY (SupplierId, GName),\n" +
                     "FOREIGN KEY (SupplierId) REFERENCES Supplier ON DELETE CASCADE,\n" +
-                    "FOREIGN KEY (GName) REFERENCES Grocery ON DELETE CASCADE);\n" );
+                    "FOREIGN KEY (GName) REFERENCES Grocery ON DELETE CASCADE);\n");
             stmt.executeUpdate("CREATE TABLE ShoppingList (\n" +
                     "SListId INT PRIMARY KEY,\n" +
                     "GName CHAR(20),\n" +
@@ -111,7 +111,7 @@ public class DatabaseConnect {
                     "Date DATE,\n" +
                     "UserId INT,\n" +
                     "FOREIGN KEY (UserId) REFERENCES User ON DELETE CASCADE,\n" +
-                    "FOREIGN KEY (GName) REFERENCES Grocery ON DELETE CASCADE);\n" );
+                    "FOREIGN KEY (GName) REFERENCES Grocery ON DELETE CASCADE);\n");
             stmt.executeUpdate("CREATE TABLE Lists (\n" +
                     "UseID INT,\n" +
                     "GName CHAR(20),\n" +
@@ -119,7 +119,7 @@ public class DatabaseConnect {
                     "PRIMARY KEY (SListId, UseID, GName),\n" +
                     "FOREIGN KEY (SListId) REFERENCES ShoppingList ON DELETE CASCADE,\n" +
                     "FOREIGN KEY (GName) REFERENCES Grocery ON DELETE CASCADE,\n" +
-                    "FOREIGN KEY (UseId) REFERENCES Usage ON DELETE CASCADE);\n" );
+                    "FOREIGN KEY (UseId) REFERENCES Usage ON DELETE CASCADE);\n");
             stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
@@ -135,7 +135,7 @@ public class DatabaseConnect {
 
     public void insertBranch(BranchModel model) {
         try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO branch VALUES (?,?,?,?,?)" );
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO branch VALUES (?,?,?,?,?)");
             ps.setInt(1, model.getId());
             ps.setString(2, model.getName());
             ps.setString(3, model.getAddress());
@@ -156,12 +156,12 @@ public class DatabaseConnect {
 
     public void deleteBranch(int branchId) {
         try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM branch WHERE branch_id = ?" );
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM branch WHERE branch_id = ?");
             ps.setInt(1, branchId);
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
-                System.out.println(WARNING_TAG + " Branch " + branchId + " does not exist!" );
+                System.out.println(WARNING_TAG + " Branch " + branchId + " does not exist!");
             }
             connection.commit();
             ps.close();
@@ -173,13 +173,13 @@ public class DatabaseConnect {
 
     public void updateBranch(int id, String name) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE branch SET branch_name = ? WHERE branch_id = ?" );
+            PreparedStatement ps = connection.prepareStatement("UPDATE branch SET branch_name = ? WHERE branch_id = ?");
             ps.setString(1, name);
             ps.setInt(2, id);
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
-                System.out.println(WARNING_TAG + " Branch " + id + " does not exist!" );
+                System.out.println(WARNING_TAG + " Branch " + id + " does not exist!");
             }
             connection.commit();
             ps.close();
@@ -193,14 +193,14 @@ public class DatabaseConnect {
         ArrayList<BranchModel> result = new ArrayList<BranchModel>();
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM branch" );
+            ResultSet rs = stmt.executeQuery("SELECT * FROM branch");
 
             while (rs.next()) {
-                BranchModel model = new BranchModel(rs.getString("branch_addr" ),
-                        rs.getString("branch_city" ),
-                        rs.getInt("branch_id" ),
-                        rs.getString("branch_name" ),
-                        rs.getInt("branch_phone" ));
+                BranchModel model = new BranchModel(rs.getString("branch_addr"),
+                        rs.getString("branch_city"),
+                        rs.getInt("branch_id"),
+                        rs.getString("branch_name"),
+                        rs.getInt("branch_phone"));
                 result.add(model);
             }
             rs.close();
@@ -214,11 +214,11 @@ public class DatabaseConnect {
     private void dropBranchTableIfExists() {
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("select table_name from user_tables" );
+            ResultSet rs = stmt.executeQuery("select table_name from user_tables");
 
             while (rs.next()) {
-                if (rs.getString(1).toLowerCase().equals("branch" )) {
-                    stmt.execute("DROP TABLE branch" );
+                if (rs.getString(1).toLowerCase().equals("branch")) {
+                    stmt.execute("DROP TABLE branch");
                     break;
                 }
             }
@@ -236,7 +236,7 @@ public class DatabaseConnect {
             }
             connection = DriverManager.getConnection(ORACLE_URL, name, password);
             connection.setAutoCommit(false);
-            System.out.println("Logged in\n" );
+            System.out.println("Logged in\n");
             return true;
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
@@ -252,24 +252,24 @@ public class DatabaseConnect {
          * */
         String truthPassword = "";
         boolean correct = false;
-        ArrayList<Integer> UidPool = new ArrayList<>();
+        ArrayList<String> NamePool = new ArrayList<>();
         try {
             Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT Name FROM User" );
+            ResultSet rs1 = stmt1.executeQuery("SELECT Name FROM User");
             while (rs1.next()) {
-                UidPool.add(Integer.parseInt(rs1.getString("UserId" )));
+                NamePool.add((rs1.getString("Name")));
             }
             rs1.close();
             stmt1.close();
-            if (UidPool.contains(UserName)) {
+            if (NamePool.contains(UserName)) {
                 Statement stmt2 = connection.createStatement();
                 ResultSet rs2 = stmt2.executeQuery("SELECT Password FROM User WHERE Name=" + UserName);
-                truthPassword = rs2.getString("Password" );
+                truthPassword = rs2.getString("Password");
                 correct = (truthPassword.equals(enterPassword));
                 rs2.close();
                 stmt2.close();
             } else {
-                System.out.println("Uid not exists" );
+                System.out.println("Uid not exists");
             }
 
         } catch (SQLException e) {
@@ -282,18 +282,18 @@ public class DatabaseConnect {
     public void changePassword(String UserName, String newPassword, String confirmPassword) {
         ArrayList<Integer> UidPool = new ArrayList<>();
         if (!newPassword.equals(confirmPassword)) {
-            System.out.println("confirmPassword should be same as newPassword." );
+            System.out.println("confirmPassword should be same as newPassword.");
             return;
         }
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE User SET Password = ? WHERE UserId = ?" );
+            PreparedStatement ps = connection.prepareStatement("UPDATE User SET Password = ? WHERE UserId = ?");
             ps.setString(1, UserName);
             ps.setString(2, newPassword);
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
                 //MainMenu.makeWarningDialog(WARNING_TAG + " Resident " + sin + " does not exist!");
-                System.out.println(WARNING_TAG + " User does not exist!" );
+                System.out.println(WARNING_TAG + " User does not exist!");
             }
             connection.commit();
             ps.close();
@@ -306,7 +306,7 @@ public class DatabaseConnect {
 
     public void insertUser(User user) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO User VALUES (?,?,?,?,?,?,?)" );
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO User VALUES (?,?,?,?,?,?,?)");
             statement.setString(1, user.getName());
             statement.setString(2, user.getPassword());
             statement.setString(3, user.getCode());
@@ -324,11 +324,48 @@ public class DatabaseConnect {
     }
 
     public void insertRecipe(Recipe recipe) {
-
+        //Recipe(String name, String tea, int pearl, int jelly, int lemon, int orange, int calories)
+        try {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO Recipe VALUES (?,?,?,?,?,?,?)");
+            statement.setString(1, recipe.getName());
+            statement.setString(2, recipe.getTea());
+            statement.setInt(3, recipe.getPearl());
+            statement.setInt(4, recipe.getJelly());
+            statement.setInt(5, recipe.getLemon());
+            statement.setInt(6, recipe.getOrange());
+            statement.setInt(7, recipe.getCalories());
+            statement.executeUpdate();
+            connection.commit();
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
     }
 
-    public Recipe[] selectAllRecipe() {
-        return new Recipe[0];
+    public ArrayList<Recipe> selectAllRecipe() {
+        ArrayList<Recipe> recipes = new ArrayList<>();
+        try {
+            Statement stmt1 = connection.createStatement();
+            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe");
+            while (rs1.next()) {
+                Recipe temp = new Recipe( rs1.getString("name"),
+                        rs1.getString("tea"),
+                        rs1.getInt("pearl"),
+                        rs1.getInt("jelly"),
+                        rs1.getInt("lemon"),
+                        rs1.getInt("orange"),
+                        rs1.getInt("calories")
+                );
+                recipes.add(temp);
+            }
+            rs1.close();
+            stmt1.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return recipes;
     }
 
     private void rollbackConnection() {

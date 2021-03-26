@@ -14,7 +14,7 @@ public class Recipe {
         this.calories = 0;
     }
 
-    public Recipe(int id, String name, String tea, int pearl, int jelly, int lemon, int orange, int calories) {
+    public Recipe(String name, String tea, int pearl, int jelly, int lemon, int orange, int calories) {
         this.name = name;
         this.tea = tea;
         this.pearl = pearl;
@@ -47,4 +47,12 @@ public class Recipe {
     public int getOrange() { return orange; }
 
     public void setOrange(int orange) { this.orange = orange; }
+
+    public int getCalories() {
+        return calories;
+    }
+
+    public void setCalories(int calories) {
+        this.calories = calories;
+    }
 }

@@ -149,7 +149,7 @@ public class RecipeWindow extends JFrame implements ActionListener, TableModelLi
         layout_right.setConstraints(button_update, constraints);
         panel_right.add(button_update);
 
-        listAllRecipe(Teashop.getAllRecipe());
+        //listAllRecipe(Teashop.getAllRecipe());
         model_recipe.addTableModelListener(this);
         spin_tea.addChangeListener(this);
         spin_pearl.addChangeListener(this);

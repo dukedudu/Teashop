@@ -20,6 +20,7 @@ public class Teashop {
 	
 	public void start() {
 		database = new DatabaseConnect();
+		database.setup();
 		recipeWindow = new RecipeWindow();
 		recipeWindow.showFrame();
 	}
@@ -47,9 +48,9 @@ public class Teashop {
 		//loginWindow.showFrame();
 	}
 
-	public static Recipe[] getAllRecipe() {
-		return database.selectAllRecipe();
-	}
+//	public static Recipe[] getAllRecipe() { // can we change return type Recipe[] to ArrayList<Recipe>?
+//		return database.selectAllRecipe();
+//	}
 
 	public static void addRecipe(Recipe recipe) {
 		database.insertRecipe(recipe);
