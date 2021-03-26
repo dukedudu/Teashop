@@ -6,7 +6,7 @@ public class Recipe {
 
     public Recipe() {
         this.name = "";
-        this.tea = "";
+//        this.tea = "";
         this.pearl = 0;
         this.jelly = 0;
         this.lemon = 0;
@@ -16,7 +16,7 @@ public class Recipe {
 
     public Recipe(int id, String name, String tea, int pearl, int jelly, int lemon, int orange, int calories) {
         this.name = name;
-        this.tea = tea;
+//        this.tea = tea;
         this.pearl = pearl;
         this.jelly = jelly;
         this.lemon = lemon;
@@ -28,9 +28,9 @@ public class Recipe {
 
     public void setName(String name) { this.name = name; }
 
-    public String getTea() { return tea; }
-
-    public void setTea(String tea) { this.tea = tea; }
+//    public String getTea() { return tea; }
+//
+//    public void setTea(String tea) { this.tea = tea; }
 
     public int getPearl() { return pearl; }
 
@@ -47,4 +47,8 @@ public class Recipe {
     public int getOrange() { return orange; }
 
     public void setOrange(int orange) { this.orange = orange; }
+
+    public int getCalories() { return calories; }
+
+    public void setCalories(int calories) { this.calories = calories; }
 }

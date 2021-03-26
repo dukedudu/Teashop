@@ -105,25 +105,25 @@ public class RegisterWindow extends JFrame implements ActionListener {
 		layout.setConstraints(field_code, constraints);
 		panel.add(field_code);
 
-		constraints.gridwidth = GridBagConstraints.RELATIVE;
-		constraints.insets = new Insets(5, 10, 5, 0);
-		layout.setConstraints(label_budget, constraints);
-		panel.add(label_code);
-
-		constraints.gridwidth = GridBagConstraints.REMAINDER;
-		constraints.insets = new Insets(5, 0, 5, 10);
-		layout.setConstraints(field_budget, constraints);
-		panel.add(field_code);
-
-		constraints.gridwidth = GridBagConstraints.RELATIVE;
-		constraints.insets = new Insets(5, 10, 5, 0);
-		layout.setConstraints(label_ctf, constraints);
-		panel.add(label_code);
-
-		constraints.gridwidth = GridBagConstraints.REMAINDER;
-		constraints.insets = new Insets(5, 0, 5, 10);
-		layout.setConstraints(field_ctf, constraints);
-		panel.add(field_code);
+//		constraints.gridwidth = GridBagConstraints.RELATIVE;
+//		constraints.insets = new Insets(5, 10, 5, 0);
+//		layout.setConstraints(label_budget, constraints);
+//		panel.add(label_code);
+//
+//		constraints.gridwidth = GridBagConstraints.REMAINDER;
+//		constraints.insets = new Insets(5, 0, 5, 10);
+//		layout.setConstraints(field_budget, constraints);
+//		panel.add(field_code);
+//
+//		constraints.gridwidth = GridBagConstraints.RELATIVE;
+//		constraints.insets = new Insets(5, 10, 5, 0);
+//		layout.setConstraints(label_ctf, constraints);
+//		panel.add(label_code);
+//
+//		constraints.gridwidth = GridBagConstraints.REMAINDER;
+//		constraints.insets = new Insets(5, 0, 5, 10);
+//		layout.setConstraints(field_ctf, constraints);
+//		panel.add(field_code);
 
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.insets = new Insets(10, 10, 10, 10);
@@ -150,8 +150,11 @@ public class RegisterWindow extends JFrame implements ActionListener {
 		user.setStreet(field_street.getText());
 		user.setHouse(Integer.parseInt(field_house.getText()));
 		user.setCode(field_code.getText());
-		user.setBudget(Integer.parseInt(field_budget.getText()));
-		user.setCode(field_code.getText());
+//		user.setBudget(Integer.parseInt(field_budget.getText()));
+//		user.setCode(field_code.getText());
 		Teashop.register(user);
+		this.dispose();
+		RecipeWindow recipeWindow = new RecipeWindow();
+		recipeWindow.showFrame();
 	}
 }
