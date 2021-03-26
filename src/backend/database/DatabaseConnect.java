@@ -1,6 +1,7 @@
 package backend.database;
 
 import frontend.model.BranchModel;
+import frontend.model.Grocery;
 import frontend.model.Recipe;
 import frontend.model.User;
 
@@ -229,80 +230,60 @@ public class DatabaseConnect {
         }
     }
 
+//    public boolean login(String name, String password) {
+//        try {
+//            if (connection != null) {
+//                connection.close();
+//            }
+//            connection = DriverManager.getConnection(ORACLE_URL, name, password);
+//            connection.setAutoCommit(false);
+//            System.out.println("Logged in\n" );
+//            return true;
+//        } catch (SQLException e) {
+//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//            return false;
+//        }
+//    }
+
     public boolean login(String name, String password) {
+        boolean result = false;
         try {
-            if (connection != null) {
-                connection.close();
-            }
-            connection = DriverManager.getConnection(ORACLE_URL, name, password);
-            connection.setAutoCommit(false);
-            System.out.println("Logged in\n" );
-            return true;
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            return false;
-        }
-    }
-
-    //login view:
-    public boolean checkPassword(String UserName, String enterPassword) {
-        /**
-         * input: UserId and password from login view
-         * return: true if entered password equals with password from DB, false otherwise.
-         * */
-        String truthPassword = "";
-        boolean correct = false;
-        ArrayList<Integer> UidPool = new ArrayList<>();
-        try {
-            Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT Name FROM User" );
-            while (rs1.next()) {
-                UidPool.add(Integer.parseInt(rs1.getString("UserId" )));
-            }
-            rs1.close();
-            stmt1.close();
-            if (UidPool.contains(UserName)) {
-                Statement stmt2 = connection.createStatement();
-                ResultSet rs2 = stmt2.executeQuery("SELECT Password FROM User WHERE Name=" + UserName);
-                truthPassword = rs2.getString("Password" );
-                correct = (truthPassword.equals(enterPassword));
-                rs2.close();
-                stmt2.close();
-            } else {
-                System.out.println("Uid not exists" );
-            }
-
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT Password FROM User WHERE Name=" + name);
+            result = (rs.equals(password));
+            rs.close();
+            stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
-        return correct;
+        return result;
     }
 
-    public void changePassword(String UserName, String newPassword, String confirmPassword) {
-        ArrayList<Integer> UidPool = new ArrayList<>();
-        if (!newPassword.equals(confirmPassword)) {
-            System.out.println("confirmPassword should be same as newPassword." );
-            return;
-        }
-        try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE User SET Password = ? WHERE UserId = ?" );
-            ps.setString(1, UserName);
-            ps.setString(2, newPassword);
-
-            int rowCount = ps.executeUpdate();
-            if (rowCount == 0) {
-                //MainMenu.makeWarningDialog(WARNING_TAG + " Resident " + sin + " does not exist!");
-                System.out.println(WARNING_TAG + " User does not exist!" );
-            }
-            connection.commit();
-            ps.close();
-
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
+//    public void changePassword(String UserName, String newPassword, String confirmPassword) {
+//        ArrayList<Integer> UidPool = new ArrayList<>();
+//        if (!newPassword.equals(confirmPassword)) {
+//            System.out.println("confirmPassword should be same as newPassword." );
+//            return;
+//        }
+//        try {
+//            PreparedStatement ps = connection.prepareStatement("UPDATE User SET Password = ? WHERE UserId = ?" );
+//            ps.setString(1, UserName);
+//            ps.setString(2, newPassword);
+//
+//            int rowCount = ps.executeUpdate();
+//            if (rowCount == 0) {
+//                //MainMenu.makeWarningDialog(WARNING_TAG + " Resident " + sin + " does not exist!");
+//                System.out.println(WARNING_TAG + " User does not exist!" );
+//            }
+//            connection.commit();
+//            ps.close();
+//
+//        } catch (SQLException e) {
+//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//            rollbackConnection();
+//        }
+//    }
 
     public void insertUser(User user) {
         try {
@@ -323,13 +304,33 @@ public class DatabaseConnect {
         }
     }
 
-    public void insertRecipe(Recipe recipe) {
+    public void insertRecipe(Recipe recipe) { }
 
-    }
+    public void updateRecipe(Recipe recipe) { }
+
+    public void deleteRecipe(String name) { }
+
+    public Recipe selectRecipeByName(String name) { return new Recipe(); }
+
+    public Recipe[] selectRecipeByKind(String kind) { return new Recipe[0]; }
 
     public Recipe[] selectAllRecipe() {
         return new Recipe[0];
     }
+
+    public void insertGrocery(Grocery grocery) { }
+
+    public void updateGrocery(Grocery grocery) { }
+
+    public Grocery[] orderGroceryByAmount() { return new Grocery[0]; }
+
+    public Grocery[] orderGroceryByDate() { return new Grocery[0]; }
+
+    public Grocery selectGrocery(String name) { return new Grocery(); }
+
+    public Grocery[] selectAllGrocery() { return new Grocery[0]; }
+
+    public void insertUsage(String name, Date date) {};
 
     private void rollbackConnection() {
         try {
@@ -349,34 +350,3 @@ public class DatabaseConnect {
         }
     }
 }
-//  check
-//            if (!user.getStreet().isEmpty()) {
-//                statement.setString(3, user.getStreet());
-//            } else {
-//                statement.setNull(3, Types.CHAR);
-//            }
-//            if (user.getHouse() == 0) {
-//                statement.setInt(4, user.getHouse());
-//            } else {
-//                statement.setNull(4, Types.INTEGER);
-//            }
-////            if (!user.getCity().isEmpty()) {
-////                statement.setString(5, user.getCity());
-////            } else {
-////                statement.setNull(5, Types.CHAR);
-////            }
-//            if (!user.getCode().isEmpty()) {
-//                statement.setString(6, user.getCode());
-//            } else {
-//                statement.setNull(6, Types.CHAR);
-//            }
-//            if (user.getBudget() == 0) {
-//                statement.setInt(7, user.getBudget());
-//            } else {
-//                statement.setNull(7, Types.INTEGER);
-//            }
-//            if (!user.getCertificate().isEmpty()) {
-//                statement.setString(8, user.getCertificate());
-//            } else {
-//                statement.setNull(8, Types.CHAR);
-//            }

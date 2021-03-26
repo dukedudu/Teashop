@@ -1,12 +1,10 @@
 package frontend.model;
 
 public class User {
-	//private final int id;
 	private int house, budget;
 	private String name, password, street, code, certificate;
+
 	public  User() {
-		//this.id = 0;
-		this.password = "";
 		this.name = "";
 		this.password = "";
 		this.street = "";
@@ -17,8 +15,6 @@ public class User {
 	}
 
 	public User(String name, String password, String code, String street, int house, String certificate, int budget ) {
-		//this.id = id;
-		this.password = password;
 		this.name = name;
 		this.password = password;
 		this.street = street;
@@ -27,10 +23,6 @@ public class User {
 		this.budget = budget;
 		this.certificate = certificate;
 	}
-	
-//	public int getId() {
-//		return id;
-//	}
 
 	public String getName() { return name; }
 
