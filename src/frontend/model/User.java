@@ -5,10 +5,7 @@ public class User {
 	private String name, password, street, code, certificate;
 
 	public  User() {
-<<<<<<< HEAD
 		this.password = "";
-=======
->>>>>>> 7cf1208207a4bfef3cfee96c85340be9b5049893
 		this.name = "";
 		this.password = "";
 		this.street = "";
@@ -19,10 +16,7 @@ public class User {
 	}
 
 	public User(String name, String password, String code, String street, int house, String certificate, int budget ) {
-<<<<<<< HEAD
 		this.password = password;
-=======
->>>>>>> 7cf1208207a4bfef3cfee96c85340be9b5049893
 		this.name = name;
 		this.password = password;
 		this.street = street;
@@ -31,10 +25,6 @@ public class User {
 		this.budget = budget;
 		this.certificate = certificate;
 	}
-<<<<<<< HEAD
-=======
-
->>>>>>> 7cf1208207a4bfef3cfee96c85340be9b5049893
 	public String getName() { return name; }
 
 	public void setName(String name) { this.name = name; }

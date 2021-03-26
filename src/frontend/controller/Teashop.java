@@ -54,11 +54,9 @@ public class Teashop {
 		database.insertRecipe(recipe);
 	}
 
-<<<<<<< HEAD
 //	public static Recipe[] getAllRecipe() { // can we change return type Recipe[] to ArrayList<Recipe>?
 //		return database.selectAllRecipe();
 //	}
-=======
 	public static void updateRecipe(Recipe recipe) { database.updateRecipe(recipe); }
 
 //	public static void deleteRecipe(String name) { database.deleteRecipe(name); }
@@ -70,7 +68,7 @@ public class Teashop {
 	public static Recipe[] getAllRecipe() {
 		return database.selectAllRecipe();
 	}
->>>>>>> 7cf1208207a4bfef3cfee96c85340be9b5049893
+
 
 	public static void makeRecipe(String name) { database.insertUsage(name, (java.sql.Date) new Date());}
 

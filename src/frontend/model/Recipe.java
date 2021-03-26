@@ -47,18 +47,6 @@ public class Recipe {
     public int getOrange() { return orange; }
 
     public void setOrange(int orange) { this.orange = orange; }
-
-<<<<<<< HEAD
-    public int getCalories() {
-        return calories;
-    }
-
-    public void setCalories(int calories) {
-        this.calories = calories;
-    }
-=======
     public int getCalories() { return calories; }
-
     public void setCalories(int calories) { this.calories = calories; }
->>>>>>> 7cf1208207a4bfef3cfee96c85340be9b5049893
 }
