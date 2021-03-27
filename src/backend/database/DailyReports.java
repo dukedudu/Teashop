@@ -1,10 +1,10 @@
 package backend.database;
 
-import java.sql.*;
-import java.util.ArrayList;
-
 import frontend.model.DailyReport;
 import frontend.model.ShoppingList;
+
+import java.sql.*;
+import java.util.ArrayList;
 
 public class DailyReports {
 
@@ -77,8 +77,14 @@ public class DailyReports {
         return selectLists("SELECT * FROM ShoppingList");
     }
 
-    public ShoppingList[] selectShoppingListsGrocery(String grocery) {
-        return selectLists("SELECT * FROM ShoppingList WHERE GName = " + grocery);
+    public ShoppingList[] selectShoppingListsGrocery(String grocery, Date day) {
+        return selectLists("SELECT * FROM ShoppingList WHERE GName = " + grocery + "AND Date="+day);//add day
+    }
+    ///please look at DatabaseConnect.java line 251 and line 274. Grocery are in DatabaseConnect class.
+    public void insertShoppingList(ShoppingList list){
+    }
+    public void updateShoppingList(Date date, String Gname, int amount){
+
     }
 
 }

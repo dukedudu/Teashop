@@ -1,7 +1,7 @@
 package frontend.model;
 
 public class Recipe {
-    private String name, tea;
+    private String name, tea, kind;
     private int pearl, jelly, lemon, orange, calories;
 
     public Recipe() {
@@ -14,9 +14,10 @@ public class Recipe {
         this.calories = 0;
     }
 
-    public Recipe(String name, String tea, int pearl, int jelly, int lemon, int orange, int calories) {
+    public Recipe(String name, String tea, String kind, int pearl, int jelly, int lemon, int orange, int calories) {
         this.name = name;
-//        this.tea = tea;
+        this.tea = tea;
+        kind = kind;
         this.pearl = pearl;
         this.jelly = jelly;
         this.lemon = lemon;
@@ -24,11 +25,19 @@ public class Recipe {
         this.calories = calories;
     }
 
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        kind = kind;
+    }
+
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
 
-//    public String getTea() { return tea; }
+    public String getTea() { return tea; }
 //
 //    public void setTea(String tea) { this.tea = tea; }
 
