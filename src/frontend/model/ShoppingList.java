@@ -3,55 +3,31 @@ package frontend.model;
 import java.util.*;
 
 public class ShoppingList {
-    private int SListId, Amount, UserId;
-    private String GName;
     private Date date;
+    private int id, amount;
+    private String uname, gname;
 
-    public ShoppingList(int SListId, int Amount, int UserId, String GName, Date date) {
-        this.SListId = SListId;
-        this.Amount = Amount;
-        this.UserId = UserId;
-        this.GName = GName;
+    public ShoppingList() {
+        this.id = 0;
+        this.uname = "";
+        this.gname = "";
+        this.amount = 0;
+        this.date = null;
+    }
+
+    public ShoppingList(int id, String uname, String gname, int amount, Date date) {
+        this.id = id;
+        this.uname = uname;
+        this.gname = gname;
+        this.amount = amount;
         this.date = date;
     }
 
-    public int getSListId() {
-        return SListId;
-    }
+    public void setDate(Date date) { this.date = date; }
 
-    public void setSListId(int SListId) {
-        this.SListId = SListId;
-    }
+    public String getGname() { return gname; }
 
-    public int getAmount() {
-        return Amount;
-    }
+    public int getAmount() { return amount; }
 
-    public void setAmount(int amount) {
-        Amount = amount;
-    }
-
-    public int getUserId() {
-        return UserId;
-    }
-
-    public void setUserId(int userId) {
-        UserId = userId;
-    }
-
-    public String getGName() {
-        return GName;
-    }
-
-    public void setGName(String GName) {
-        this.GName = GName;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
+    public Date getDate() { return date; }
 }

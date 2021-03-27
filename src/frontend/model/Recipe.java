@@ -1,8 +1,8 @@
 package frontend.model;
 
 public class Recipe {
-    private int pearl, jelly, lemon, orange, calories;
     private String name, tea;
+    private int pearl, jelly, lemon, orange, calories;
 
     public Recipe() {
         this.name = "";

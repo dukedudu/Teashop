@@ -173,19 +173,18 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         layout_right.setConstraints(button_update, constraints);
         panel_right.add(button_update);
 
-<<<<<<< HEAD
-        //listAllRecipe(Teashop.getAllRecipe());
-        model_recipe.addTableModelListener(this);
-        spin_tea.addChangeListener(this);
-        spin_pearl.addChangeListener(this);
-        spin_jelly.addChangeListener(this);
-        spin_lemon.addChangeListener(this);
-        spin_orange.addChangeListener(this);
-=======
 //        constraints.gridwidth = GridBagConstraints.REMAINDER;
 //        constraints.insets = new Insets(5, 10, 5, 0);
 //        layout_right.setConstraints(button_delete, constraints);
 //        panel_right.add(button_delete);
+
+        //listAllRecipe(Teashop.getAllRecipe());
+//        model_recipe.addTableModelListener(this);
+//        spin_tea.addChangeListener(this);
+        spin_pearl.addChangeListener(this);
+        spin_jelly.addChangeListener(this);
+        spin_lemon.addChangeListener(this);
+        spin_orange.addChangeListener(this);
 
         listRecipe(Teashop.getAllRecipe());
         table.addMouseListener(this);
@@ -195,7 +194,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         button_update.addActionListener(this);
 //        button_delete.addActionListener(this);
 
->>>>>>> 7cf1208207a4bfef3cfee96c85340be9b5049893
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);

@@ -30,7 +30,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
 
     private String[] columns = {"Name", "Amount", "Date"};
     private Date date = new Date(new java.util.Date().getTime());
-    private Object[][]groceries = {{"Pearl", 100, date.toString()}, {"Jelly", 50, date.toString()}, {"Lemon", 50, date.toString()}, {"Orange", 20, date.toString()}};
+    private Object[][] groceries = {{"Pearl", 100, date}, {"Jelly", 50, date}, {"Lemon", 50, date}, {"Orange", 20, date}};
     private String[] names = {"Pearl", "Jelly", "Lemon", "Orange"};
 
     public GroceryWindow() { super("Grocery"); }

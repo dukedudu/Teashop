@@ -3,8 +3,7 @@ package backend.database;
 import java.sql.*;
 import java.util.ArrayList;
 
-import frontend.model.BranchModel;
-import frontend.model.Report;
+import frontend.model.DailyReport;
 import frontend.model.ShoppingList;
 
 public class DailyReports {
@@ -23,29 +22,29 @@ public class DailyReports {
         }
     }
 
-    private Report[] selectReports(String query) {
-        ArrayList<Report> result = new ArrayList<Report>();
+    private DailyReport[] selectReports(String query) {
+        ArrayList<DailyReport> result = new ArrayList<DailyReport>();
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
-                Report model = new Report(rs.getInt("ReportID" ),
-                        rs.getInt("UseID" ),
-                        rs.getInt("UserID" ),
-                        rs.getInt("Pearl" ),
-                        rs.getInt("Jelly" ),
-                        rs.getInt("Lemon"),
-                        rs.getInt("Orange"),
-                        rs.getDate("Date"));
-                result.add(model);
+//                DailyReport model = new DailyReport(rs.getInt("ReportID" ),
+//                        rs.getInt("UseID" ),
+//                        rs.getInt("UserID" ),
+//                        rs.getInt("Pearl" ),
+//                        rs.getInt("Jelly" ),
+//                        rs.getInt("Lemon"),
+//                        rs.getInt("Orange"),
+//                        rs.getDate("Date"));
+//                result.add(model);
             }
             rs.close();
             stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
-        return result.toArray(new Report[result.size()]);
+        return result.toArray(new DailyReport[result.size()]);
     }
 
     private ShoppingList[] selectLists(String query) {
@@ -55,12 +54,12 @@ public class DailyReports {
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
-                ShoppingList model = new ShoppingList(rs.getInt("SListId" ),
-                        rs.getInt("Amount" ),
-                        rs.getInt("UserId" ),
-                        rs.getString("GName" ),
-                        rs.getDate("Date"));
-                result.add(model);
+//                ShoppingList model = new ShoppingList(rs.getInt("SListId" ),
+//                        rs.getInt("Amount" ),
+//                        rs.getInt("UserId" ),
+//                        rs.getString("GName" ),
+//                        rs.getDate("Date"));
+//                result.add(model);
             }
             rs.close();
             stmt.close();
@@ -70,7 +69,7 @@ public class DailyReports {
         return result.toArray(new ShoppingList[result.size()]);
     }
 
-    public Report[] selectReportsAll() {
+    public DailyReport[] selectReportsAll() {
         return selectReports("SELECT * FROM DailyReport");
     }
 

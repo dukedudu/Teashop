@@ -18,10 +18,12 @@ public class Teashop {
 	public static RegisterWindow registerWindow;
 	public static RecipeWindow recipeWindow;
 	public static GroceryWindow groceryWindow;
+	public static ReportListWindow reportListWindow;
 	
 	public void start() {
 		database = new DatabaseConnect();
-		database.setup();
+		database.databaseConnect();
+//		database.setup();
 		recipeWindow = new RecipeWindow();
 		recipeWindow.showFrame();
 	}
@@ -33,7 +35,7 @@ public class Teashop {
 	}
 
 	public static void login(String name, String password, JPasswordField field) {
-		boolean connected = database.login(name, password);
+		boolean connected = database.selectPassword(name, password);
 		if (connected) { loginWindow.dispose(); }
 		else { failed(field); }
 		//database.checkPassword --use this to login
