@@ -8,7 +8,6 @@ public class DailyReport {
 
     public void DailyReport() {
         this.date = null;
-        //this.uname = "";
         this.pearl = 0;
         this.jelly = 0;
         this.lemon = 0;
@@ -17,7 +16,6 @@ public class DailyReport {
 
     public DailyReport(String date, int pearl, int jelly, int lemon, int orange) {
         this.date = Date.valueOf(date);
-        //this.uname = uname;
         this.pearl = pearl;
         this.jelly = jelly;
         this.lemon = lemon;

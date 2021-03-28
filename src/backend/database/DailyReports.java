@@ -29,15 +29,13 @@ public class DailyReports {
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
-//                DailyReport model = new DailyReport(rs.getInt("ReportID" ),
-//                        rs.getInt("UseID" ),
-//                        rs.getInt("UserID" ),
-//                        rs.getInt("Pearl" ),
-//                        rs.getInt("Jelly" ),
-//                        rs.getInt("Lemon"),
-//                        rs.getInt("Orange"),
-//                        rs.getDate("Date"));
-//                result.add(model);
+                DailyReport model = new DailyReport(
+                        rs.getDate("Date").toString(),
+                        rs.getInt("Pearl" ),
+                        rs.getInt("Jelly" ),
+                        rs.getInt("Lemon"),
+                        rs.getInt("Orange"));
+                result.add(model);
             }
             rs.close();
             stmt.close();
@@ -54,12 +52,11 @@ public class DailyReports {
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
-//                ShoppingList model = new ShoppingList(rs.getInt("SListId" ),
-//                        rs.getInt("Amount" ),
-//                        rs.getInt("UserId" ),
-//                        rs.getString("GName" ),
-//                        rs.getDate("Date"));
-//                result.add(model);
+                ShoppingList model = new ShoppingList(
+                        rs.getString("GName" ),
+                        rs.getInt("Amount" ),
+                       rs.getDate("Date"));
+                result.add(model);
             }
             rs.close();
             stmt.close();
@@ -73,6 +70,12 @@ public class DailyReports {
         return selectReports("SELECT * FROM DailyReport");
     }
 
+    public DailyReport[] selectReportsAllGroceriesUsed() {
+
+       String query = "SELECT * FROM DailyReport D WHERE NOT EXISTS ((SELECT * FROM DailyReport D1) EXCEPT (SELECT * FROM DailyReport D2 WHERE D2.Pearl > 0 AND D2. Jelly > 0 AND D2.Lemon > 0 AND D2. Orange > 0))";
+       return selectReports(query);
+    }
+
     public ShoppingList[] selectShoppingListsAll() {
         return selectLists("SELECT * FROM ShoppingList");
     }
@@ -80,11 +83,38 @@ public class DailyReports {
     public ShoppingList[] selectShoppingListsGrocery(String grocery, Date day) {
         return selectLists("SELECT * FROM ShoppingList WHERE GName = " + grocery + "AND Date="+day);//add day
     }
-    ///please look at DatabaseConnect.java line 251 and line 274. Grocery are in DatabaseConnect class.
+
     public void insertShoppingList(ShoppingList list){
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement("INSERT INTO ShoppingList VALUES (?,?,?)");
+            stmt.setString(1, list.getGname());
+            stmt.setInt(2, list.getAmount());
+            stmt.setDate(3, list.getDate());
+
+            stmt.executeUpdate();
+            connection.commit();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            //rollbackConnection();
+        }
     }
     public void updateShoppingList(Date date, String Gname, int amount){
 
+        try {
+            PreparedStatement stmt = connection.prepareStatement("UPDATE ShoppingList SET Gname=?, Amount=?, Date=?, Orange=? WHERE GName =" + Gname + "AND Date =" + date.toString());
+            stmt.setString(1, Gname);
+            stmt.setInt(2, amount);
+            stmt.setDate(3, date);
+
+            stmt.executeUpdate();
+            connection.commit();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            //rollbackConnection();
+        }
     }
 
 }
