@@ -1,23 +1,14 @@
 package frontend.ui;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import frontend.controller.Teashop;
+import frontend.model.User;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
-import frontend.controller.Teashop;
-import frontend.model.User;
 
 public class RegisterWindow extends JFrame implements ActionListener {
 	private User user;
@@ -148,7 +139,7 @@ public class RegisterWindow extends JFrame implements ActionListener {
 		user.setName(field_name.getText());
 		user.setPassword(String.valueOf(field_pwd.getPassword()));
 		user.setStreet(field_street.getText());
-		user.setHouse(Integer.parseInt(field_house.getText()));
+		user.setHouseNumber(Integer.parseInt(field_house.getText()));
 		user.setCode(field_code.getText());
 //		user.setBudget(Integer.parseInt(field_budget.getText()));
 //		user.setCode(field_code.getText());
