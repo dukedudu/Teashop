@@ -30,14 +30,15 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     private JButton button_make, button_my, button_add, button_update, button_delete;
 
     private String[] columns = {"Rname", "Uname", "Calories"};
-    private Object[][] recipes = {{"Red tea", "Sam", 0}, {"Green tea", "Lily", 0}, {"Bubble tea", "Lily", 100}, {"Lemon tea", "Sam", 50}};
+    //private Object[][] recipes = {{"Red tea", "Sam", 0}, {"Green tea", "Lily", 0}, {"Bubble tea", "Lily", 100}, {"Lemon tea", "Sam", 50}};
     private String[] teas = {"Red tea", "Green tea"};
     private String[] kinds = {"Milk tea", "Fruit tea"};
-
+    private Object[][] recipes = {};
     public RecipeWindow() { super("Recipe"); }
 
     public void showFrame() {
 //        user =
+        listRecipe(Teashop.getAllRecipe());
         panel = new JSplitPane();
         panel_left = new JPanel();
         panel_right = new JPanel();
@@ -190,12 +191,13 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         //listAllRecipe(Teashop.getAllRecipe());
 //        model_recipe.addTableModelListener(this);
 //        spin_tea.addChangeListener(this);
+
         spin_pearl.addChangeListener(this);
         spin_jelly.addChangeListener(this);
         spin_lemon.addChangeListener(this);
         spin_orange.addChangeListener(this);
 
-//        listRecipe(Teashop.getAllRecipe());
+
         table.addMouseListener(this);
         button_make.addActionListener(this);
         spin_kind.addChangeListener(this);
@@ -214,7 +216,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     }
 
     private void listRecipe(Recipe[] data) {
-        recipes = new Object[0][0];
+        recipes = new Object[data.length][2];
         for (int i = 0; i < data.length; i++) {
             recipes[i] = new Object[]{data[i].getName(), data[i].getCalories()};
         }
@@ -235,8 +237,8 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
 
     @Override
     public void stateChanged(ChangeEvent event) {
-        Recipe[] data = Teashop.getRecipeByKind((String)spin_kind.getValue());
-        listRecipe(data);
+        //Recipe[] data = Teashop.getRecipeByKind((String)spin_kind.getValue());
+        //listRecipe(data);
     }
 
     @Override

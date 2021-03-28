@@ -6,7 +6,7 @@ public class Recipe {
 
     public Recipe() {
         this.name = "";
-//        this.tea = "";
+        this.tea = "";
         this.pearl = 0;
         this.jelly = 0;
         this.lemon = 0;
@@ -17,7 +17,7 @@ public class Recipe {
     public Recipe(String name, String tea, String kind, int pearl, int jelly, int lemon, int orange, int calories) {
         this.name = name;
         this.tea = tea;
-        kind = kind;
+        this.kind = kind;
         this.pearl = pearl;
         this.jelly = jelly;
         this.lemon = lemon;

@@ -20,10 +20,10 @@ public class Teashop {
 	
 	public void start() {
 		database = new DatabaseConnect();
-//		database.databaseConnect();
-//		database.setup();
-		groceryWindow = new GroceryWindow();
-		groceryWindow.showFrame();
+		database.databaseConnect();
+		database.setup();
+		recipeWindow = new RecipeWindow();
+		recipeWindow.showFrame();
 	}
 
 	public static void register(User user) {
