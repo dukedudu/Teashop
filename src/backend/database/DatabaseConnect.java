@@ -1,9 +1,6 @@
 package backend.database;
 
-import frontend.model.Grocery;
-import frontend.model.Recipe;
-import frontend.model.ShoppingList;
-import frontend.model.User;
+import frontend.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -145,11 +142,11 @@ public class DatabaseConnect {
 
 //    public void deleteRecipe(String name) { }
 
-    public Recipe selectRecipeByName(String name) {
+    public Recipe selectRecipeByRname(String rname) {
         Recipe result = new Recipe();
         try {
             Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe WHERE RName=" + name);
+            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe WHERE RName=" + rname);
             result = new Recipe(rs1.getString("name"),
                     rs1.getString("tea"),
                     rs1.getString("Kind"),
@@ -166,6 +163,29 @@ public class DatabaseConnect {
             rollbackConnection();
         }
         return result;
+    }
+
+    public Recipe[] selectRecipeByUname(String uname) {
+//        Recipe result = new Recipe();
+//        try {
+//            Statement stmt1 = connection.createStatement();
+//            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe WHERE RName=" + name);
+//            result = new Recipe(rs1.getString("name"),
+//                    rs1.getString("tea"),
+//                    rs1.getString("Kind"),
+//                    rs1.getInt("pearl"),
+//                    rs1.getInt("jelly"),
+//                    rs1.getInt("lemon"),
+//                    rs1.getInt("orange"),
+//                    rs1.getInt("calories")
+//            );
+//            rs1.close();
+//            stmt1.close();
+//        } catch (SQLException e) {
+//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//            rollbackConnection();
+//        }
+        return new Recipe[0];
     }
 
     public Recipe[] selectRecipeByKind(String kind) {
@@ -237,7 +257,7 @@ public class DatabaseConnect {
 
     }
     public void makeBeverage(String name, Date today){
-        Recipe recipeCandidate = selectRecipeByName(name); //
+        Recipe recipeCandidate = selectRecipeByRname(name); //
         deleteGroceryWithZero();
         Object[] pearlStock = findEariliestGroceryAmount("Pearl");
         Object[] jellyStock = findEariliestGroceryAmount("Jelly");
@@ -298,9 +318,7 @@ public class DatabaseConnect {
     public void updateGrocery(Grocery grocery) {
     }
 
-    public Grocery[] orderGroceryByAmount() {
-        return new Grocery[0];
-    }
+    public int sumGroceryAmount(String name) { return 0; }
 
     public Grocery[] orderGroceryByDate() {
         return new Grocery[0];
@@ -314,10 +332,19 @@ public class DatabaseConnect {
         return new Grocery[0];
     }
 
-    public void insertUsage(String name, Date date) {
-    }
+    public void insertUsage(String name, Date date) { }
 
-    ;
+    public DailyReport[] selectReportByGname(String gname) { return new DailyReport[0]; }
+
+    public DailyReport[] selectReportWithEvery() { return new DailyReport[0]; }
+
+    public DailyReport[] selectAllReport() { return new DailyReport[0]; }
+
+    public ShoppingList[] selectListByDate(Date date1, Date date2) { return new ShoppingList[0]; }
+
+    public ShoppingList[] selectListByGname(String gname) { return new ShoppingList[0]; }
+
+    public ShoppingList[] selectAllList() { return new ShoppingList[0]; }
 
     private void rollbackConnection() {
         try {

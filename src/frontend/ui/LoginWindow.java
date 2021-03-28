@@ -25,7 +25,7 @@ public class LoginWindow extends JFrame implements ActionListener {
 	private JLabel label_name, label_pwd;
 	private JTextField field_name;
 	private JPasswordField field_pwd;
-	private JButton button_login, button_register;
+	private JButton button_login, button_forgot, button_register;
 	private String name, password;
 
 	public LoginWindow() {
@@ -44,6 +44,7 @@ public class LoginWindow extends JFrame implements ActionListener {
 		field_pwd = new JPasswordField(10);
 		field_pwd.setEchoChar('*');
 		button_login = new JButton("Log In");
+		button_forgot = new JButton("Forgot");
 		button_register = new JButton("Register");
 
 		panel.setLayout(layout);
@@ -69,11 +70,17 @@ public class LoginWindow extends JFrame implements ActionListener {
 		layout.setConstraints(field_pwd, constraints);
 		panel.add(field_pwd);
 
-		constraints.gridwidth = GridBagConstraints.REMAINDER;
+		constraints.gridwidth = GridBagConstraints.RELATIVE;
 		constraints.insets = new Insets(5, 10, 10, 10);
 		constraints.anchor = GridBagConstraints.CENTER;
 		layout.setConstraints(button_login, constraints);
 		panel.add(button_login);
+
+		constraints.gridwidth = GridBagConstraints.REMAINDER;
+		constraints.insets = new Insets(5, 10, 10, 10);
+		constraints.anchor = GridBagConstraints.CENTER;
+		layout.setConstraints(button_forgot, constraints);
+		panel.add(button_forgot);
 
 		constraints.gridwidth = GridBagConstraints.REMAINDER;
 		constraints.insets = new Insets(5, 10, 10, 10);
@@ -99,6 +106,9 @@ public class LoginWindow extends JFrame implements ActionListener {
 			name = field_name.getText();
 			password = String.valueOf(field_pwd.getPassword());
 			Teashop.login(name, password, field_pwd);
+		}
+		else if (event.getSource() == button_forgot) {
+
 		}
 		else {
 			this.dispose();

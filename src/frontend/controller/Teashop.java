@@ -1,13 +1,11 @@
 package frontend.controller;
 
 import backend.database.DatabaseConnect;
-import frontend.model.Grocery;
-import frontend.model.Recipe;
-import frontend.model.User;
+import frontend.model.*;
 import frontend.ui.*;
 
 import javax.swing.*;
-import java.util.Date;
+import java.sql.Date;
 
 //ssh -l username -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
 
@@ -22,10 +20,10 @@ public class Teashop {
 	
 	public void start() {
 		database = new DatabaseConnect();
-		database.databaseConnect();
+//		database.databaseConnect();
 //		database.setup();
-		recipeWindow = new RecipeWindow();
-		recipeWindow.showFrame();
+		groceryWindow = new GroceryWindow();
+		groceryWindow.showFrame();
 	}
 
 	public static void register(User user) {
@@ -63,28 +61,39 @@ public class Teashop {
 
 //	public static void deleteRecipe(String name) { database.deleteRecipe(name); }
 
-	public static Recipe getRecipeByName(String name) { return database.selectRecipeByName(name); }
+	public static Recipe[] getAllRecipe() { return database.selectAllRecipe(); }
+
+	public static void makeRecipe(String name) { database.insertUsage(name, new Date(0));}
+
+	public static Recipe[] getMyRecipe(String name) { return database.selectRecipeByUname(name); }
+
+	public static Recipe getRecipeByName(String name) { return database.selectRecipeByRname(name); }
 
 	public static Recipe[] getRecipeByKind(String kind) { return database.selectRecipeByKind(kind); }
-
-	public static Recipe[] getAllRecipe() {
-		return database.selectAllRecipe();
-	}
-
-
-	public static void makeRecipe(String name) { database.insertUsage(name, (java.sql.Date) new Date());}
 
 	public static void addGrocery(Grocery grocery) { database.insertGrocery(grocery); }
 
 	public static void updateGrocery(Grocery grocery) { database.updateGrocery(grocery); }
 
-	public static Grocery[] orderGroceryByAmount() { return database.orderGroceryByAmount(); }
-
-	public static Grocery[] orderGroceryByDate() { return database.orderGroceryByDate(); }
-
 	public static Grocery getGrocery(String name) { return database.selectGrocery(name); }
 
 	public static Grocery[] getAllGrocery() { return database.selectAllGrocery(); }
+
+	public static Grocery[] orderGroceryByDate() { return database.orderGroceryByDate(); }
+
+	public static int getGroceryAmountSum(String name) { return database.sumGroceryAmount(name); }
+
+	public static DailyReport[] getAllReport() { return database.selectAllReport(); }
+
+	public static DailyReport[] getReportByName(String name) { return database.selectReportByGname(name); }
+
+	public static DailyReport[] getReportWithEvery() { return database.selectReportWithEvery(); }
+
+	public static ShoppingList[] getAllList() { return database.selectAllList(); }
+
+	public static ShoppingList[] getListByDate(Date date1, Date date2) { return database.selectListByDate(date1, date2); }
+
+	public static ShoppingList[] getListByName(String name) { return database.selectListByGname(name); }
 
 	public void finish() { database.close(); }
 

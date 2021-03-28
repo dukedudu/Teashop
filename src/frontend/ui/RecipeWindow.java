@@ -2,6 +2,7 @@ package frontend.ui;
 
 import frontend.controller.Teashop;
 import frontend.model.Recipe;
+import frontend.model.User;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -12,6 +13,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class RecipeWindow extends JFrame implements ActionListener, MouseListener, ChangeListener {
+    private static User user;
     private JSplitPane panel;
     private JPanel panel_left, panel_right;
     private GridBagLayout layout_left, layout_right;
@@ -25,16 +27,17 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     private JSpinner spin_pearl, spin_jelly, spin_lemon, spin_orange, spin_kind;
     private SpinnerNumberModel model_pearl, model_jelly, model_lemon, model_orange;
     private SpinnerListModel model_kind;
-    private JButton button_add, button_update, button_delete, button_make;
+    private JButton button_make, button_my, button_add, button_update, button_delete;
 
-    private String[] columns = {"Name", "Calories"};
-    private Object[][] recipes = {{"Red tea", 0}, {"Green tea", 0}, {"Bubble tea", 100}, {"Lemon tea", 50}};
+    private String[] columns = {"Rname", "Uname", "Calories"};
+    private Object[][] recipes = {{"Red tea", "Sam", 0}, {"Green tea", "Lily", 0}, {"Bubble tea", "Lily", 100}, {"Lemon tea", "Sam", 50}};
     private String[] teas = {"Red tea", "Green tea"};
     private String[] kinds = {"Milk tea", "Fruit tea"};
 
     public RecipeWindow() { super("Recipe"); }
 
     public void showFrame() {
+//        user =
         panel = new JSplitPane();
         panel_left = new JPanel();
         panel_right = new JPanel();
@@ -55,7 +58,8 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         label_kind = new JLabel("Kind: ");
         model_kind = new SpinnerListModel(kinds);
         spin_kind = new JSpinner(model_kind);
-        button_make = new JButton("Make");
+        button_make = new JButton("Make This");
+        button_my = new JButton("My Recipes");
 
         label_name = new JLabel("Name: ");
         field = new JTextField(10);
@@ -98,10 +102,15 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         layout_left.setConstraints(spin_kind, constraints);
         panel_left.add(spin_kind);
 
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
         layout_left.setConstraints(button_make, constraints);
         panel_left.add(button_make);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 5, 0);
+        layout_left.setConstraints(button_my, constraints);
+        panel_left.add(button_my);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
@@ -186,7 +195,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         spin_lemon.addChangeListener(this);
         spin_orange.addChangeListener(this);
 
-        listRecipe(Teashop.getAllRecipe());
+//        listRecipe(Teashop.getAllRecipe());
         table.addMouseListener(this);
         button_make.addActionListener(this);
         spin_kind.addChangeListener(this);
@@ -240,18 +249,21 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         recipe.setLemon((int)spin_lemon.getValue());
         recipe.setOrange((int)spin_orange.getValue());
 
-        if (event.getSource() == button_add) {
+        if (event.getSource() == button_make) {
+            Teashop.makeRecipe(recipe.getName());
+        }
+        else if (event.getSource() == button_my) {
+            listRecipe(Teashop.getMyRecipe(user.getName()));
+        }
+        else if (event.getSource() == button_add) {
             Teashop.addRecipe(recipe);
         }
-        else if (event.getSource() == button_update){
+        else {
             Teashop.updateRecipe(recipe);
         }
 //        else if (event.getSource() == button_delete){
 //            Teashop.deleteRecipe(recipe.getName());
 //        }
-        else {
-            Teashop.makeRecipe(recipe.getName());
-        }
     }
 
     @Override

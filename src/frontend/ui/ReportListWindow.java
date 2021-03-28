@@ -1,26 +1,30 @@
 package frontend.ui;
 
+import frontend.controller.Teashop;
+import frontend.model.DailyReport;
+import frontend.model.ShoppingList;
+
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Date;
 
-public class ReportListWindow extends JFrame implements ActionListener, MouseListener{
+public class ReportListWindow extends JFrame implements ActionListener, ChangeListener {
     private JSplitPane panel;
     private JPanel panel_left, panel_right;
     private GridBagLayout layout_left, layout_right;
     private GridBagConstraints constraints;
 
     private JTable table_report, table_list;
-    private JTableHeader header_report, header_list;
     private DefaultTableModel model_report, model_list;
-    private JLabel label_date1, label_date2, label_name;
-    private JSpinner spin_date1, spin_date2, spin_name;
+    private JLabel label_name1, label_date1, label_date2, label_name2;
+    private JSpinner spin_name1, spin_date1, spin_date2, spin_name2;
+    private SpinnerListModel model_name1, model_name2;
     private SpinnerDateModel model_date1, model_date2;
-    private SpinnerListModel model_name;
-    private JButton button_date, button_every, button_name, button_sum;
+    private JButton button_name1, button_every, button_date, button_name2;
 
     private String[] columns_report = {"Date", "Pearl", "Jelly", "Lemon", "Orange"};
     private String[] columns_list = {"Date", "Name", "Amount"};
@@ -45,31 +49,30 @@ public class ReportListWindow extends JFrame implements ActionListener, MouseLis
         model_report = new DefaultTableModel();
         model_report.setDataVector(reports, columns_report);
         table_report = new JTable(model_report);
-        header_report = table_report.getTableHeader();
-        header_report.addMouseListener(this);
         table_report.setRowSelectionAllowed(true);
         table_report.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        label_name1 = new JLabel("Name: ");
+        model_name1 = new SpinnerListModel(names);
+        spin_name1 = new JSpinner(model_name1);
+        button_name1 = new JButton("By Name");
+        button_every = new JButton("With Every");
+
+        model_list = new DefaultTableModel();
+        model_list.setDataVector(lists, columns_list);
+        table_list = new JTable(model_list);
+        table_list.setRowSelectionAllowed(true);
+        table_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         label_date1 = new JLabel("From: ");
         model_date1 = new SpinnerDateModel();
         spin_date1 = new JSpinner(model_date1);
         label_date2 = new JLabel("To: ");
         model_date2 = new SpinnerDateModel();
         spin_date2 = new JSpinner(model_date2);
+        label_name2 = new JLabel("Name: ");
+        model_name2 = new SpinnerListModel(names);
+        spin_name2 = new JSpinner(model_name2);
         button_date = new JButton("By Date");
-        button_every = new JButton("Every");
-
-        model_list = new DefaultTableModel();
-        model_list.setDataVector(lists, columns_list);
-        table_list = new JTable(model_list);
-        header_list = table_list.getTableHeader();
-        header_list.addMouseListener(this);
-        table_list.setRowSelectionAllowed(true);
-        table_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        label_name = new JLabel("Name: ");
-        model_name = new SpinnerListModel(names);
-        spin_name = new JSpinner(model_name);
-        button_name = new JButton("By Name");
-        button_sum = new JButton("Sum");
+        button_name2 = new JButton("By Name");
 
         panel_left.setLayout(layout_left);
         panel_left.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
@@ -83,31 +86,21 @@ public class ReportListWindow extends JFrame implements ActionListener, MouseLis
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
-        layout_left.setConstraints(label_date1, constraints);
-        panel_left.add(label_date1);
+        layout_left.setConstraints(label_name1, constraints);
+        panel_left.add(label_name1);
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.insets = new Insets(5, 0, 5, 10);
-        layout_left.setConstraints(spin_date1, constraints);
-        panel_left.add(spin_date1);
+        layout_left.setConstraints(spin_name1, constraints);
+        panel_left.add(spin_name1);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(5, 10, 5, 0);
-        layout_left.setConstraints(label_date2, constraints);
-        panel_left.add(label_date2);
+        constraints.insets = new Insets(5, 100, 5, 0);
+        layout_left.setConstraints(button_name1, constraints);
+        panel_left.add(button_name1);
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.insets = new Insets(5, 0, 5, 10);
-        layout_left.setConstraints(spin_date2, constraints);
-        panel_left.add(spin_date2);
-
-        constraints.gridwidth = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(5, 100, 5, 10);
-        layout_left.setConstraints(button_date, constraints);
-        panel_left.add(button_date);
-
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.insets = new Insets(5, 0, 5, 10);
+        constraints.insets = new Insets(5, 10, 5, 10);
         layout_left.setConstraints(button_every, constraints);
         panel_left.add(button_every);
 
@@ -118,23 +111,55 @@ public class ReportListWindow extends JFrame implements ActionListener, MouseLis
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
-        layout_right.setConstraints(label_name, constraints);
-        panel_right.add(label_name);
+        layout_right.setConstraints(label_date1, constraints);
+        panel_right.add(label_date1);
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.insets = new Insets(5, 0, 5, 10);
-        layout_right.setConstraints(spin_name, constraints);
-        panel_right.add(spin_name);
+        layout_right.setConstraints(spin_date1, constraints);
+        panel_right.add(spin_date1);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
-        layout_right.setConstraints(button_name, constraints);
-        panel_right.add(button_name);
+        layout_right.setConstraints(label_date2, constraints);
+        panel_right.add(label_date2);
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 0, 5, 10);
+        layout_right.setConstraints(spin_date2, constraints);
+        panel_right.add(spin_date2);
+
+        constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
-        layout_right.setConstraints(button_sum, constraints);
-        panel_right.add(button_sum);
+        layout_right.setConstraints(label_name2, constraints);
+        panel_right.add(label_name2);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 0, 5, 10);
+        layout_right.setConstraints(spin_name2, constraints);
+        panel_right.add(spin_name2);
+
+        constraints.gridwidth = GridBagConstraints.RELATIVE;
+        constraints.insets = new Insets(5, 50, 5, 0);
+        layout_right.setConstraints(button_name2, constraints);
+        panel_right.add(button_name2);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 5, 10);
+        layout_right.setConstraints(button_date, constraints);
+        panel_right.add(button_date);
+
+        listReport(Teashop.getAllReport());
+        listList(Teashop.getAllList());
+        spin_name1.addChangeListener(this);
+        button_name1.addActionListener(this);
+        spin_date1.addChangeListener(this);
+        spin_date2.addChangeListener(this);
+        button_date.addActionListener(this);
+        button_every.addActionListener(this);
+        spin_name2.addChangeListener(this);
+        button_name2.addActionListener(this);
+        button_date.addActionListener(this);
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -146,26 +171,40 @@ public class ReportListWindow extends JFrame implements ActionListener, MouseLis
         this.pack();
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
+    private void listReport(DailyReport[] data) {
+        reports = new Object[0][0];
+        for (int i = 0; i < data.length; i++) {
+            reports[i] = new Object[]{data[i].getDate(), data[i].getPearl(), data[i].getJelly(), data[i].getLemon(), data[i].getOrange()};
+        }
+    }
 
+    private void listList(ShoppingList[] data) {
+        lists = new Object[0][0];
+        for (int i = 0; i < data.length; i++) {
+            lists[i] = new Object[]{data[i].getDate(), data[i].getGname(), data[i].getAmount()};
+        }
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-
+    public void actionPerformed(ActionEvent event) {
+        if (event.getSource() == button_name1) {
+            String name = (String)spin_name1.getValue();
+            listReport(Teashop.getReportByName(name));
+        }
+        else if (event.getSource() == button_every) {
+            listReport(Teashop.getReportWithEvery());
+        }
+        else if (event.getSource() == button_date) {
+            Date date1 = (Date)spin_date1.getValue();
+            Date date2 = (Date)spin_date2.getValue();
+            listList(Teashop.getListByDate(date1, date2));
+        }
+        else {
+            String name = (String)spin_name2.getValue();
+            listList(Teashop.getListByName(name));
+        }
     }
 
-
     @Override
-    public void mousePressed(MouseEvent e) { }
-
-    @Override
-    public void mouseReleased(MouseEvent e) { }
-
-    @Override
-    public void mouseEntered(MouseEvent e) { }
-
-    @Override
-    public void mouseExited(MouseEvent e) { }
+    public void stateChanged(ChangeEvent e) { }
 }

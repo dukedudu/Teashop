@@ -177,11 +177,15 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         else if (event.getSource() == button_update) {
             Teashop.updateGrocery(grocery);
         }
+        else if (event.getSource() == button_date) {
+            listGrocery(Teashop.orderGroceryByDate());
+        }
         else if (event.getSource() == button_amount) {
-            Teashop.orderGroceryByAmount();
+            String name = (String)spin_amount.getValue();
+            Teashop.getGroceryAmountSum(name);
         }
         else {
-            Teashop.orderGroceryByDate();
+
         }
     }
 
