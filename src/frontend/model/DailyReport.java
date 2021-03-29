@@ -3,8 +3,7 @@ import java.sql.Date;
 
 public class DailyReport {
     private Date date;
-    //private String uname;
-    private int pearl, jelly, lemon, orange, amount;
+    private int pearl, jelly, lemon, orange;
 
     public void DailyReport() {
         this.date = null;
@@ -22,41 +21,23 @@ public class DailyReport {
         this.orange = orange;
     }
 
-    public void setDate(String date) {
-        this.date = Date.valueOf(date);
-    }
-
-//    public void setUname(String uname) {
-//        this.uname = uname;
-//    }
-
-    public void setPearl(int pearl) {
-        this.pearl = pearl;
-    }
-
-    public void setJelly(int jelly) {
-        this.jelly = jelly;
-    }
-
-    public void setLemon(int lemon) {
-        this.lemon = lemon;
-    }
-
-    public void setOrange(int orange) {
-        this.orange = orange;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
     public Date getDate() { return date; }
+
+    public void setDate(String date) { this.date = Date.valueOf(date); }
 
     public int getPearl() { return pearl; }
 
+    public void setPearl(int pearl) { this.pearl = pearl; }
+
     public int getJelly() { return jelly; }
+
+    public void setJelly(int jelly) { this.jelly = jelly; }
 
     public int getLemon() { return lemon; }
 
+    public void setLemon(int lemon) { this.lemon = lemon; }
+
     public int getOrange() { return orange; }
+
+    public void setOrange(int orange) { this.orange = orange; }
 }
