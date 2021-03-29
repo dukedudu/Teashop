@@ -6,6 +6,7 @@ import frontend.ui.*;
 
 import javax.swing.*;
 import java.sql.Date;
+import java.util.Arrays;
 
 //ssh -l username -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
 
@@ -22,6 +23,10 @@ public class Teashop {
 		database = new DatabaseConnect();
 		database.databaseConnect();
 		database.setup();
+<<<<<<< HEAD
+=======
+		System.out.println(Arrays.stream(getAllGrocery()).toString());
+>>>>>>> b57a54ffc65fd5bf5d1e41c78e99dc3063137501
 //		recipeWindow = new RecipeWindow();
 //		recipeWindow.showFrame();
 	}

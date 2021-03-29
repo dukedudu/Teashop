@@ -12,7 +12,7 @@ public class User {
         this.name = "";
         this.password = "";
         this.street = "";
-        this.code = code;
+        this.code = "";
         this.certificate = "";
         this.city = "";
     }
