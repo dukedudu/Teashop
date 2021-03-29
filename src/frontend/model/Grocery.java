@@ -18,7 +18,7 @@ public class Grocery {
         this.name = name;
         this.amount = amount;
         this.buyingDate = date;
-        this.buyingDate = null;
+        this.duration = duration;
     }
 
     public String getName() { return name; }
@@ -32,4 +32,12 @@ public class Grocery {
     public Date getDate() { return buyingDate; }
 
     public void setDate(Date date) { this.buyingDate = date; }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 }

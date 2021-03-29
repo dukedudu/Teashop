@@ -58,7 +58,8 @@ public class Teashop {
 			System.out.println("Actual "+tmp.getName());
 		}
 
-		System.out.println("test6: Select recipe by Uname");
+		System.out.println("test6: Insert Grocery and delete zero");
+		database.deleteGroceryWithZero();
 	}
 	public static void register(User user) {
 		database.insertUser(user);

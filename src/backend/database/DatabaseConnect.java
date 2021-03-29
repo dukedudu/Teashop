@@ -17,7 +17,7 @@ public class DatabaseConnect {
             if (connection != null) {
                 connection.close();
             }
-            connection = DriverManager.getConnection(ORACLE_URL, "ora_dmy0604","a44147163");//"ora_sunjingy", "a48346902");
+            connection = DriverManager.getConnection(ORACLE_URL, "ora_dmy0604", "a44147163");//"ora_sunjingy", "a48346902");
             System.out.println("Logged in");
             connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -83,6 +83,10 @@ public class DatabaseConnect {
         insertSupplier(1, "Coco");
         DailyReport d1 = new DailyReport("2021-03-28", 20, 0, 0, 0);
         insertDailReport(d1);
+        Grocery g1 = new Grocery("Pearl", 0, 20, Date.valueOf("2021-03-29"));
+        insertGrocery(g1);
+        Grocery g2 = new Grocery("Pearl", 50, 20, Date.valueOf("2021-03-30"));
+        insertGrocery(g2);
     }
 
     public void insertDailReport(DailyReport d) {
@@ -281,29 +285,6 @@ public class DatabaseConnect {
         return result;
     }
 
-    public Recipe[] selectRecipeByUname(String uname) {
-//        Recipe result = new Recipe();
-//        try {
-//            Statement stmt1 = connection.createStatement();
-//            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe WHERE RName=" + name);
-//            result = new Recipe(rs1.getString("name"),
-//                    rs1.getString("tea"),
-//                    rs1.getString("Kind"),
-//                    rs1.getInt("pearl"),
-//                    rs1.getInt("jelly"),
-//                    rs1.getInt("lemon"),
-//                    rs1.getInt("orange"),
-//                    rs1.getInt("calories")
-//            );
-//            rs1.close();
-//            stmt1.close();
-//        } catch (SQLException e) {
-//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-//            rollbackConnection();
-//        }
-        return new Recipe[0];
-    }
-
     public Recipe[] selectRecipeByKind(String kind) {
         ArrayList<Recipe> recipes = new ArrayList<>();
         try {
@@ -454,6 +435,19 @@ public class DatabaseConnect {
     }
 
     public void insertGrocery(Grocery grocery) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO Grocery VALUES (?,?,?,?)");
+            statement.setString(1, grocery.getName());
+            statement.setInt(2, grocery.getAmount());
+            statement.setDate(3, grocery.getDate());
+            statement.setInt(4, grocery.getDuration());
+            statement.executeUpdate();
+            connection.commit();
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
     }
 
     public void updateGrocery(Grocery grocery) {
@@ -522,60 +516,88 @@ public class DatabaseConnect {
 
     private void dropAllTableIfExists() {
         try {
-            Statement stmt2 = connection.createStatement();
-            stmt2.execute("DROP TABLE Users CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE Recipe CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE Address CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE Grocery CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE GroceryDate CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE MakeRecipe CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE Buys CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE Usage CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE Generates CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE DailyReport CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE Supplier CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE Supplies CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE ShoppingList CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE LISTS CASCADE CONSTRAINTS");
-
-            //while(rs.next()) {
-//                Statement stmt2 = connection.createStatement();
-//                stmt2.execute("DROP TABLE Recipe CASCADE CONSTRAINTS");
-//                stmt2.execute("DROP TABLE User CASCADE CONSTRAINTS");
-//                stmt2.execute("DROP TABLE Create CASCADE CONSTRAINTS");
-////                if (rs.getString(1).toLowerCase().equals("building")) {
-//                    stmt2.execute("DROP TABLE Building CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("garbageroom")) {
-//                    stmt2.execute("DROP TABLE GarbageRoom CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("landlord")) {
-//                    stmt2.execute("DROP TABLE Landlord CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("manage")) {
-//                    stmt2.execute("DROP TABLE Manage CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("manager")) {
-//                    stmt2.execute("DROP TABLE Manager CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("parkingspot")) {
-//                    stmt2.execute("DROP TABLE ParkingSpot CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("postman")) {
-//                    stmt2.execute("DROP TABLE Postman CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("resident")) {
-//                    stmt2.execute("DROP TABLE Resident CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("room")) {
-//                    stmt2.execute("DROP TABLE Room CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("serve")) {
-//                    stmt2.execute("DROP TABLE Serve CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("tenant")) {
-//                    stmt2.execute("DROP TABLE Tenant CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("videoserveillance")) {
-//                    stmt2.execute("DROP TABLE VideoServeillance CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("dobandage")) {
-//                    stmt2.execute("DROP TABLE DOBandAge CASCADE CONSTRAINTS");
-//                } else if (rs.getString(1).toLowerCase().equals("sinandname")) {
-//                    stmt2.execute("DROP TABLE SINandName CASCADE CONSTRAINTS");
-//                }
-            //stmt2.close();
-            //}
-            //rs.close();
-            stmt2.close();
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("select table_name from user_tables");
+            while (rs.next()) {
+                Statement stmt2 = connection.createStatement();
+                switch (rs.getString(1).toLowerCase()) {
+                    case "users": {
+                        stmt2.execute("DROP TABLE Users CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "recipe": {
+                        stmt2.execute("DROP TABLE Recipe CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "address": {
+                        stmt2.execute("DROP TABLE Address CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "grocery": {
+                        stmt2.execute("DROP TABLE Grocery CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "grocerydate": {
+                        stmt2.execute("DROP TABLE GroceryDate CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "makerecipe": {
+                        stmt2.execute("DROP TABLE MakeRecipe CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "buys": {
+                        stmt2.execute("DROP TABLE Buys CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "usage": {
+                        stmt2.execute("DROP TABLE Usage CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "generates": {
+                        stmt2.execute("DROP TABLE Generates CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "dailyreport": {
+                        stmt2.execute("DROP TABLE DailyReport CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "supplier": {
+                        stmt2.execute("DROP TABLE Supplier CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "supplies": {
+                        stmt2.execute("DROP TABLE Supplies CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "shoppinglist": {
+                        stmt2.execute("DROP TABLE ShoppingList CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    case "lists": {
+                        stmt2.execute("DROP TABLE LISTS CASCADE CONSTRAINTS");
+                        break;
+                    }
+                    default: System.out.println(rs.getString(1).toLowerCase());
+                }
+                stmt2.close();
+            }
+            rs.close();
+//            Statement stmt2 = connection.createStatement();
+//            stmt2.execute("DROP TABLE Users CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE Recipe CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE Address CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE Grocery CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE GroceryDate CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE MakeRecipe CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE Buys CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE Usage CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE Generates CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE DailyReport CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE Supplier CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE Supplies CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE ShoppingList CASCADE CONSTRAINTS");
+//            stmt2.execute("DROP TABLE LISTS CASCADE CONSTRAINTS");
+//            stmt2.close();
         } catch (SQLException e) {
             //MainMenu.makeWarningDialog(EXCEPTION_TAG + " " + e.getMessage());
             System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "drop table error");
