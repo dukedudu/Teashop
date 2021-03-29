@@ -103,7 +103,7 @@ public class DailyReports {
     public void updateShoppingList(Date date, String Gname, int amount){
 
         try {
-            PreparedStatement stmt = connection.prepareStatement("UPDATE ShoppingList SET Gname=?, Amount=?, Date=?, Orange=? WHERE GName =" + Gname + "AND Date =" + date.toString());
+            PreparedStatement stmt = connection.prepareStatement("UPDATE ShoppingList SET Gname=?, Amount=?, Date=? WHERE GName =" + Gname + "AND Date =" + date.toString());
             stmt.setString(1, Gname);
             stmt.setInt(2, amount);
             stmt.setDate(3, date);
@@ -117,4 +117,21 @@ public class DailyReports {
         }
     }
 
+    public void updateDailyReport(Date date, int pearl, int jelly, int lemon, int orange) {
+        try {
+            PreparedStatement stmt = connection.prepareStatement("UPDATE DailyReport SET reportDay=?, Pearl=?, Jelly=?, Lemon=?, Orange=? WHERE reportDay =" + date.toString());
+            stmt.setDate(1, date);
+            stmt.setInt(2, pearl);
+            stmt.setInt(3, jelly);
+            stmt.setInt(4, lemon);
+            stmt.setInt(5, orange);
+
+            stmt.executeUpdate();
+            connection.commit();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            //rollbackConnection();
+        }
+    }
 }
