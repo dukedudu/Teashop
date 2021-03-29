@@ -27,36 +27,39 @@ public class DatabaseConnect {
         dropAllTableIfExists();
         try {
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate("CREATE TABLE UserInfo(UName varchar2(20) PRIMARY KEY, Password varchar2(20), StreetName varchar2(20), HouseNumber INT DEFAULT 0, City varchar2(20), " +
+            stmt.executeUpdate("CREATE TABLE Users(UName varchar2(20) PRIMARY KEY, Password varchar2(20), StreetName varchar2(20), HouseNumber INT DEFAULT 0, City varchar2(20), " +
                     "PostalCode varchar2(20), Certificate varchar2(20), Budget INT DEFAULT 0)");
             System.out.println("Table User created");
             stmt.executeUpdate("CREATE TABLE Recipe(RName varchar2(20) PRIMARY KEY, Kind varchar2(20), Tea varchar2(20), Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0, Calories INT DEFAULT 0)");
             System.out.println("Table Recipe created");
             //                   "FOREIGN KEY(PostalCode) REFERENCES Address(PostalCode) ON DELETE CASCADE, FOREIGN KEY(StreetName) REFERENCES Address(StreetName) ON DELETE CASCADE, FOREIGN KEY(House#) REFERENCES Address(House#) ON DELETE CASCADE);");
-//            stmt.executeUpdate("CREATE TABLE Address(PostalCode CHAR(20),StreetName CHAR(20),House# INT,City CHAR(20), PRIMARY KEY(PostalCode, StreetName, House#));");
-            stmt.executeUpdate("CREATE TABLE Grocery(GName varchar2(20) PRIMARY KEY)");
-//                    ",Amount INT DEFAULT 0, BuyingDate DATE, Duration INT," +
-//                    "FOREIGN KEY(BuyingDate) REFERENCES GroceryDate(BuyingDate) ON DELETE CASCADE, FOREIGN KEY(Duration) REFERENCES GroceryDate(Duration) ON DELETE CASCADE)");
-//            stmt.executeUpdate("CREATE TABLE GroceryDate(BuyingDate DATE, Duration INT, ExpiryDate DATE, PRIMARY KEY(BuyingDate, Duration));");
-//            stmt.executeUpdate("CREATE TABLE Buys(UserId INT, GName CHAR(20), BuyingDate DATE, PRIMARY KEY(UserId, GName, BuyingDate)," +
+            stmt.executeUpdate("CREATE TABLE Address(PostalCode varchar2(20),StreetName varchar2(20),House# INT, City varchar2(20), PRIMARY KEY(PostalCode, StreetName, House#))"); //no connection
+            System.out.println("Table Address created");
+            stmt.executeUpdate("CREATE TABLE Grocery(GName VARCHAR2(20), Amount INT DEFAULT 0, BuyingDate DATE, PRIMARY KEY (GName,BuyingDate), Duration INT)");
+            stmt.executeUpdate("CREATE TABLE GroceryDate(BuyingDate DATE, Duration INT, ExpiryDate DATE, PRIMARY KEY(BuyingDate, Duration))");
+            stmt.executeUpdate("CREATE TABLE Buys(UName VARCHAR2(20), GName VARCHAR2(20), BuyingDate DATE, PRIMARY KEY(UName, GName, BuyingDate), " +
+                    "FOREIGN KEY(UName) REFERENCES Users, FOREIGN KEY(GName, BuyingDate) REFERENCES Grocery(GName, BuyingDate))");
+            //                    ",Amount INT DEFAULT 0, BuyingDate DATE, Duration INT," +
 //                    "FOREIGN KEY(UserId) REFERENCES User(UserId) ON DELETE CASCADE, FOREIGN KEY(GName) REFERENCES Grocery(GName) ON DELETE CASCADE, FOREIGN KEY(BuyingDate) REFERENCES Grocery(BuyingDate) ON DELETE CASCADESystem.out.println("Table Recipe passed\n");
-            stmt.executeUpdate("CREATE TABLE MakeRecipe(UName varchar2(20), RName varchar2(20), PRIMARY KEY(UName,RName), FOREIGN KEY(UName) REFERENCES UserInfo, FOREIGN KEY(RName) REFERENCES Recipe)");
+            stmt.executeUpdate("CREATE TABLE MakeRecipe(UName varchar2(20), RName varchar2(20), PRIMARY KEY(UName,RName), FOREIGN KEY(UName) REFERENCES Users, FOREIGN KEY(RName) REFERENCES Recipe)");
             System.out.println("Table MakeRecipe created");
-            //stmt.executeUpdate("CREATE TABLE Usage(UseID INT AUTO_INCREMENT PRIMARY KEY, RecipeId INT, Date DATE NOT NULL, Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0," );
-//            stmt.executeUpdate("CREATE TABLE Generates(RecipeId INT, UseID INT, PRIMARY KEY(RecipeId, UseID), " +
-//                    "FOREIGN KEY(RecipeId) REFERENCES Recipe ON DELETE CASCADE, FOREIGN KEY(UseId) REFERENCES Usage ON DELETE CASCADE);\n");
+            stmt.executeUpdate("CREATE TABLE Usage(UseID INT PRIMARY KEY, RName varchar2(20), UsingDate DATE NOT NULL, Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
+            stmt.executeUpdate("CREATE TABLE Generates(RName varchar2(20), UseID INT, PRIMARY KEY(RName, UseID), " +
+                    "FOREIGN KEY(RName) REFERENCES Recipe ON DELETE CASCADE, FOREIGN KEY(UseId) REFERENCES Usage ON DELETE CASCADE)");
             stmt.executeUpdate("CREATE TABLE DailyReport(reportDay DATE PRIMARY KEY, Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
             //"FOREIGN KEY (UserID) REFERENCES User ON DELETE CASCADE, FOREIGN KEY (Date) REFERENCES ReportWeekDay ON DELETE CASCADE, FOREIGN KEY (Weekday) REFERENCES ReportWeekDay ON DELETE CASCADE);"
 //            stmt.executeUpdate("CREATE TABLE ReportWeekDay(Date DATE PRIMARY KEY, Weekday INT);");
             stmt.executeUpdate("CREATE TABLE Supplier(SupplierId INT PRIMARY KEY, CompanyName varchar2(20) NOT NULL)");
             System.out.println("Table Supplier created");
-            stmt.executeUpdate("CREATE TABLE Supplies(SupplierId INT, GName varchar2(20), PRIMARY KEY (SupplierId)," +
-                    "FOREIGN KEY(SupplierId) REFERENCES Supplier, FOREIGN KEY(GName) REFERENCES Grocery(GName))");
+            stmt.executeUpdate("CREATE TABLE Supplies(SupplierId INT, GName varchar2(20), BuyingDate DATE, PRIMARY KEY (SupplierId)," +
+                    "FOREIGN KEY(SupplierId) REFERENCES Supplier, FOREIGN KEY(GName, BuyingDate) REFERENCES Grocery(GName, BuyingDate))");
             System.out.println("Table Supplies created");
-//            stmt.executeUpdate("CREATE TABLE ShoppingList(SListId INT AUTO_INCREMENT, GName CHAR(20), Amount INT NOT NULL, Date DATE, UserId INT, PRIMARY KEY (SListId)" +
-//                    "FOREIGN KEY(UserId) REFERENCES User ON DELETE CASCADE, FOREIGN KEY(GName) REFERENCES Grocery ON DELETE CASCADE);");
-//            stmt.executeUpdate("CREATE TABLE Lists(UseID INT, GName CHAR(20), SListId INT, PRIMARY KEY (SListId, UseID, GName)," +
-//                    "FOREIGN KEY (SListId) REFERENCES ShoppingList ON DELETE CASCADE, FOREIGN KEY (GName) REFERENCES Grocery ON DELETE CASCADE, FOREIGN KEY (UseId) REFERENCES Usage ON DELETE CASCADE);");
+            stmt.executeUpdate("CREATE TABLE ShoppingList(GName CHAR(20), Amount INT NOT NULL, ListDate DATE, PRIMARY KEY (GName,ListDate))");
+            System.out.println("Table ShoppingList created");
+//                    "FOREIGN KEY(UserId) REFERENCES User ON DELETE CASCADE, FOREIGN KEY(GName,ListDate) REFERENCES Grocery ON DELETE CASCADE);");
+            stmt.executeUpdate("CREATE TABLE Lists(GName CHAR(20), ListDate DATE, UseID INT, PRIMARY KEY (UseID, GName, ListDate), " +
+                    "FOREIGN KEY (GName,ListDate) REFERENCES ShoppingList ON DELETE CASCADE, FOREIGN KEY (UseID) REFERENCES Usage ON DELETE CASCADE)");
+            System.out.println("Table List created");
             stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Error: create table error");
@@ -133,8 +136,12 @@ public class DatabaseConnect {
         boolean result = false;
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT Password FROM User WHERE Name=" + name);
-            result = (rs.equals(password));
+            ResultSet rs = stmt.executeQuery("SELECT Password FROM Users WHERE UName = '" + name+ "'");
+            if(rs.next()){
+                String temp = rs.getString("Password");
+                System.out.println(temp);
+                result = (temp.equals(password));
+            }
             rs.close();
             stmt.close();
         } catch (SQLException e) {
@@ -143,10 +150,33 @@ public class DatabaseConnect {
         }
         return result;
     }
+    public boolean changePassword(String UName, String newPassword, String confirmPassword){
+        if (!newPassword.equals(confirmPassword)){
+            System.out.println("confirmPassword should be same as newPassword.");
+            return false;
+        }
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE Users SET Password = ? WHERE UName = ?");
+            ps.setString(1,newPassword);
+            ps.setString(2,UName);
+            int rowCount = ps.executeUpdate();
+            if (rowCount == 0) {
+                System.out.println(WARNING_TAG + " User does not exist!");
+                return false;
+            }
+            connection.commit();
+            ps.close();
+            return true;
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return false;
+    }
     public void insertUser(User user) {
         try {
             //UserInfo(UName varchar2(20) PRIMARY KEY, Password varchar2(20), StreetName varchar2(20), HouseNumber INT DEFAULT 0, City varchar2(20), PostalCode varchar2(20), Certificate varchar2(20), Budget INT DEFAULT 0)");
-            PreparedStatement stmt = connection.prepareStatement("INSERT INTO UserInfo VALUES (?,?,?,?,?,?,?,?)");
+            PreparedStatement stmt = connection.prepareStatement("INSERT INTO Users VALUES (?,?,?,?,?,?,?,?)");
             stmt.setString(1, user.getName());
             stmt.setString(2, user.getPassword());
             stmt.setString(3, user.getStreet());
@@ -252,7 +282,7 @@ public class DatabaseConnect {
 //            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 //            rollbackConnection();
 //        }
-        return new Recipe[0];
+       return new Recipe[0];
     }
     public Recipe[] selectRecipeByKind(String kind) {
         ArrayList<Recipe> recipes = new ArrayList<>();
@@ -304,13 +334,22 @@ public class DatabaseConnect {
         }
         return recipes.toArray(new Recipe[recipes.size()]);
     }
-    public String[] recipeInventor(String uName) {
-        ArrayList<String> recipes = new ArrayList<>();
+    public Recipe[] recipeInventor(String uName) {
+        ArrayList<Recipe> recipes = new ArrayList<>();
         try {
             Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT r.RName FROM Recipe r, UserInfo u Create c WHERE c.RName = r.RName AND c.UName = u.UName AND u.UName = " + uName);
+            ResultSet rs1 = stmt1.executeQuery("SELECT r.RName, r.Kind, r.Tea, r.pearl, r.jelly, r.lemon, r.orange, r.calories FROM Recipe r, Users u, MakeRecipe m WHERE m.RName = r.RName AND m.UName = u.UName AND u.UName = '" + uName+"'");
             while (rs1.next()) {
-                recipes.add(rs1.getString("RName"));
+                Recipe temp = new Recipe(rs1.getString("RName"),
+                        rs1.getString("Tea"),
+                        rs1.getString("Kind"),
+                        rs1.getInt("Pearl"),
+                        rs1.getInt("Jelly"),
+                        rs1.getInt("Lemon"),
+                        rs1.getInt("Orange"),
+                        rs1.getInt("Calories")
+                );
+                recipes.add(temp);
             }
             rs1.close();
             stmt1.close();
@@ -318,7 +357,7 @@ public class DatabaseConnect {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
-        return recipes.toArray(new String[recipes.size()]);
+        return recipes.toArray(new Recipe[recipes.size()]);
 
     }
     public void makeBeverage(String name, Date today) {
@@ -464,13 +503,20 @@ public class DatabaseConnect {
             //Statement stmt = connection.createStatement();
             //ResultSet rs = stmt.executeQuery("select table_name from user_tables");
             Statement stmt2 = connection.createStatement();
+            stmt2.execute("DROP TABLE Users CASCADE CONSTRAINTS");
             stmt2.execute("DROP TABLE Recipe CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE UserInfo CASCADE CONSTRAINTS");
-            stmt2.execute("DROP TABLE MakeRecipe CASCADE CONSTRAINTS");
+            stmt2.execute("DROP TABLE Address CASCADE CONSTRAINTS");
             stmt2.execute("DROP TABLE Grocery CASCADE CONSTRAINTS");
+            stmt2.execute("DROP TABLE GroceryDate CASCADE CONSTRAINTS");
+            stmt2.execute("DROP TABLE Buys CASCADE CONSTRAINTS");
+            stmt2.execute("DROP TABLE MakeRecipe CASCADE CONSTRAINTS");
+            stmt2.execute("DROP TABLE Usage CASCADE CONSTRAINTS");
+            stmt2.execute("DROP TABLE Generates CASCADE CONSTRAINTS");
             stmt2.execute("DROP TABLE DailyReport CASCADE CONSTRAINTS");
             stmt2.execute("DROP TABLE Supplier CASCADE CONSTRAINTS");
             stmt2.execute("DROP TABLE Supplies CASCADE CONSTRAINTS");
+            stmt2.execute("DROP TABLE ShoppingList CASCADE CONSTRAINTS");
+            stmt2.execute("DROP TABLE LISTS CASCADE CONSTRAINTS");
 
             //while(rs.next()) {
 //                Statement stmt2 = connection.createStatement();

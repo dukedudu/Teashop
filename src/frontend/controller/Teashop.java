@@ -22,10 +22,44 @@ public class Teashop {
 		database = new DatabaseConnect();
 		database.databaseConnect();
 		database.setup();
-		recipeWindow = new RecipeWindow();
-		recipeWindow.showFrame();
+//		recipeWindow = new RecipeWindow();
+//		recipeWindow.showFrame();
 	}
+	public void test(){
+		database = new DatabaseConnect();
+		database.databaseConnect();
+		database.setup();
 
+		System.out.println("test1: select password");
+		System.out.println("Expected true. Actual " + database.selectPassword("Sam", "123"));
+		System.out.println("Expected false. Actual " + database.selectPassword("Sam", "234"));
+
+		System.out.println("test2: insert user (already test on database.setup) PASSED");
+
+		System.out.println("test3: Update Password");
+		System.out.println("Expected true. Actual "+database.changePassword("Sam", "777","777")); //view results in db
+		System.out.println("Expected false. Actual "+database.changePassword("seffs", "777","777"));
+		System.out.println("Expected false. Actual "+database.changePassword("seffs", "777","7778"));
+
+		System.out.println("test4: Select recipe by name");
+		Recipe r = getRecipeByName("Perl Milk Tea");
+		System.out.println("Expected Perl Milk Tea, Actual " + r.getName());
+
+		System.out.println("test5: Select recipe by Uname");
+		Recipe r3 = new Recipe("Orange tea", "Red tea", "Milk Tea", 0, 0, 0, 50, 100);
+		Recipe r4 = new Recipe("Lemon tea", "Red tea", "Milk Tea", 0, 0, 30, 0, 100);
+		database.insertRecipe(r3);
+		database.insertRecipe(r4);
+		database.insertMakeRecipe("Sam", "Orange tea");
+		database.insertMakeRecipe("Sam", "Lemon tea");
+		Recipe[] t5Results = getMyRecipe("Sam");
+		System.out.println("Expected Red tea, Orange tea and lemon tea.");
+		for (Recipe tmp:t5Results){
+			System.out.println("Actual "+tmp.getName());
+		}
+
+		System.out.println("test6: Select recipe by Uname");
+	}
 	public static void register(User user) {
 		database.insertUser(user);
 		registerWindow.dispose();
@@ -65,7 +99,7 @@ public class Teashop {
 
 	public static void makeRecipe(String name) { database.insertUsage(name, new Date(0));}
 
-	public static Recipe[] getMyRecipe(String name) { return database.selectRecipeByUname(name); }
+	public static Recipe[] getMyRecipe(String name) { return database.recipeInventor(name);}//database.selectRecipeByUname(name); }
 
 	public static Recipe getRecipeByName(String name) { return database.selectRecipeByRname(name); }
 
@@ -99,6 +133,7 @@ public class Teashop {
 
 	public static void main(String args[]) {
 		Teashop teashop = new Teashop();
-		teashop.start();
+		//teashop.start();
+		teashop.test();
 	}
 }
