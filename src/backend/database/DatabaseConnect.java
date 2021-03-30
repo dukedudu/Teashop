@@ -105,7 +105,7 @@ public class DatabaseConnect {
             //rollbackConnection();
         }
     }
-    
+
     public void insertSupplies(int id, String Name){
         try {
             Statement stmt1 = connection.createStatement();
