@@ -21,17 +21,16 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
     private JTable table;
     private JTableHeader header;
     private DefaultTableModel model_grocery;
-    private JLabel label_name, label_amount, label_date;
-    private JSpinner spin_name, spin_amount, spin_date;
+    private JLabel label_name, label_amount, label_date, label_duration;
+    private JSpinner spin_name, spin_amount, spin_date, spin_duration;
     private SpinnerListModel model_name;
-    private SpinnerNumberModel model_amount;
+    private SpinnerNumberModel model_amount, model_duration;
     private SpinnerDateModel model_date;
     private JButton button_add, button_update, button_amount, button_date;
 
-    private String[] columns = {"Name", "Amount", "Date"};
-    private Date date = new Date(new java.util.Date().getTime());
-    private Object[][] groceries = {{"Pearl", 100, date}, {"Jelly", 50, date}, {"Lemon", 50, date}, {"Orange", 20, date}};
+    private String[] columns = {"Name", "Amount", "Bought", "Duration", "Expiry"};
     private String[] names = {"Pearl", "Jelly", "Lemon", "Orange"};
+    private Object[][] groceries = {};
 
     public GroceryWindow() { super("Grocery"); }
 
@@ -65,6 +64,9 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         label_date = new JLabel("Date: ");
         model_date = new SpinnerDateModel();
         spin_date = new JSpinner(model_date);
+        label_duration = new JLabel("Duration: ");
+        model_duration = new SpinnerNumberModel();
+        spin_duration = new JSpinner(model_duration);
         button_add = new JButton("Add");
         button_update = new JButton("Update");
 
@@ -120,6 +122,16 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
+        layout_right.setConstraints(label_duration, constraints);
+        panel_right.add(label_duration);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 0, 5, 10);
+        layout_right.setConstraints(spin_duration, constraints);
+        panel_right.add(spin_duration);
+
+        constraints.gridwidth = GridBagConstraints.RELATIVE;
+        constraints.insets = new Insets(5, 10, 5, 0);
         layout_right.setConstraints(button_add, constraints);
         panel_right.add(button_add);
 
@@ -151,7 +163,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
     private void listGrocery(Grocery[] data) {
         groceries = new Object[0][0];
         for (int i = 0; i < data.length; i++) {
-            groceries[i] = new Object[]{data[i].getName(), data[i].getAmount(), data[i].getDate()};
+            groceries[i] = new Object[]{data[i].getName(), data[i].getAmount(), data[i].getBuyingDate(), data[i].getDuration(), data[i].getExpiryDate()};
         }
     }
 
@@ -161,7 +173,8 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         Grocery grocery = Teashop.getGrocery(name);
         spin_name.setValue(grocery.getName());
         spin_amount.setValue(grocery.getAmount());
-        spin_date.setValue(grocery.getDate());
+        spin_date.setValue(grocery.getBuyingDate());
+        spin_duration.setValue(grocery.getDuration());
     }
 
     @Override
@@ -169,7 +182,8 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         Grocery grocery = new Grocery();
         grocery.setName((String)spin_name.getValue());
         grocery.setAmount((int)spin_amount.getValue());
-//        grocery.setDate(spin_date.getValue());
+        grocery.setBuyingDate((Date)spin_date.getValue());
+        grocery.setDuration((int)spin_duration.getValue());
 
         if (event.getSource() == button_add) {
             Teashop.addGrocery(grocery);
@@ -182,7 +196,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         }
         else if (event.getSource() == button_amount) {
             String name = (String)spin_amount.getValue();
-            Teashop.getGroceryAmountSum(name);
+            Teashop.getGrocerySum(name);
         }
         else {
 

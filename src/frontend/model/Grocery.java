@@ -4,21 +4,23 @@ import java.sql.Date;
 
 public class Grocery {
     private String name;
-    private int amount, duration; //added
-    private Date buyingDate, expiryDate; //added
+    private int amount, duration;
+    private Date buyingDate, expiryDate;
 
     public Grocery() {
         this.name = "";
         this.amount = 0;
+        this.duration = 0;
         this.buyingDate = null;
-        this.buyingDate = null;
+        this.expiryDate = null;
     }
 
-    public Grocery(String name, int amount, int duration, Date date) {
+    public Grocery(String name, int amount, int duration, Date buyingDate, Date expiryDate) {
         this.name = name;
         this.amount = amount;
-        this.buyingDate = date;
         this.duration = duration;
+        this.buyingDate = buyingDate;
+        this.expiryDate = expiryDate;
     }
 
     public String getName() { return name; }
@@ -29,15 +31,15 @@ public class Grocery {
 
     public void setAmount(int amount) { this.amount = amount; }
 
-    public Date getDate() { return buyingDate; }
+    public int getDuration() { return duration; }
 
-    public void setDate(Date date) { this.buyingDate = date; }
+    public void setDuration(int duration) { this.duration = duration; }
 
-    public int getDuration() {
-        return duration;
-    }
+    public Date getBuyingDate() { return buyingDate; }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
+    public void setBuyingDate(Date buyingDate) { this.buyingDate = buyingDate; }
+
+    public Date getExpiryDate() { return expiryDate; }
+
+    public void setExpiryDate(Date expiryDate) { this.expiryDate = expiryDate; }
 }
