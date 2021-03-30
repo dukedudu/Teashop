@@ -1,5 +1,4 @@
 package backend.database;
-
 import frontend.model.*;
 
 import java.sql.*;
@@ -17,7 +16,7 @@ public class DatabaseConnect {
             if (connection != null) {
                 connection.close();
             }
-            connection = DriverManager.getConnection(ORACLE_URL, "ora_dmy0604", "a44147163");//"ora_sunjingy", "a48346902");
+            connection = DriverManager.getConnection(ORACLE_URL, "ora_sunjingy", "a48346902");
             System.out.println("Logged in");
             connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -29,10 +28,9 @@ public class DatabaseConnect {
         dropAllTableIfExists();
         try {
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate("CREATE TABLE Users(UName varchar2(20) PRIMARY KEY, Password varchar2(20), StreetName varchar2(20), HouseNumber INT DEFAULT 0, City varchar2(20), " +
-                    "PostalCode varchar2(20))");
+            stmt.executeUpdate("CREATE TABLE Users(UName VARCHAR2(20) PRIMARY KEY, Password VARCHAR2(20), StreetName VARCHAR2(20), HouseNumber INT DEFAULT 0, City VARCHAR2(20), PostalCode VARCHAR2(20))");
             System.out.println("Table User created");
-            stmt.executeUpdate("CREATE TABLE Recipe(RName varchar2(20) PRIMARY KEY, Kind varchar2(20), Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
+            stmt.executeUpdate("CREATE TABLE Recipe(RName VARCHAR2(20) PRIMARY KEY, Kind VARCHAR2(20), Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
             System.out.println("Table Recipe created");
             //                   "FOREIGN KEY(PostalCode) REFERENCES Address(PostalCode) ON DELETE CASCADE, FOREIGN KEY(StreetName) REFERENCES Address(StreetName) ON DELETE CASCADE, FOREIGN KEY(House#) REFERENCES Address(House#) ON DELETE CASCADE);");
             stmt.executeUpdate("CREATE TABLE Address(PostalCode varchar2(20),StreetName varchar2(20),House# INT, City varchar2(20), PRIMARY KEY(PostalCode, StreetName, House#))"); //no connection
@@ -43,28 +41,27 @@ public class DatabaseConnect {
                     "FOREIGN KEY(UName) REFERENCES Users, FOREIGN KEY(GName, BuyingDate) REFERENCES Grocery(GName, BuyingDate))");
             //                    ",Amount INT DEFAULT 0, BuyingDate DATE, Duration INT," +
 //                    "FOREIGN KEY(UserId) REFERENCES User(UserId) ON DELETE CASCADE, FOREIGN KEY(GName) REFERENCES Grocery(GName) ON DELETE CASCADE, FOREIGN KEY(BuyingDate) REFERENCES Grocery(BuyingDate) ON DELETE CASCADESystem.out.println("Table Recipe passed\n");
-            stmt.executeUpdate("CREATE TABLE MakeRecipe(UName varchar2(20), RName varchar2(20), PRIMARY KEY(UName,RName), FOREIGN KEY(UName) REFERENCES Users, FOREIGN KEY(RName) REFERENCES Recipe)");
+            stmt.executeUpdate("CREATE TABLE MakeRecipe(UName VARCHAR2(20), RName VARCHAR2(20), PRIMARY KEY(UName,RName), FOREIGN KEY(UName) REFERENCES Users, FOREIGN KEY(RName) REFERENCES Recipe)");
             System.out.println("Table MakeRecipe created");
-            stmt.executeUpdate("CREATE TABLE Usage(UseID INT PRIMARY KEY, RName varchar2(20), UsingDate DATE NOT NULL, Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
-            stmt.executeUpdate("CREATE TABLE Generates(RName varchar2(20), UseID INT, PRIMARY KEY(RName, UseID), " +
-                    "FOREIGN KEY(RName) REFERENCES Recipe ON DELETE CASCADE, FOREIGN KEY(UseId) REFERENCES Usage ON DELETE CASCADE)");
-            stmt.executeUpdate("CREATE TABLE DailyReport(reportDay DATE PRIMARY KEY, Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
+            stmt.executeUpdate("CREATE TABLE Usage(UseID INT PRIMARY KEY, RName VARCHAR2(20), UsingDate DATE NOT NULL, Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
+            stmt.executeUpdate("CREATE TABLE Generates(RName VARCHAR2(20), UseID INT, PRIMARY KEY(RName, UseID), FOREIGN KEY(RName) REFERENCES Recipe ON DELETE CASCADE, FOREIGN KEY(UseId) REFERENCES Usage(UseID) ON DELETE CASCADE)");
+            stmt.executeUpdate("CREATE TABLE DailyReport(ReportDay DATE PRIMARY KEY, Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
             //"FOREIGN KEY (UserID) REFERENCES User ON DELETE CASCADE, FOREIGN KEY (Date) REFERENCES ReportWeekDay ON DELETE CASCADE, FOREIGN KEY (Weekday) REFERENCES ReportWeekDay ON DELETE CASCADE);"
 //            stmt.executeUpdate("CREATE TABLE ReportWeekDay(Date DATE PRIMARY KEY, Weekday INT);");
-            stmt.executeUpdate("CREATE TABLE Supplier(SupplierId INT PRIMARY KEY, CompanyName varchar2(20) NOT NULL)");
+            stmt.executeUpdate("CREATE TABLE Supplier(SupplierId INT PRIMARY KEY, CompanyName VARCHAR2(20) NOT NULL)");
             System.out.println("Table Supplier created");
-            stmt.executeUpdate("CREATE TABLE Supplies(SupplierId INT, GName varchar2(20), BuyingDate DATE, PRIMARY KEY (SupplierId)," +
-                    "FOREIGN KEY(SupplierId) REFERENCES Supplier, FOREIGN KEY(GName, BuyingDate) REFERENCES Grocery(GName, BuyingDate))");
+            stmt.executeUpdate("CREATE TABLE Supplies(SupplierId INT, GName VARCHAR2(20), BuyingDate DATE, PRIMARY KEY (SupplierId))");
+//                                    "FOREIGN KEY(SupplierId) REFERENCES Supplier(SupplierId), FOREIGN KEY(GName, BuyingDate) REFERENCES Grocery(GName, BuyingDate))");
             System.out.println("Table Supplies created");
             stmt.executeUpdate("CREATE TABLE ShoppingList(GName CHAR(20), Amount INT NOT NULL, ListDate DATE, PRIMARY KEY (GName,ListDate))");
             System.out.println("Table ShoppingList created");
-//                    "FOREIGN KEY(UserId) REFERENCES User ON DELETE CASCADE, FOREIGN KEY(GName,ListDate) REFERENCES Grocery ON DELETE CASCADE);");
-            stmt.executeUpdate("CREATE TABLE Lists(GName CHAR(20), ListDate DATE, UseID INT, PRIMARY KEY (UseID, GName, ListDate), " +
-                    "FOREIGN KEY (GName,ListDate) REFERENCES ShoppingList ON DELETE CASCADE, FOREIGN KEY (UseID) REFERENCES Usage ON DELETE CASCADE)");
+            //                    "FOREIGN KEY(UserId) REFERENCES User ON DELETE CASCADE, FOREIGN KEY(GName,ListDate) REFERENCES Grocery ON DELETE CASCADE);");
+            stmt.executeUpdate("CREATE TABLE Lists(GName CHAR(20), ListDate DATE, UseID INT, PRIMARY KEY (UseID, GName, ListDate))");
             System.out.println("Table List created");
+//                                    "FOREIGN KEY (GName,ListDate) REFERENCES ShoppingList(GName, ListDate) ON DELETE CASCADE, FOREIGN KEY (UseID) REFERENCES Usage(UseID) ON DELETE CASCADE)");
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Error: create table error");
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage()+"Error: create table error");
         }
         User u1 = new User("Sam", "123", "23rd W Ave", 2341, "Vancouver", "V6S1H6");
         User u2 = new User("Lily", "234", "23rd W Ave", 2341, "Vancouver", "V6S1H6");
@@ -144,15 +141,14 @@ public class DatabaseConnect {
         }
     }
 
-    public boolean selectPassword(String name, String password) {
+    public boolean selectPassword(User user) {
         boolean result = false;
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT Password FROM Users WHERE UName = '" + name + "'");
-            if (rs.next()) {
-                String temp = rs.getString("Password");
-                System.out.println(temp);
-                result = (temp.equals(password));
+            ResultSet rs = stmt.executeQuery("SELECT Password FROM Users WHERE UName = '" + user.getName() + "'");
+            if(rs.next()) {
+                String truePassword = rs.getString("Password");
+                result = (user.getPassword().equals(truePassword));
             }
             rs.close();
             stmt.close();
@@ -163,33 +159,32 @@ public class DatabaseConnect {
         return result;
     }
 
-    public boolean changePassword(String UName, String newPassword, String confirmPassword) {
-        if (!newPassword.equals(confirmPassword)) {
-            System.out.println("confirmPassword should be same as newPassword.");
-            return false;
-        }
-        try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE Users SET Password = ? WHERE UName = ?");
-            ps.setString(1, newPassword);
-            ps.setString(2, UName);
-            int rowCount = ps.executeUpdate();
-            if (rowCount == 0) {
-                System.out.println(WARNING_TAG + " User does not exist!");
-                return false;
-            }
-            connection.commit();
-            ps.close();
-            return true;
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-        return false;
-    }
+//    public boolean changePassword(String UName, String newPassword, String confirmPassword) {
+//        if (!newPassword.equals(confirmPassword)) {
+//            System.out.println("confirmPassword should be same as newPassword.");
+//            return false;
+//        }
+//        try {
+//            PreparedStatement ps = connection.prepareStatement("UPDATE Users SET Password = ? WHERE UName = ?");
+//            ps.setString(1, newPassword);
+//            ps.setString(2, UName);
+//            int rowCount = ps.executeUpdate();
+//            if (rowCount == 0) {
+//                System.out.println(WARNING_TAG + " User does not exist!");
+//                return false;
+//            }
+//            connection.commit();
+//            ps.close();
+//            return true;
+//        } catch (SQLException e) {
+//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//            rollbackConnection();
+//        }
+//        return false;
+//    }
 
     public void insertUser(User user) {
         try {
-            //UserInfo(UName varchar2(20) PRIMARY KEY, Password varchar2(20), StreetName varchar2(20), HouseNumber INT DEFAULT 0, City varchar2(20), PostalCode varchar2(20), Certificate varchar2(20), Budget INT DEFAULT 0)");
             PreparedStatement stmt = connection.prepareStatement("INSERT INTO Users VALUES (?,?,?,?,?,?)");
             stmt.setString(1, user.getName());
             stmt.setString(2, user.getPassword());
@@ -207,17 +202,14 @@ public class DatabaseConnect {
     }
 
     public void insertRecipe(Recipe recipe) {
-        //Recipe(String name, String tea, int pearl, int jelly, int lemon, int orange, int calories)
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO Recipe VALUES (?,?,?,?,?,?)");
             statement.setString(1, recipe.getName());
-            //statement.setString(2, recipe.getTea());
             statement.setString(2, recipe.getKind());
             statement.setInt(3, recipe.getPearl());
             statement.setInt(4, recipe.getJelly());
             statement.setInt(5, recipe.getLemon());
             statement.setInt(6, recipe.getOrange());
-            //statement.setInt(8, recipe.getCalories());
             statement.executeUpdate();
             connection.commit();
             statement.close();
@@ -228,16 +220,12 @@ public class DatabaseConnect {
     }
 
     public void updateRecipe(Recipe recipe) {
-        //Recipe(String name, String tea, int pearl, int jelly, int lemon, int orange, int calories)
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE Recipe SET Pearl=?, Jelly=?, Lemon=?, Orange=? WHERE RName='" + recipe.getName() + "'");
-//            ps.setString(1, recipe.getTea());
-//            ps.setString(2, recipe.getKind());
             ps.setInt(1, recipe.getPearl());
             ps.setInt(2, recipe.getJelly());
             ps.setInt(3, recipe.getLemon());
             ps.setInt(4, recipe.getOrange());
-            //ps.setInt(5, recipe.getCalories());
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
@@ -254,52 +242,6 @@ public class DatabaseConnect {
     }
 
 //    public void deleteRecipe(String name) { }
-
-    public Recipe selectRecipeByRname(String rname) {
-        Recipe result = new Recipe();
-        try {
-            Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe WHERE RName = '" + rname + "'");
-            rs1.next();
-            result = new Recipe(rs1.getString("RName"),
-                    rs1.getString("Kind"),
-                    rs1.getInt("Pearl"),
-                    rs1.getInt("Jelly"),
-                    rs1.getInt("Lemon"),
-                    rs1.getInt("Orange")
-            );
-            rs1.close();
-            stmt1.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-        return result;
-    }
-
-    public Recipe[] selectRecipeByKind(String kind) {
-        ArrayList<Recipe> recipes = new ArrayList<>();
-        try {
-            Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe WHERE Kind=" + kind);
-            while (rs1.next()) {
-                Recipe temp = new Recipe(rs1.getString("name"),
-                        rs1.getString("Kind"),
-                        rs1.getInt("pearl"),
-                        rs1.getInt("jelly"),
-                        rs1.getInt("lemon"),
-                        rs1.getInt("orange")
-                );
-                recipes.add(temp);
-            }
-            rs1.close();
-            stmt1.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-        return recipes.toArray(new Recipe[recipes.size()]);
-    }
 
     public Recipe[] selectAllRecipe() {
         ArrayList<Recipe> recipes = new ArrayList<>();
@@ -325,52 +267,119 @@ public class DatabaseConnect {
         return recipes.toArray(new Recipe[recipes.size()]);
     }
 
-    public Recipe[] recipeInventor(String uName) {
+    public Recipe[] selectRecipeByKind(String kind) {
         ArrayList<Recipe> recipes = new ArrayList<>();
         try {
-            Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT r.RName, r.Kind, r.pearl, r.jelly, r.lemon, r.orange FROM Recipe r, Users u, MakeRecipe m WHERE m.RName = r.RName AND m.UName = u.UName AND u.UName = '" + uName + "'");
-
-            while (rs1.next()) {
-                Recipe temp = new Recipe(rs1.getString("RName"),
-                        rs1.getString("Kind"),
-                        rs1.getInt("Pearl"),
-                        rs1.getInt("Jelly"),
-                        rs1.getInt("Lemon"),
-                        rs1.getInt("Orange")
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Recipe");
+            while (rs.next()) {
+                Recipe temp = new Recipe(rs.getString("RName"),
+                        rs.getString("Kind"),
+                        rs.getInt("Pearl"),
+                        rs.getInt("Jelly"),
+                        rs.getInt("Lemon"),
+                        rs.getInt("Orange")
                 );
                 recipes.add(temp);
             }
-            rs1.close();
-            stmt1.close();
+            rs.close();
+            stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
         return recipes.toArray(new Recipe[recipes.size()]);
-
     }
 
-    public void makeBeverage(String name, Date today) {
-        Recipe recipeCandidate = selectRecipeByRname(name); //
-        deleteGroceryWithZero();
-        Object[] pearlStock = findEariliestGroceryAmount("Pearl");
-        Object[] jellyStock = findEariliestGroceryAmount("Jelly");
-        Object[] lemonStock = findEariliestGroceryAmount("Lemon");
-        Object[] orangeStock = findEariliestGroceryAmount("Orange");
+    public Recipe selectRecipeByRname(String rname) {
+        Recipe result = new Recipe();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Recipe WHERE RName = '" + rname + "'");
+            rs.next();
+            result = new Recipe(rs.getString("RName"),
+                    rs.getString("Kind"),
+                    rs.getInt("Pearl"),
+                    rs.getInt("Jelly"),
+                    rs.getInt("Lemon"),
+                    rs.getInt("Orange")
+            );
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return result;
+    }
 
-        if (!checkAddToList(recipeCandidate.getPearl(), (int) pearlStock[0], "Pearl", today) &&
-                !checkAddToList(recipeCandidate.getJelly(), (int) jellyStock[0], "Jelly", today) &&
-                !checkAddToList(recipeCandidate.getLemon(), (int) lemonStock[0], "Lemon", today) &&
-                !checkAddToList(recipeCandidate.getPearl(), (int) orangeStock[0], "Orange", today)) {
+    public Recipe[] selectRecipeByUname(String uname) {
+        ArrayList<Recipe> recipes = new ArrayList<>();
+        try {
+            Statement stmt1 = connection.createStatement();
+            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe r, Users u, MakeRecipe m WHERE m.RName = r.RName AND m.UName = u.UName AND u.UName = '" + uname + "'");
+            while (rs1.next()) {
+                recipes.add(new Recipe(
+                        rs1.getString("RName"),
+                        rs1.getString("Kind"),
+                        rs1.getInt("Pearl"),
+                        rs1.getInt("Jelly"),
+                        rs1.getInt("Lemon"),
+                        rs1.getInt("Orange")));
+            }
+            rs1.close();
+            stmt1.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Failed to select recipe by uname");
+            rollbackConnection();
+        }
+        return recipes.toArray(new Recipe[recipes.size()]);
+    }
+
+//    public Recipe[] selectRecipeByKind(String kind) {
+//        ArrayList<Recipe> recipes = new ArrayList<>();
+//        try {
+//            Statement stmt1 = connection.createStatement();
+//            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe WHERE Kind=" + kind);
+//            while (rs1.next()) {
+//                Recipe temp = new Recipe(rs1.getString("name"),
+//                        rs1.getString("Kind"),
+//                        rs1.getInt("pearl"),
+//                        rs1.getInt("jelly"),
+//                        rs1.getInt("lemon"),
+//                        rs1.getInt("orange")
+//                );
+//                recipes.add(temp);
+//            }
+//            rs1.close();
+//            stmt1.close();
+//        } catch (SQLException e) {
+//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//            rollbackConnection();
+//        }
+//        return recipes.toArray(new Recipe[recipes.size()]);
+//    }
+
+    public void makeRecipe(String name, Date today) {
+        Recipe recipe = selectRecipeByRname(name); //
+        deleteWithZero();
+        Object[] pearlStock = findEarliestAmount("Pearl");
+        Object[] jellyStock = findEarliestAmount("Jelly");
+        Object[] lemonStock = findEarliestAmount("Lemon");
+        Object[] orangeStock = findEarliestAmount("Orange");
+
+        if (!checkAddToList(recipe.getPearl(), (int) pearlStock[0], "Pearl", today) &&
+            !checkAddToList(recipe.getJelly(), (int) jellyStock[0], "Jelly", today) &&
+            !checkAddToList(recipe.getLemon(), (int) lemonStock[0], "Lemon", today) &&
+            !checkAddToList(recipe.getPearl(), (int) orangeStock[0], "Orange", today)) {
             //to Eric:
-            Grocery pearl = new Grocery("Pearl", (int) pearlStock[0] - recipeCandidate.getPearl(), 5, (Date) pearlStock[1]);
+            Grocery pearl = new Grocery("Pearl", (int) pearlStock[0] - recipe.getPearl(), 5, (Date) pearlStock[1]);
             updateGrocery(pearl);
-            Grocery jelly = new Grocery("Jelly", (int) pearlStock[0] - recipeCandidate.getJelly(), 5, (Date) jellyStock[1]);
+            Grocery jelly = new Grocery("Jelly", (int) pearlStock[0] - recipe.getJelly(), 5, (Date) jellyStock[1]);
             updateGrocery(jelly);
-            Grocery lemon = new Grocery("Lemon", (int) pearlStock[0] - recipeCandidate.getLemon(), 5, (Date) lemonStock[1]);
+            Grocery lemon = new Grocery("Lemon", (int) pearlStock[0] - recipe.getLemon(), 5, (Date) lemonStock[1]);
             updateGrocery(lemon);
-            Grocery orange = new Grocery("Orange", (int) pearlStock[0] - recipeCandidate.getOrange(), 5, (Date) orangeStock[1]);
+            Grocery orange = new Grocery("Orange", (int) pearlStock[0] - recipe.getOrange(), 5, (Date) orangeStock[1]);
             updateGrocery(orange);
             //insert usage --- daily report
             System.out.println("Success! Enjoy!");
@@ -379,26 +388,26 @@ public class DatabaseConnect {
         }
     }
 
-    public boolean checkAddToList(int needAmount, int haveAmount, String Gname, Date today) {
+    public boolean checkAddToList(int needAmount,int haveAmount, String Gname, Date today){
         boolean enough = false;
 //        if (needAmount <= haveAmount) {
 //            enough = true;
 //        } else {
 //            int shortAmount = needAmount - haveAmount;
 //            //to Eric
-//            //DailyReports temp = new DailyReports();
-//            ShoppingList[] glist = selectShoppingListsGrocery(Gname, today);
+//            DailyReports temp = new DailyReports();
+//            ShoppingList[] glist = temp.selectShoppingListsGrocery(Gname, today);
 //            if (glist.length == 0) {//today we have not buy this grocery yet
 //                ShoppingList list = new ShoppingList(Gname, shortAmount, today);
-//                insertShoppingList(list);
+//                temp.insertShoppingList(list);
 //            } else {//update today's existing
-//                updateShoppingList(today, Gname, shortAmount + glist[0].getAmount());
+//                temp.updateShoppingList(today, Gname, shortAmount + glist[0].getAmount());
 //            }
 //        }
         return enough;
     }
 
-    public void deleteGroceryWithZero() {
+    public void deleteWithZero() {
         //todo: delete all tuples with 0 amount
         try {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM Grocery WHERE amount = 0");
@@ -414,8 +423,8 @@ public class DatabaseConnect {
         }
     }
 
-    public Object[] findEariliestGroceryAmount(String name) { //return amount and date!!
-        int amount = 0;
+    public Object[] findEarliestAmount(String name){ //return amount and date!!
+        int amount=0;
         Date date = null;
         return new Object[]{amount, date};
     }
@@ -437,12 +446,11 @@ public class DatabaseConnect {
         }
     }
 
-    public void updateGrocery(Grocery grocery) {
-    }
+    public void updateGrocery(Grocery grocery) { }
 
-    public int sumGroceryAmount(String name) {
-        return 0;
-    }
+    public Grocery[] selectAllGrocery() { return new Grocery[0]; }
+
+    public int sumGroceryAmount(String name) { return 0; }
 
     public Grocery[] orderGroceryByDate() {
         return new Grocery[0];
@@ -452,36 +460,27 @@ public class DatabaseConnect {
         return new Grocery();
     }
 
-    public Grocery[] selectAllGrocery() {
-        return new Grocery[0];
-    }
+    public void insertUsage(String name, Date date) { }
 
-    public void insertUsage(String name, Date date) {
-    }
+    public void insertReport() { }
 
-    public DailyReport[] selectReportByGname(String gname) {
-        return new DailyReport[0];
-    }
+    public void updateReport() { }
 
-    public DailyReport[] selectReportWithEvery() {
-        return new DailyReport[0];
-    }
+    public DailyReport[] selectAllReport() { return new DailyReport[0]; }
 
-    public DailyReport[] selectAllReport() {
-        return new DailyReport[0];
-    }
+    public DailyReport[] selectReportByGname(String gname) { return new DailyReport[0]; }
 
-    public ShoppingList[] selectListByDate(Date date1, Date date2) {
-        return new ShoppingList[0];
-    }
+    public DailyReport[] selectReportWithEvery() { return new DailyReport[0]; }
 
-    public ShoppingList[] selectListByGname(String gname) {
-        return new ShoppingList[0];
-    }
+    public void insertList() { }
 
-    public ShoppingList[] selectAllList() {
-        return new ShoppingList[0];
-    }
+    public void updateList() { }
+
+    public ShoppingList[] selectAllList() { return new ShoppingList[0]; }
+
+    public ShoppingList[] selectListByDate(Date date1, Date date2) { return new ShoppingList[0]; }
+
+    public ShoppingList[] selectListByGname(String gname) { return new ShoppingList[0]; }
 
     private void rollbackConnection() {
         try {
@@ -508,87 +507,27 @@ public class DatabaseConnect {
             while (rs.next()) {
                 Statement stmt2 = connection.createStatement();
                 switch (rs.getString(1).toLowerCase()) {
-                    case "users": {
-                        stmt2.execute("DROP TABLE Users CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "recipe": {
-                        stmt2.execute("DROP TABLE Recipe CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "address": {
-                        stmt2.execute("DROP TABLE Address CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "grocery": {
-                        stmt2.execute("DROP TABLE Grocery CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "grocerydate": {
-                        stmt2.execute("DROP TABLE GroceryDate CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "makerecipe": {
-                        stmt2.execute("DROP TABLE MakeRecipe CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "buys": {
-                        stmt2.execute("DROP TABLE Buys CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "usage": {
-                        stmt2.execute("DROP TABLE Usage CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "generates": {
-                        stmt2.execute("DROP TABLE Generates CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "dailyreport": {
-                        stmt2.execute("DROP TABLE DailyReport CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "supplier": {
-                        stmt2.execute("DROP TABLE Supplier CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "supplies": {
-                        stmt2.execute("DROP TABLE Supplies CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "shoppinglist": {
-                        stmt2.execute("DROP TABLE ShoppingList CASCADE CONSTRAINTS");
-                        break;
-                    }
-                    case "lists": {
-                        stmt2.execute("DROP TABLE LISTS CASCADE CONSTRAINTS");
-                        break;
-                    }
+                    case "users": { stmt2.execute("DROP TABLE Users CASCADE CONSTRAINTS"); break; }
+                    case "recipe": { stmt2.execute("DROP TABLE Recipe CASCADE CONSTRAINTS"); break; }
+                    case "address": { stmt2.execute("DROP TABLE Address CASCADE CONSTRAINTS"); break; }
+                    case "grocery": { stmt2.execute("DROP TABLE Grocery CASCADE CONSTRAINTS"); break; }
+                    case "grocerydate": { stmt2.execute("DROP TABLE GroceryDate CASCADE CONSTRAINTS"); break; }
+                    case "makerecipe": { stmt2.execute("DROP TABLE MakeRecipe CASCADE CONSTRAINTS"); break; }
+                    case "buys": { stmt2.execute("DROP TABLE Buys CASCADE CONSTRAINTS"); break; }
+                    case "usage": { stmt2.execute("DROP TABLE Usage CASCADE CONSTRAINTS"); break; }
+                    case "generates": { stmt2.execute("DROP TABLE Generates CASCADE CONSTRAINTS"); break; }
+                    case "dailyreport": { stmt2.execute("DROP TABLE DailyReport CASCADE CONSTRAINTS"); break; }
+                    case "supplier": { stmt2.execute("DROP TABLE Supplier CASCADE CONSTRAINTS"); break; }
+                    case "supplies": { stmt2.execute("DROP TABLE Supplies CASCADE CONSTRAINTS"); break; }
+                    case "shoppinglist": { stmt2.execute("DROP TABLE ShoppingList CASCADE CONSTRAINTS"); break; }
+                    case "lists": { stmt2.execute("DROP TABLE LISTS CASCADE CONSTRAINTS"); break; }
                     default: System.out.println(rs.getString(1).toLowerCase());
                 }
                 stmt2.close();
             }
             rs.close();
-//            Statement stmt2 = connection.createStatement();
-//            stmt2.execute("DROP TABLE Users CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE Recipe CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE Address CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE Grocery CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE GroceryDate CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE MakeRecipe CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE Buys CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE Usage CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE Generates CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE DailyReport CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE Supplier CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE Supplies CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE ShoppingList CASCADE CONSTRAINTS");
-//            stmt2.execute("DROP TABLE LISTS CASCADE CONSTRAINTS");
-//            stmt2.close();
         } catch (SQLException e) {
-            //MainMenu.makeWarningDialog(EXCEPTION_TAG + " " + e.getMessage());
             System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "drop table error");
         }
     }
-
 }
