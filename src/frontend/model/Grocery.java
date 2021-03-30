@@ -15,12 +15,12 @@ public class Grocery {
         this.expiryDate = null;
     }
 
-    public Grocery(String name, int amount, int duration, Date buyingDate, Date expiryDate) {
+    public Grocery(String name, int amount, int duration, Date buyingDate) {
         this.name = name;
         this.amount = amount;
         this.duration = duration;
         this.buyingDate = buyingDate;
-        this.expiryDate = expiryDate;
+        this.expiryDate = ;//buyingDate + duration;
     }
 
     public String getName() { return name; }
