@@ -116,7 +116,7 @@ public class Teashop {
 
 	public static Grocery[] orderGroceryByDate() { return database.orderGroceryByDate(); }
 
-	public static int getGroceryAmountSum(String name) { return database.sumGroceryAmount(name); }
+	public static int getGrocerySum(String name) { return database.sumGroceryAmount(name); }
 
 	public static DailyReport[] getAllReport() { return database.selectAllReport(); }
 

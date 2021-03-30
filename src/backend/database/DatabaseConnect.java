@@ -30,14 +30,14 @@ public class DatabaseConnect {
         try {
             Statement stmt = connection.createStatement();
             stmt.executeUpdate("CREATE TABLE Users(UName varchar2(20) PRIMARY KEY, Password varchar2(20), StreetName varchar2(20), HouseNumber INT DEFAULT 0, City varchar2(20), " +
-                    "PostalCode varchar2(20), Certificate varchar2(20), Budget INT DEFAULT 0)");
+                    "PostalCode varchar2(20))");
             System.out.println("Table User created");
             stmt.executeUpdate("CREATE TABLE Recipe(RName varchar2(20) PRIMARY KEY, Kind varchar2(20), Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
             System.out.println("Table Recipe created");
             //                   "FOREIGN KEY(PostalCode) REFERENCES Address(PostalCode) ON DELETE CASCADE, FOREIGN KEY(StreetName) REFERENCES Address(StreetName) ON DELETE CASCADE, FOREIGN KEY(House#) REFERENCES Address(House#) ON DELETE CASCADE);");
             stmt.executeUpdate("CREATE TABLE Address(PostalCode varchar2(20),StreetName varchar2(20),House# INT, City varchar2(20), PRIMARY KEY(PostalCode, StreetName, House#))"); //no connection
             System.out.println("Table Address created");
-            stmt.executeUpdate("CREATE TABLE Grocery(GName VARCHAR2(20), Amount INT DEFAULT 0, BuyingDate DATE, PRIMARY KEY (GName,BuyingDate), Duration INT)");
+            stmt.executeUpdate("CREATE TABLE Grocery(GName VARCHAR2(20), Amount INT DEFAULT 0, BuyingDate DATE, PRIMARY KEY (GName,BuyingDate), Duration INT, ExpiryDate DATE)");
             stmt.executeUpdate("CREATE TABLE GroceryDate(BuyingDate DATE, Duration INT, ExpiryDate DATE, PRIMARY KEY(BuyingDate, Duration))");
             stmt.executeUpdate("CREATE TABLE Buys(UName VARCHAR2(20), GName VARCHAR2(20), BuyingDate DATE, PRIMARY KEY(UName, GName, BuyingDate), " +
                     "FOREIGN KEY(UName) REFERENCES Users, FOREIGN KEY(GName, BuyingDate) REFERENCES Grocery(GName, BuyingDate))");
@@ -62,11 +62,6 @@ public class DatabaseConnect {
             stmt.executeUpdate("CREATE TABLE Lists(GName CHAR(20), ListDate DATE, UseID INT, PRIMARY KEY (UseID, GName, ListDate), " +
                     "FOREIGN KEY (GName,ListDate) REFERENCES ShoppingList ON DELETE CASCADE, FOREIGN KEY (UseID) REFERENCES Usage ON DELETE CASCADE)");
             System.out.println("Table List created");
-//                    "FOREIGN KEY(SupplierId) REFERENCES Supplier, FOREIGN KEY(GName) REFERENCES Grocery(GName))");
-//            stmt.executeUpdate("CREATE TABLE ShoppingList(GName VARCHAR2(20), Amount INT NOT NULL, ListDate DATE, PRIMARY KEY (GName, ListDate)" +
-//                    "FOREIGN KEY(UName) REFERENCES Users ON DELETE CASCADE, FOREIGN KEY(GName) REFERENCES Grocery ON DELETE CASCADE);");
-//            stmt.executeUpdate("CREATE TABLE Lists(UseID INT, GName VARCHAR2(20), SListId INT, PRIMARY KEY (SListId, UseID, GName)," +
-//                    "FOREIGN KEY (SListId) REFERENCES ShoppingList ON DELETE CASCADE, FOREIGN KEY (GName) REFERENCES Grocery ON DELETE CASCADE, FOREIGN KEY (UseId) REFERENCES Usage ON DELETE CASCADE);");
             stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Error: create table error");
@@ -83,9 +78,10 @@ public class DatabaseConnect {
         insertSupplier(1, "Coco");
         DailyReport d1 = new DailyReport("2021-03-28", 20, 0, 0, 0);
         insertDailReport(d1);
-        Grocery g1 = new Grocery("Pearl", 0, 20, Date.valueOf("2021-03-29"),Date.valueOf("xxxx-xx-xx")); //天的运算
+        Grocery g1 = new Grocery("Pearl", 0, 20, Date.valueOf("2021-03-29")); //天的运算
         insertGrocery(g1);
-        Grocery g2 = new Grocery("Pearl", 50, 20, Date.valueOf("2021-03-30"),Date.valueOf("xxxx-xx-xx"));
+        System.out.println("123412123");
+        Grocery g2 = new Grocery("Pearl", 50, 20, Date.valueOf("2021-03-30"));
         insertGrocery(g2);
     }
 
@@ -201,8 +197,6 @@ public class DatabaseConnect {
             stmt.setInt(4, user.getHouseNumber());
             stmt.setString(5, user.getCity());
             stmt.setString(6, user.getCode());
-//            stmt.setString(7, user.getCertificate());
-//            stmt.setInt(8, user.getBudget());
             stmt.executeUpdate();
             connection.commit();
             stmt.close();
@@ -335,7 +329,7 @@ public class DatabaseConnect {
         ArrayList<Recipe> recipes = new ArrayList<>();
         try {
             Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT r.RName, r.Kind, r.Tea, r.pearl, r.jelly, r.lemon, r.orange, r.calories FROM Recipe r, Users u, MakeRecipe m WHERE m.RName = r.RName AND m.UName = u.UName AND u.UName = '" + uName + "'");
+            ResultSet rs1 = stmt1.executeQuery("SELECT r.RName, r.Kind, r.pearl, r.jelly, r.lemon, r.orange FROM Recipe r, Users u, MakeRecipe m WHERE m.RName = r.RName AND m.UName = u.UName AND u.UName = '" + uName + "'");
 
             while (rs1.next()) {
                 Recipe temp = new Recipe(rs1.getString("RName"),
@@ -370,7 +364,7 @@ public class DatabaseConnect {
                 !checkAddToList(recipeCandidate.getLemon(), (int) lemonStock[0], "Lemon", today) &&
                 !checkAddToList(recipeCandidate.getPearl(), (int) orangeStock[0], "Orange", today)) {
             //to Eric:
-            Grocery pearl = new Grocery("Pearl", (int) pearlStock[0] - recipeCandidate.getPearl(), 5, (Date) pearlStock[1],);
+            Grocery pearl = new Grocery("Pearl", (int) pearlStock[0] - recipeCandidate.getPearl(), 5, (Date) pearlStock[1]);
             updateGrocery(pearl);
             Grocery jelly = new Grocery("Jelly", (int) pearlStock[0] - recipeCandidate.getJelly(), 5, (Date) jellyStock[1]);
             updateGrocery(jelly);
@@ -387,20 +381,20 @@ public class DatabaseConnect {
 
     public boolean checkAddToList(int needAmount, int haveAmount, String Gname, Date today) {
         boolean enough = false;
-        if (needAmount <= haveAmount) {
-            enough = true;
-        } else {
-            int shortAmount = needAmount - haveAmount;
-            //to Eric
-            DailyReports temp = new DailyReports();
-            ShoppingList[] glist = temp.selectShoppingListsGrocery(Gname, today);
-            if (glist.length == 0) {//today we have not buy this grocery yet
-                ShoppingList list = new ShoppingList(Gname, shortAmount, today);
-                temp.insertShoppingList(list);
-            } else {//update today's existing
-                temp.updateShoppingList(today, Gname, shortAmount + glist[0].getAmount());
-            }
-        }
+//        if (needAmount <= haveAmount) {
+//            enough = true;
+//        } else {
+//            int shortAmount = needAmount - haveAmount;
+//            //to Eric
+//            //DailyReports temp = new DailyReports();
+//            ShoppingList[] glist = selectShoppingListsGrocery(Gname, today);
+//            if (glist.length == 0) {//today we have not buy this grocery yet
+//                ShoppingList list = new ShoppingList(Gname, shortAmount, today);
+//                insertShoppingList(list);
+//            } else {//update today's existing
+//                updateShoppingList(today, Gname, shortAmount + glist[0].getAmount());
+//            }
+//        }
         return enough;
     }
 
@@ -428,11 +422,12 @@ public class DatabaseConnect {
 
     public void insertGrocery(Grocery grocery) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO Grocery VALUES (?,?,?,?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO Grocery VALUES (?,?,?,?,?)");
             statement.setString(1, grocery.getName());
             statement.setInt(2, grocery.getAmount());
             statement.setDate(3, grocery.getBuyingDate());
             statement.setInt(4, grocery.getDuration());
+            statement.setDate(5, grocery.getExpiryDate());
             statement.executeUpdate();
             connection.commit();
             statement.close();
