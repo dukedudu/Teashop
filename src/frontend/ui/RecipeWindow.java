@@ -2,7 +2,6 @@ package frontend.ui;
 
 import frontend.controller.Teashop;
 import frontend.model.Recipe;
-import frontend.model.User;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -13,7 +12,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class RecipeWindow extends JFrame implements ActionListener, MouseListener, ChangeListener {
-    private static User user;
     private JSplitPane panel;
     private JPanel panel_left, panel_right;
     private GridBagLayout layout_left, layout_right;
@@ -23,21 +21,19 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     private JTableHeader header;
     private DefaultTableModel model_recipe;
     private JTextField field;
-    private JLabel label_name, label_pearl, label_jelly, label_lemon, label_orange, label_kind;
-    private JSpinner spin_pearl, spin_jelly, spin_lemon, spin_orange, spin_kind;
-    private SpinnerNumberModel model_pearl, model_jelly, model_lemon, model_orange;
+    private JLabel label_kind, label_name, label_pearl, label_jelly, label_lemon, label_orange;
+    private JSpinner spin_kind, spin_pearl, spin_jelly, spin_lemon, spin_orange;
     private SpinnerListModel model_kind;
-    private JButton button_make, button_my, button_add, button_update, button_delete;
+    private SpinnerNumberModel model_pearl, model_jelly, model_lemon, model_orange;
+    private JButton button_make, button_my, button_add, button_update;
 
-    private String[] columns = {"Rname", "Uname", "Calories"};
-    //private Object[][] recipes = {{"Red tea", "Sam", 0}, {"Green tea", "Lily", 0}, {"Bubble tea", "Lily", 100}, {"Lemon tea", "Sam", 50}};
-    private String[] teas = {"Red tea", "Green tea"};
+    private String[] columns = {"Rname", "Pearl", "Jelly", "Lemon", "Orange"};
     private String[] kinds = {"Milk tea", "Fruit tea"};
     private Object[][] recipes = {};
+
     public RecipeWindow() { super("Recipe"); }
 
     public void showFrame() {
-//        user =
         listRecipe(Teashop.getAllRecipe());
         panel = new JSplitPane();
         panel_left = new JPanel();
@@ -56,21 +52,18 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         header.addMouseListener(this);
         table.setRowSelectionAllowed(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        label_kind = new JLabel("Kind: ");
-        model_kind = new SpinnerListModel(kinds);
-        spin_kind = new JSpinner(model_kind);
         button_make = new JButton("Make This");
         button_my = new JButton("My Recipes");
 
         label_name = new JLabel("Name: ");
         field = new JTextField(10);
-//        model_tea = new SpinnerListModel(teas);
-//        label_tea = new JLabel("Tea: ");
-//        spin_tea = new JSpinner(model_tea);
+        model_kind = new SpinnerListModel(kinds);
         model_pearl = new SpinnerNumberModel(0, 0, 50, 1);
         model_jelly = new SpinnerNumberModel(0, 0, 50, 1);
         model_lemon = new SpinnerNumberModel(0, 0, 50, 1);
         model_orange = new SpinnerNumberModel(0, 0, 50, 1);
+        label_kind = new JLabel("Kind: ");
+        spin_kind = new JSpinner(model_kind);
         label_pearl = new JLabel("Pearl: ");
         spin_pearl = new JSpinner(model_pearl);
         label_jelly = new JLabel("Jelly: ");
@@ -81,7 +74,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         spin_orange = new JSpinner(model_orange);
         button_add = new JButton("Add");
         button_update = new JButton("Update");
-//        button_delete = new JButton("Delete");
 
         panel_left.setLayout(layout_left);
         panel_left.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
@@ -122,16 +114,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         constraints.insets = new Insets(5, 0, 5, 10);
         layout_right.setConstraints(field, constraints);
         panel_right.add(field);
-
-//        constraints.gridwidth = GridBagConstraints.RELATIVE;
-//        constraints.insets = new Insets(5, 10, 5, 0);
-//        layout_right.setConstraints(label_tea, constraints);
-//        panel_right.add(label_tea);
-//
-//        constraints.gridwidth = GridBagConstraints.REMAINDER;
-//        constraints.insets = new Insets(5, 10, 5, 0);
-//        layout_right.setConstraints(spin_tea, constraints);
-//        panel_right.add(spin_tea);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
@@ -183,27 +165,16 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         layout_right.setConstraints(button_update, constraints);
         panel_right.add(button_update);
 
-//        constraints.gridwidth = GridBagConstraints.REMAINDER;
-//        constraints.insets = new Insets(5, 10, 5, 0);
-//        layout_right.setConstraints(button_delete, constraints);
-//        panel_right.add(button_delete);
-
-        //listAllRecipe(Teashop.getAllRecipe());
-//        model_recipe.addTableModelListener(this);
-//        spin_tea.addChangeListener(this);
-
         spin_pearl.addChangeListener(this);
         spin_jelly.addChangeListener(this);
         spin_lemon.addChangeListener(this);
         spin_orange.addChangeListener(this);
-
 
         table.addMouseListener(this);
         button_make.addActionListener(this);
         spin_kind.addChangeListener(this);
         button_add.addActionListener(this);
         button_update.addActionListener(this);
-//        button_delete.addActionListener(this);
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -218,7 +189,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     private void listRecipe(Recipe[] data) {
         recipes = new Object[data.length][2];
         for (int i = 0; i < data.length; i++) {
-            recipes[i] = new Object[]{data[i].getName(), data[i].getCalories()};
+            recipes[i] = new Object[]{data[i].getName(), data[i].getPearl(), data[i].getJelly(), data[i].getLemon(), data[i].getOrange()};
         }
     }
 
@@ -228,7 +199,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         Recipe recipe = Teashop.getRecipeByName(name);
         field.setText(recipe.getName());
         field.disable();
-//        spin_tea.setValue(recipe.getTea());
         spin_pearl.setValue(recipe.getPearl());
         spin_jelly.setValue(recipe.getJelly());
         spin_lemon.setValue(recipe.getLemon());
@@ -245,7 +215,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     public void actionPerformed(ActionEvent event) {
         Recipe recipe = new Recipe();
         recipe.setName(field.getText());
-//        recipe.setTea((String)spin_tea.getValue());
         recipe.setPearl((int)spin_pearl.getValue());
         recipe.setJelly((int)spin_jelly.getValue());
         recipe.setLemon((int)spin_lemon.getValue());
@@ -255,7 +224,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
             Teashop.makeRecipe(recipe.getName());
         }
         else if (event.getSource() == button_my) {
-            listRecipe(Teashop.getMyRecipe(user.getName()));
+//            listRecipe(Teashop.getMyRecipe(user.getName()));
         }
         else if (event.getSource() == button_add) {
             Teashop.addRecipe(recipe);
@@ -263,9 +232,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         else {
             Teashop.updateRecipe(recipe);
         }
-//        else if (event.getSource() == button_delete){
-//            Teashop.deleteRecipe(recipe.getName());
-//        }
     }
 
     @Override

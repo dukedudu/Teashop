@@ -28,10 +28,9 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
 
     private String[] columns_report = {"Date", "Pearl", "Jelly", "Lemon", "Orange"};
     private String[] columns_list = {"Date", "Name", "Amount"};
-    private Date date = new Date(new java.util.Date().getTime());
-    private Object[][] reports = {{date, 100, 100, 50, 50}, {date, 200, 100, 100, 50}, {date, 100, 200, 50, 100}, {date, 100, 100, 50, 0}};
-    private Object[][] lists = {{date, "Pearl", 100}, {date, "Jelly", 50}, {date, "Lemon", 100}, {date, "Orange", 50}};
     private String[] names = {"Pearl", "Jelly", "Lemon", "Orange"};
+    private Object[][] reports = {};
+    private Object[][] lists = {};
 
     public ReportListWindow() { super("Daily Report & Shopping List"); }
 

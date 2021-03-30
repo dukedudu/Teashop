@@ -23,21 +23,11 @@ public class DailyReport {
 
     public Date getDate() { return date; }
 
-    public void setDate(String date) { this.date = Date.valueOf(date); }
-
     public int getPearl() { return pearl; }
-
-    public void setPearl(int pearl) { this.pearl = pearl; }
 
     public int getJelly() { return jelly; }
 
-    public void setJelly(int jelly) { this.jelly = jelly; }
-
     public int getLemon() { return lemon; }
 
-    public void setLemon(int lemon) { this.lemon = lemon; }
-
     public int getOrange() { return orange; }
-
-    public void setOrange(int orange) { this.orange = orange; }
 }
