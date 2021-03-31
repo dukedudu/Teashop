@@ -1,5 +1,5 @@
 package frontend.model;
-
+import java.util.Calendar;
 import java.sql.Date;
 
 public class Grocery {
@@ -15,14 +15,26 @@ public class Grocery {
         this.expiryDate = null;
     }
 
-    public Grocery(String name, int amount, int duration, Date buyingDate, Date expiryDate) {
+    public Grocery(String name, int amount, int duration, Date buyingDate) {
         this.name = name;
         this.amount = amount;
         this.duration = duration;
         this.buyingDate = buyingDate;
-        this.expiryDate = expiryDate;
+        this.expiryDate = addDays(buyingDate,duration);//buyingDate + duration;
+    }
+    public static Date addDays(Date date, int days) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, days);
+        return new Date(c.getTimeInMillis());
     }
 
+    public static Date subtractDays(Date date, int days) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, -days);
+        return new Date(c.getTimeInMillis());
+    }
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }

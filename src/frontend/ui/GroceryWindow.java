@@ -81,7 +81,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         panel_left.add(table);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(5, 10, 5, 0);
+        constraints.insets = new Insets(5, 80, 5, 0);
         layout_left.setConstraints(button_amount, constraints);
         panel_left.add(button_amount);
 
@@ -131,7 +131,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         panel_right.add(spin_duration);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(5, 10, 5, 0);
+        constraints.insets = new Insets(5, 20, 5, 0);
         layout_right.setConstraints(button_add, constraints);
         panel_right.add(button_add);
 
@@ -165,6 +165,8 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         for (int i = 0; i < data.length; i++) {
             groceries[i] = new Object[]{data[i].getName(), data[i].getAmount(), data[i].getBuyingDate(), data[i].getDuration(), data[i].getExpiryDate()};
         }
+        model_grocery.setDataVector(groceries, columns);
+        model_grocery.fireTableDataChanged();
     }
 
     @Override

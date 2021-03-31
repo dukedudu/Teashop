@@ -2,10 +2,12 @@ package frontend.ui;
 
 import frontend.controller.Teashop;
 import frontend.model.Recipe;
+import frontend.model.User;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
@@ -34,7 +36,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     public RecipeWindow() { super("Recipe"); }
 
     public void showFrame() {
-        listRecipe(Teashop.getAllRecipe());
         panel = new JSplitPane();
         panel_left = new JPanel();
         panel_right = new JPanel();
@@ -86,17 +87,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         panel_left.add(table);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(5, 10, 5, 0);
-        layout_left.setConstraints(label_kind, constraints);
-        panel_left.add(label_kind);
-
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.insets = new Insets(5, 10, 5, 0);
-        layout_left.setConstraints(spin_kind, constraints);
-        panel_left.add(spin_kind);
-
-        constraints.gridwidth = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(5, 10, 5, 0);
+        constraints.insets = new Insets(5, 80, 5, 0);
         layout_left.setConstraints(button_make, constraints);
         panel_left.add(button_make);
 
@@ -114,6 +105,16 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         constraints.insets = new Insets(5, 0, 5, 10);
         layout_right.setConstraints(field, constraints);
         panel_right.add(field);
+
+//        constraints.gridwidth = GridBagConstraints.RELATIVE;
+//        constraints.insets = new Insets(5, 10, 5, 0);
+//        layout_right.setConstraints(label_kind, constraints);
+//        panel_right.add(label_kind);
+//
+//        constraints.gridwidth = GridBagConstraints.REMAINDER;
+//        constraints.insets = new Insets(5, 10, 5, 0);
+//        layout_right.setConstraints(spin_kind, constraints);
+//        panel_right.add(spin_kind);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
@@ -156,7 +157,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         panel_right.add(spin_orange);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(5, 10, 5, 0);
+        constraints.insets = new Insets(5, 20, 5, 0);
         layout_right.setConstraints(button_add, constraints);
         panel_right.add(button_add);
 
@@ -165,14 +166,16 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         layout_right.setConstraints(button_update, constraints);
         panel_right.add(button_update);
 
+        listRecipe(Teashop.getAllRecipe());
+        table.addMouseListener(this);
+        button_make.addActionListener(this);
+        button_my.addActionListener(this);
+
         spin_pearl.addChangeListener(this);
         spin_jelly.addChangeListener(this);
         spin_lemon.addChangeListener(this);
         spin_orange.addChangeListener(this);
-
-        table.addMouseListener(this);
-        button_make.addActionListener(this);
-        spin_kind.addChangeListener(this);
+//        spin_kind.addChangeListener(this);
         button_add.addActionListener(this);
         button_update.addActionListener(this);
 
@@ -187,10 +190,12 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     }
 
     private void listRecipe(Recipe[] data) {
-        recipes = new Object[data.length][2];
+        recipes = new Object[data.length][5];
         for (int i = 0; i < data.length; i++) {
             recipes[i] = new Object[]{data[i].getName(), data[i].getPearl(), data[i].getJelly(), data[i].getLemon(), data[i].getOrange()};
         }
+        model_recipe.setDataVector(recipes, columns);
+        model_recipe.fireTableDataChanged();
     }
 
     @Override
@@ -224,13 +229,17 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
             Teashop.makeRecipe(recipe.getName());
         }
         else if (event.getSource() == button_my) {
-//            listRecipe(Teashop.getMyRecipe(user.getName()));
+            User user = LoginWindow.getUser();
+            listRecipe(Teashop.getMyRecipe(user.getName()));
+//            System.out.println("Recipe: " + Teashop.getMyRecipe(user.getName())[0].getName());
         }
         else if (event.getSource() == button_add) {
             Teashop.addRecipe(recipe);
+            listRecipe(Teashop.getAllRecipe());
         }
         else {
             Teashop.updateRecipe(recipe);
+            listRecipe(Teashop.getAllRecipe());
         }
     }
 

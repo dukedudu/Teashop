@@ -17,8 +17,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import frontend.controller.Teashop;
+import frontend.model.User;
 
 public class LoginWindow extends JFrame implements ActionListener {
+	public static User user;
 	private JPanel panel;
 	private GridBagLayout layout;
 	private GridBagConstraints constraints;
@@ -33,6 +35,7 @@ public class LoginWindow extends JFrame implements ActionListener {
 	}
 
 	public void showFrame() {
+		user = new User();
 		panel = new JPanel();
 		this.setContentPane(panel);
 		layout = new GridBagLayout();
@@ -96,9 +99,9 @@ public class LoginWindow extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == button_login) {
-			name = field_name.getText();
-			password = String.valueOf(field_pwd.getPassword());
-			Teashop.login(name, password, field_pwd);
+			user.setName(field_name.getText());
+			user.setPassword(String.valueOf(field_pwd.getPassword()));
+			Teashop.login(user, field_pwd);
 		}
 		else {
 			this.dispose();
@@ -106,4 +109,6 @@ public class LoginWindow extends JFrame implements ActionListener {
 			registerWindow.showFrame();
 		}
 	}
+
+	public static User getUser() { return user; }
 }
