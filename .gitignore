@@ -1,9 +1,5 @@
-/.idea
-/.settings
 /out
-.classpath
-.project
 *.iml
 *.xml
-*.class
-/bin
+*.meta
+*.prefs
