@@ -11,7 +11,6 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Date;
-import java.util.Arrays;
 
 public class GroceryWindow extends JFrame implements ActionListener, MouseListener, ChangeListener {
     private JSplitPane panel;
@@ -75,6 +74,11 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         panel_left.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         panel_right.setLayout(layout_right);
         panel_right.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 0, 0);
+        layout_left.setConstraints(header, constraints);
+        panel_left.add(header);
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.insets = new Insets(5, 10, 5, 0);
@@ -208,9 +212,6 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
     }
 
     @Override
-    public void stateChanged(ChangeEvent e) { }
-
-    @Override
     public void mousePressed(MouseEvent e) { }
 
     @Override
@@ -221,4 +222,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
 
     @Override
     public void mouseExited(MouseEvent e) { }
+
+    @Override
+    public void stateChanged(ChangeEvent e) { }
 }

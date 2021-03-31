@@ -23,13 +23,13 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     private JTableHeader header;
     private DefaultTableModel model_recipe;
     private JTextField field;
-    private JLabel label_kind, label_name, label_pearl, label_jelly, label_lemon, label_orange;
+    private JLabel label_name, label_pearl, label_jelly, label_lemon, label_orange;
     private JSpinner spin_pearl, spin_jelly, spin_lemon, spin_orange;
     private SpinnerNumberModel model_pearl, model_jelly, model_lemon, model_orange;
     private JButton button_make, button_my, button_add, button_update;
 
+    private String[] windows = {"Recipe", "Grocery", "Reports"};
     private String[] columns = {"Name", "Pearl", "Jelly", "Lemon", "Orange"};
-    private String[] kinds = {"Milk tea", "Fruit tea"};
     private Object[][] recipes = {};
 
     public RecipeWindow() { super("Recipe"); }
@@ -54,7 +54,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         button_make = new JButton("Make This");
         button_my = new JButton("My Recipes");
-        label_kind = new JLabel("Recommended Kind: ");
 
         label_name = new JLabel("Name: ");
         field = new JTextField(10);
@@ -79,6 +78,11 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         panel_right.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 0, 0);
+        layout_left.setConstraints(header, constraints);
+        panel_left.add(header);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.insets = new Insets(5, 10, 5, 0);
         layout_left.setConstraints(table, constraints);
         panel_left.add(table);
@@ -92,11 +96,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         constraints.insets = new Insets(5, 10, 5, 0);
         layout_left.setConstraints(button_my, constraints);
         panel_left.add(button_my);
-
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.insets = new Insets(5, 10, 5, 0);
-        layout_left.setConstraints(label_kind, constraints);
-        panel_left.add(label_kind);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
@@ -203,11 +202,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     }
 
     @Override
-    public void stateChanged(ChangeEvent event) {
-        //add kind recommendation
-    }
-
-    @Override
     public void actionPerformed(ActionEvent event) {
         Recipe recipe = new Recipe();
         recipe.setName(field.getText());
@@ -245,4 +239,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
 
     @Override
     public void mouseExited(MouseEvent e) { }
+
+    @Override
+    public void stateChanged(ChangeEvent e) { }
 }

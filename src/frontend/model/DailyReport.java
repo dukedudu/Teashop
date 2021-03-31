@@ -13,8 +13,8 @@ public class DailyReport {
         this.orange = 0;
     }
 
-    public DailyReport(String date, int pearl, int jelly, int lemon, int orange) {
-        this.date = Date.valueOf(date);
+    public DailyReport(Date date, int pearl, int jelly, int lemon, int orange) {
+        this.date = date;
         this.pearl = pearl;
         this.jelly = jelly;
         this.lemon = lemon;
