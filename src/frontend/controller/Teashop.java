@@ -7,7 +7,7 @@ import frontend.ui.*;
 import javax.swing.*;
 import java.sql.Date;
 
-//ssh -l eric369 -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
+//ssh -l sunjingy -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
 
 public class Teashop {
 	public static User user = null;
@@ -22,17 +22,18 @@ public class Teashop {
 		database = new DatabaseConnect();
 		database.databaseConnect();
 		database.setup();
-		loginWindow = new LoginWindow();
-		loginWindow.showFrame();
-		registerWindow = new RegisterWindow();
+//		loginWindow = new LoginWindow();
+//		loginWindow.showFrame();
+//		registerWindow = new RegisterWindow();
 //		registerWindow.showFrame();
 		recipeWindow = new RecipeWindow();
-//		recipeWindow.showFrame();
+		recipeWindow.showFrame();
 //		groceryWindow = new GroceryWindow();
 //		groceryWindow.showFrame();
 //		reportListWindow = new ReportListWindow();
 //		reportListWindow.showFrame();
 	}
+
 	public void test(){
 		database = new DatabaseConnect();
 		database.databaseConnect();
@@ -78,21 +79,22 @@ public class Teashop {
 		database.insertGrocery(g3);
 		Grocery g4 = new Grocery("Lemon",200,20,Date.valueOf("2021-06-11"));
 		database.insertGrocery(g4);
-		System.out.println("Expected 2021-03-30, Actual "
-				+Grocery.subtractDays(database.findEarliestAmount("Pearl").getExpiryDate(),database.findEarliestAmount("Pearl").getDuration()));
-		System.out.println("Expected 2021-01-11, Actual "
-				+Grocery.subtractDays(database.findEarliestAmount("Jelly").getExpiryDate(),database.findEarliestAmount("Jelly").getDuration()));
-		System.out.println("Expected 2021-03-11, Actual "
-				+Grocery.subtractDays(database.findEarliestAmount("Orange").getExpiryDate(),database.findEarliestAmount("Orange").getDuration()));
-		System.out.println("Expected 2021-06-11, Actual "
-				+Grocery.subtractDays(database.findEarliestAmount("Lemon").getExpiryDate(),database.findEarliestAmount("Lemon").getDuration()));
+//		System.out.println("Expected 2021-03-30, Actual "
+//				+Grocery.subtractDays(database.findEarliestAmount("Pearl").getExpiryDate(),database.findEarliestAmount("Pearl").getDuration()));
+//		System.out.println("Expected 2021-01-11, Actual "
+//				+Grocery.subtractDays(database.findEarliestAmount("Jelly").getExpiryDate(),database.findEarliestAmount("Jelly").getDuration()));
+//		System.out.println("Expected 2021-03-11, Actual "
+//				+Grocery.subtractDays(database.findEarliestAmount("Orange").getExpiryDate(),database.findEarliestAmount("Orange").getDuration()));
+//		System.out.println("Expected 2021-06-11, Actual "
+//				+Grocery.subtractDays(database.findEarliestAmount("Lemon").getExpiryDate(),database.findEarliestAmount("Lemon").getDuration()));
 
 		System.out.println("test 8: grocery sum");
 		database.sumGroceryAmount("Pearl");
 
 		System.out.println("test 9: nested aggr");
-		database.bestMix("Pearl");
+		System.out.println(database.recommendKind("Pearl"));
 	}
+
 	public static void register(User user) {
 		database.insertUser(user);
 		registerWindow.dispose();
@@ -116,25 +118,27 @@ public class Teashop {
 
 	public static Recipe[] getAllRecipe() { return database.selectAllRecipe(); }
 
-	public static void makeRecipe(String name) { database.insertUsage(name, new Date(0));}
+	public static void makeRecipe(Recipe recipe, Date date) { database.insertUsage(recipe, date);}
 
 	public static Recipe[] getMyRecipe(String name) { return database.selectRecipeByUname(name);}//database.selectRecipeByUname(name); }
 
 	public static Recipe getRecipeByName(String name) { return database.selectRecipeByRname(name); }
 
-	public static Recipe[] getRecipeByKind(String kind) { return database.selectRecipeByKind(kind); }
+//	public static Recipe[] getRecipeByKind(String kind) { return database.selectRecipeByKind(kind); }
+
+	public static String getRecommendedKind(String gname) { return database.recommendKind(gname); }
 
 	public static void addGrocery(Grocery grocery) { database.insertGrocery(grocery); }
 
 	public static void updateGrocery(Grocery grocery) { database.updateGrocery(grocery); }
 
-	public static Grocery getGrocery(String name) { return database.selectGrocery(name,Date.valueOf("xxxx-xx-xx")); }
+	public static Grocery getGrocery(String name, Date date) { return database.selectGrocery(name, date); }
 
 	public static Grocery[] getAllGrocery() { return database.selectAllGrocery(); }
 
 	public static Grocery[] orderGroceryByDate() { return database.orderGroceryByDate(); }
 
-	public static int getGrocerySum(String name) { return database.sumGroceryAmount(name); }
+	public static Grocery[] getGrocerySum(String name) { return database.sumGroceryAmount(name); }
 
 	public static DailyReport[] getAllReport() { return database.selectAllReport(); }
 
@@ -152,7 +156,7 @@ public class Teashop {
 
 	public static void main(String args[]) {
 		Teashop teashop = new Teashop();
-		//teashop.start();
-		teashop.test();
+		teashop.start();
+//		teashop.test();
 	}
 }

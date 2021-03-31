@@ -11,6 +11,7 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Date;
+import java.util.Arrays;
 
 public class GroceryWindow extends JFrame implements ActionListener, MouseListener, ChangeListener {
     private JSplitPane panel;
@@ -55,7 +56,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         button_amount = new JButton("By Amount");
         button_date = new JButton("By Date");
 
-        label_name = new JLabel("Kind: ");
+        label_name = new JLabel("Name: ");
         model_name = new SpinnerListModel(names);
         spin_name = new JSpinner(model_name);
         label_amount = new JLabel("Amount: ");
@@ -161,7 +162,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
     }
 
     private void listGrocery(Grocery[] data) {
-        groceries = new Object[0][0];
+        groceries = new Object[data.length][0];
         for (int i = 0; i < data.length; i++) {
             groceries[i] = new Object[]{data[i].getName(), data[i].getAmount(), data[i].getBuyingDate(), data[i].getDuration(), data[i].getExpiryDate()};
         }
@@ -172,7 +173,8 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
     @Override
     public void mouseClicked(MouseEvent event) {
         String name = (String)groceries[table.getSelectedRow()][0];
-        Grocery grocery = Teashop.getGrocery(name);
+        Date date = (Date)groceries[table.getSelectedRow()][2];
+        Grocery grocery = Teashop.getGrocery(name, date);
         spin_name.setValue(grocery.getName());
         spin_amount.setValue(grocery.getAmount());
         spin_date.setValue(grocery.getBuyingDate());
@@ -184,24 +186,24 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         Grocery grocery = new Grocery();
         grocery.setName((String)spin_name.getValue());
         grocery.setAmount((int)spin_amount.getValue());
-        grocery.setBuyingDate((Date)spin_date.getValue());
+        java.util.Date date = (java.util.Date)spin_date.getValue();
+        grocery.setBuyingDate(new Date(date.getTime()));
         grocery.setDuration((int)spin_duration.getValue());
 
-        if (event.getSource() == button_add) {
-            Teashop.addGrocery(grocery);
-        }
-        else if (event.getSource() == button_update) {
-            Teashop.updateGrocery(grocery);
-        }
-        else if (event.getSource() == button_date) {
+        if (event.getSource() == button_date) {
             listGrocery(Teashop.orderGroceryByDate());
         }
         else if (event.getSource() == button_amount) {
-            String name = (String)spin_amount.getValue();
-            Teashop.getGrocerySum(name);
+            String name = (String)spin_name.getValue();
+            listGrocery(Teashop.getGrocerySum(name));
+        }
+        else if (event.getSource() == button_add) {
+            Teashop.addGrocery(grocery);
+            listGrocery(Teashop.getAllGrocery());
         }
         else {
-
+            Teashop.updateGrocery(grocery);
+            listGrocery(Teashop.getAllGrocery());
         }
     }
 

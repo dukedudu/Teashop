@@ -7,11 +7,11 @@ import frontend.model.User;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.synth.SynthTextAreaUI;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Date;
 
 public class RecipeWindow extends JFrame implements ActionListener, MouseListener, ChangeListener {
     private JSplitPane panel;
@@ -24,12 +24,11 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     private DefaultTableModel model_recipe;
     private JTextField field;
     private JLabel label_kind, label_name, label_pearl, label_jelly, label_lemon, label_orange;
-    private JSpinner spin_kind, spin_pearl, spin_jelly, spin_lemon, spin_orange;
-    private SpinnerListModel model_kind;
+    private JSpinner spin_pearl, spin_jelly, spin_lemon, spin_orange;
     private SpinnerNumberModel model_pearl, model_jelly, model_lemon, model_orange;
     private JButton button_make, button_my, button_add, button_update;
 
-    private String[] columns = {"Rname", "Pearl", "Jelly", "Lemon", "Orange"};
+    private String[] columns = {"Name", "Pearl", "Jelly", "Lemon", "Orange"};
     private String[] kinds = {"Milk tea", "Fruit tea"};
     private Object[][] recipes = {};
 
@@ -55,16 +54,14 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         button_make = new JButton("Make This");
         button_my = new JButton("My Recipes");
+        label_kind = new JLabel("Recommended Kind: ");
 
         label_name = new JLabel("Name: ");
         field = new JTextField(10);
-        model_kind = new SpinnerListModel(kinds);
         model_pearl = new SpinnerNumberModel(0, 0, 50, 1);
         model_jelly = new SpinnerNumberModel(0, 0, 50, 1);
         model_lemon = new SpinnerNumberModel(0, 0, 50, 1);
         model_orange = new SpinnerNumberModel(0, 0, 50, 1);
-        label_kind = new JLabel("Kind: ");
-        spin_kind = new JSpinner(model_kind);
         label_pearl = new JLabel("Pearl: ");
         spin_pearl = new JSpinner(model_pearl);
         label_jelly = new JLabel("Jelly: ");
@@ -96,6 +93,11 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         layout_left.setConstraints(button_my, constraints);
         panel_left.add(button_my);
 
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 5, 0);
+        layout_left.setConstraints(label_kind, constraints);
+        panel_left.add(label_kind);
+
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
         layout_right.setConstraints(label_name, constraints);
@@ -105,16 +107,6 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         constraints.insets = new Insets(5, 0, 5, 10);
         layout_right.setConstraints(field, constraints);
         panel_right.add(field);
-
-//        constraints.gridwidth = GridBagConstraints.RELATIVE;
-//        constraints.insets = new Insets(5, 10, 5, 0);
-//        layout_right.setConstraints(label_kind, constraints);
-//        panel_right.add(label_kind);
-//
-//        constraints.gridwidth = GridBagConstraints.REMAINDER;
-//        constraints.insets = new Insets(5, 10, 5, 0);
-//        layout_right.setConstraints(spin_kind, constraints);
-//        panel_right.add(spin_kind);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
@@ -212,8 +204,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
 
     @Override
     public void stateChanged(ChangeEvent event) {
-        //Recipe[] data = Teashop.getRecipeByKind((String)spin_kind.getValue());
-        //listRecipe(data);
+        //add kind recommendation
     }
 
     @Override
@@ -226,12 +217,12 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         recipe.setOrange((int)spin_orange.getValue());
 
         if (event.getSource() == button_make) {
-            Teashop.makeRecipe(recipe.getName());
+            java.util.Date date = new java.util.Date();
+            Teashop.makeRecipe(recipe, new Date(date.getTime()));
         }
         else if (event.getSource() == button_my) {
             User user = LoginWindow.getUser();
             listRecipe(Teashop.getMyRecipe(user.getName()));
-//            System.out.println("Recipe: " + Teashop.getMyRecipe(user.getName())[0].getName());
         }
         else if (event.getSource() == button_add) {
             Teashop.addRecipe(recipe);

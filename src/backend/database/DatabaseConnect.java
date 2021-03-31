@@ -12,11 +12,11 @@ public class DatabaseConnect {
 
     public void databaseConnect() {
         try {
-            DriverManager.registerDriver(new java.sql.oracle.jdbc.driver.OracleDriver());
+            DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             if (connection != null) {
                 connection.close();
             }
-            connection = DriverManager.getConnection(ORACLE_URL, "ora_eric369", "a78022084");
+            connection = DriverManager.getConnection(ORACLE_URL, "ora_sunjingy", "a48346902");
             System.out.println("Logged in");
             connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -29,12 +29,12 @@ public class DatabaseConnect {
         try {
             Statement stmt = connection.createStatement();
             stmt.executeUpdate("CREATE TABLE Users(UName VARCHAR2(20) PRIMARY KEY, Password VARCHAR2(20), StreetName VARCHAR2(20), HouseNumber INT DEFAULT 0, City VARCHAR2(20), PostalCode VARCHAR2(20))");
-            System.out.println("Table User created");
+//            System.out.println("Table User created");
             stmt.executeUpdate("CREATE TABLE Recipe(RName VARCHAR2(20) PRIMARY KEY, Kind VARCHAR2(20), Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
-            System.out.println("Table Recipe created");
+//            System.out.println("Table Recipe created");
             //                   "FOREIGN KEY(PostalCode) REFERENCES Address(PostalCode) ON DELETE CASCADE, FOREIGN KEY(StreetName) REFERENCES Address(StreetName) ON DELETE CASCADE, FOREIGN KEY(House#) REFERENCES Address(House#) ON DELETE CASCADE);");
             stmt.executeUpdate("CREATE TABLE Address(PostalCode varchar2(20),StreetName varchar2(20),House# INT, City varchar2(20), PRIMARY KEY(PostalCode, StreetName, House#))"); //no connection
-            System.out.println("Table Address created");
+//            System.out.println("Table Address created");
             stmt.executeUpdate("CREATE TABLE Grocery(GName VARCHAR2(20), Amount INT DEFAULT 0, BuyingDate DATE, PRIMARY KEY (GName,BuyingDate), Duration INT, ExpiryDate DATE)");
             stmt.executeUpdate("CREATE TABLE GroceryDate(BuyingDate DATE, Duration INT, ExpiryDate DATE, PRIMARY KEY(BuyingDate, Duration))");
             stmt.executeUpdate("CREATE TABLE Buys(UName VARCHAR2(20), GName VARCHAR2(20), BuyingDate DATE, PRIMARY KEY(UName, GName, BuyingDate), " +
@@ -42,22 +42,22 @@ public class DatabaseConnect {
             //                    ",Amount INT DEFAULT 0, BuyingDate DATE, Duration INT," +
 //                    "FOREIGN KEY(UserId) REFERENCES User(UserId) ON DELETE CASCADE, FOREIGN KEY(GName) REFERENCES Grocery(GName) ON DELETE CASCADE, FOREIGN KEY(BuyingDate) REFERENCES Grocery(BuyingDate) ON DELETE CASCADESystem.out.println("Table Recipe passed\n");
             stmt.executeUpdate("CREATE TABLE MakeRecipe(UName VARCHAR2(20), RName VARCHAR2(20), PRIMARY KEY(UName,RName), FOREIGN KEY(UName) REFERENCES Users, FOREIGN KEY(RName) REFERENCES Recipe)");
-            System.out.println("Table MakeRecipe created");
+//            System.out.println("Table MakeRecipe created");
             stmt.executeUpdate("CREATE TABLE Usage(UseID INT PRIMARY KEY, RName VARCHAR2(20), UsingDate DATE NOT NULL, Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
             stmt.executeUpdate("CREATE TABLE Generates(RName VARCHAR2(20), UseID INT, PRIMARY KEY(RName, UseID), FOREIGN KEY(RName) REFERENCES Recipe ON DELETE CASCADE, FOREIGN KEY(UseId) REFERENCES Usage(UseID) ON DELETE CASCADE)");
             stmt.executeUpdate("CREATE TABLE DailyReport(ReportDay DATE PRIMARY KEY, Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
             //"FOREIGN KEY (UserID) REFERENCES User ON DELETE CASCADE, FOREIGN KEY (Date) REFERENCES ReportWeekDay ON DELETE CASCADE, FOREIGN KEY (Weekday) REFERENCES ReportWeekDay ON DELETE CASCADE);"
 //            stmt.executeUpdate("CREATE TABLE ReportWeekDay(Date DATE PRIMARY KEY, Weekday INT);");
             stmt.executeUpdate("CREATE TABLE Supplier(SupplierId INT PRIMARY KEY, CompanyName VARCHAR2(20) NOT NULL)");
-            System.out.println("Table Supplier created");
+//            System.out.println("Table Supplier created");
             stmt.executeUpdate("CREATE TABLE Supplies(SupplierId INT, GName VARCHAR2(20), BuyingDate DATE, PRIMARY KEY (SupplierId))");
 //                                    "FOREIGN KEY(SupplierId) REFERENCES Supplier(SupplierId), FOREIGN KEY(GName, BuyingDate) REFERENCES Grocery(GName, BuyingDate))");
-            System.out.println("Table Supplies created");
+//            System.out.println("Table Supplies created");
             stmt.executeUpdate("CREATE TABLE ShoppingList(GName CHAR(20), Amount INT NOT NULL, ListDate DATE, PRIMARY KEY (GName,ListDate))");
-            System.out.println("Table ShoppingList created");
+//            System.out.println("Table ShoppingList created");
             //                    "FOREIGN KEY(UserId) REFERENCES User ON DELETE CASCADE, FOREIGN KEY(GName,ListDate) REFERENCES Grocery ON DELETE CASCADE);");
             stmt.executeUpdate("CREATE TABLE Lists(GName CHAR(20), ListDate DATE, UseID INT, PRIMARY KEY (UseID, GName, ListDate))");
-            System.out.println("Table List created");
+//            System.out.println("Table List created");
 //                                    "FOREIGN KEY (GName,ListDate) REFERENCES ShoppingList(GName, ListDate) ON DELETE CASCADE, FOREIGN KEY (UseID) REFERENCES Usage(UseID) ON DELETE CASCADE)");
             stmt.close();
         } catch (SQLException e) {
@@ -83,12 +83,11 @@ public class DatabaseConnect {
 
     public void insertSupplies(int id, String Name) {
         try {
-            Statement stmt1 = connection.createStatement();
+            Statement stmt = connection.createStatement();
             String cmd = String.format("INSERT INTO Supplies (SupplierId,GName) VALUES ('%d', '%s')", id, Name);
-            stmt1.executeQuery(cmd);
+            stmt.executeQuery(cmd);
             connection.commit();
-            stmt1.close();
-            System.out.println("Insert Supplier passed");
+            stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Error: failed to insert supplies");
             rollbackConnection();
@@ -97,12 +96,11 @@ public class DatabaseConnect {
 
     public void insertSupplier(int id, String Name) {
         try {
-            Statement stmt1 = connection.createStatement();
+            Statement stmt = connection.createStatement();
             String cmd = String.format("INSERT INTO Supplier (SupplierId,CompanyName) VALUES ('%d', '%s')", id, Name);
-            stmt1.executeQuery(cmd);
+            stmt.executeQuery(cmd);
             connection.commit();
-            stmt1.close();
-            System.out.println("Insert Supplier passed");
+            stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Error: failed to insert supplier");
             rollbackConnection();
@@ -111,12 +109,11 @@ public class DatabaseConnect {
 
     public void insertMakeRecipe(String UName, String RName) {
         try {
-            Statement stmt1 = connection.createStatement();
+            Statement stmt = connection.createStatement();
             String cmd = String.format("INSERT INTO MakeRecipe (UName,RName) VALUES ('%s', '%s')", UName, RName);
-            stmt1.executeQuery(cmd);
+            stmt.executeQuery(cmd);
             connection.commit();
-            stmt1.close();
-            System.out.println("Insert make recipe passed");
+            stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Error: failed to insert make recipe");
             rollbackConnection();
@@ -167,16 +164,16 @@ public class DatabaseConnect {
 
     public void insertUser(User user) {
         try {
-            PreparedStatement stmt = connection.prepareStatement("INSERT INTO Users VALUES (?,?,?,?,?,?)");
-            stmt.setString(1, user.getName());
-            stmt.setString(2, user.getPassword());
-            stmt.setString(3, user.getStreet());
-            stmt.setInt(4, user.getHouseNumber());
-            stmt.setString(5, user.getCity());
-            stmt.setString(6, user.getCode());
-            stmt.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO Users VALUES (?,?,?,?,?,?)");
+            ps.setString(1, user.getName());
+            ps.setString(2, user.getPassword());
+            ps.setString(3, user.getStreet());
+            ps.setInt(4, user.getHouseNumber());
+            ps.setString(5, user.getCity());
+            ps.setString(6, user.getCode());
+            ps.executeUpdate();
             connection.commit();
-            stmt.close();
+            ps.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
@@ -185,16 +182,16 @@ public class DatabaseConnect {
 
     public void insertRecipe(Recipe recipe) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO Recipe VALUES (?,?,?,?,?,?)");
-            statement.setString(1, recipe.getName());
-            statement.setString(2, recipe.getKind());
-            statement.setInt(3, recipe.getPearl());
-            statement.setInt(4, recipe.getJelly());
-            statement.setInt(5, recipe.getLemon());
-            statement.setInt(6, recipe.getOrange());
-            statement.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO Recipe VALUES (?,?,?,?,?,?)");
+            ps.setString(1, recipe.getName());
+            ps.setString(2, recipe.getKind());
+            ps.setInt(3, recipe.getPearl());
+            ps.setInt(4, recipe.getJelly());
+            ps.setInt(5, recipe.getLemon());
+            ps.setInt(6, recipe.getOrange());
+            ps.executeUpdate();
             connection.commit();
-            statement.close();
+            ps.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
@@ -208,7 +205,6 @@ public class DatabaseConnect {
             ps.setInt(2, recipe.getJelly());
             ps.setInt(3, recipe.getLemon());
             ps.setInt(4, recipe.getOrange());
-
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
                 //MainMenu.makeWarningDialog(WARNING_TAG + " Tenant " + sin + " does not exist!");
@@ -226,31 +222,7 @@ public class DatabaseConnect {
 //    public void deleteRecipe(String name) { }
 
     public Recipe[] selectAllRecipe() {
-        ArrayList<Recipe> recipes = new ArrayList<>();
-        try {
-            Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe");
-            while (rs1.next()) {
-                Recipe temp = new Recipe(rs1.getString("RName"),
-                        rs1.getString("Kind"),
-                        rs1.getInt("Pearl"),
-                        rs1.getInt("Jelly"),
-                        rs1.getInt("Lemon"),
-                        rs1.getInt("Orange")
-                );
-                recipes.add(temp);
-            }
-            rs1.close();
-            stmt1.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-        return recipes.toArray(new Recipe[recipes.size()]);
-    }
-
-    public Recipe[] selectRecipeByKind(String kind) {
-        ArrayList<Recipe> recipes = new ArrayList<>();
+        ArrayList<Recipe> result = new ArrayList<>();
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM Recipe");
@@ -262,7 +234,7 @@ public class DatabaseConnect {
                         rs.getInt("Lemon"),
                         rs.getInt("Orange")
                 );
-                recipes.add(temp);
+                result.add(temp);
             }
             rs.close();
             stmt.close();
@@ -270,7 +242,7 @@ public class DatabaseConnect {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
-        return recipes.toArray(new Recipe[recipes.size()]);
+        return result.toArray(new Recipe[result.size()]);
     }
 
     public Recipe selectRecipeByRname(String rname) {
@@ -296,26 +268,26 @@ public class DatabaseConnect {
     }
 
     public Recipe[] selectRecipeByUname(String uname) {
-        ArrayList<Recipe> recipes = new ArrayList<>();
+        ArrayList<Recipe> result = new ArrayList<>();
         try {
-            Statement stmt1 = connection.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Recipe r, Users u, MakeRecipe m WHERE m.RName = r.RName AND m.UName = u.UName AND u.UName = '" + uname + "'");
-            while (rs1.next()) {
-                recipes.add(new Recipe(
-                        rs1.getString("RName"),
-                        rs1.getString("Kind"),
-                        rs1.getInt("Pearl"),
-                        rs1.getInt("Jelly"),
-                        rs1.getInt("Lemon"),
-                        rs1.getInt("Orange")));
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Recipe R, Users U, MakeRecipe MR WHERE MR.RName = R.RName AND MR.UName = U.UName AND U.UName = '" + uname + "'");
+            while (rs.next()) {
+                result.add(new Recipe(
+                        rs.getString("RName"),
+                        rs.getString("Kind"),
+                        rs.getInt("Pearl"),
+                        rs.getInt("Jelly"),
+                        rs.getInt("Lemon"),
+                        rs.getInt("Orange")));
             }
-            rs1.close();
-            stmt1.close();
+            rs.close();
+            stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Failed to select recipe by uname");
             rollbackConnection();
         }
-        return recipes.toArray(new Recipe[recipes.size()]);
+        return result.toArray(new Recipe[result.size()]);
     }
 
 //    public Recipe[] selectRecipeByKind(String kind) {
@@ -374,7 +346,7 @@ public class DatabaseConnect {
         }
     }
 
-    public boolean checkAddToList(int needAmount,int haveAmount, String Gname, Date today){
+    public boolean checkAddToList(int needAmount,int haveAmount, String gname, Date today){
         boolean enough = false;
 //        if (needAmount <= haveAmount) {
 //            enough = true;
@@ -392,6 +364,7 @@ public class DatabaseConnect {
 //        }
         return enough;
     }
+
 //    public Recipe[] dietSelection(int toppingNums){
 //        try {
 //            PreparedStatement ps = connection.prepareStatement("SELECT RName, Pearl, Jelly, Orange, Lemon, Pearl+Jelly+Orange+Lemon AS \"Total\" INTO #RecipeSum FROM Recipe");
@@ -406,18 +379,20 @@ public class DatabaseConnect {
 //            rollbackConnection();
 //        }
 //    }
-    public void bestMix(String GName){
+
+    public String recommendKind(String gname){
+        String result = "";
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(
-                    "SELECT AVG("+GName+") as temp, Kind FROM Recipe R GROUP BY Kind HAVING AVG("+GName+") >= all(SELECT AVG(R."+GName+") FROM Recipe R GROUP BY R.Kind)");
-            while(rs.next()){
-                System.out.println(rs.getString("Kind")+rs.getInt("temp"));
-            }
+                    "SELECT AVG("+gname+") as temp, Kind FROM Recipe R GROUP BY Kind HAVING AVG("+gname+") >= all(SELECT AVG(R."+gname+") FROM Recipe R GROUP BY R.Kind)");
+            rs.next();
+            result = rs.getString("Kind");
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
+        return result;
     }
 
     public void deleteWithZero() {
@@ -440,11 +415,10 @@ public class DatabaseConnect {
         Grocery result = new Grocery();
         try{
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT GName, MIN(ExpiryDate) as targetDate FROM Grocery g GROUP BY GName HAVING GName = '" +name+ "'");
+            ResultSet rs = stmt.executeQuery("SELECT GName, MIN(ExpiryDate) as Target FROM Grocery GROUP BY GName HAVING GName = '" +name+ "'");
             while (rs.next()) {
-                result = selectGrocery(name,rs.getDate("targetDate"));
+                result = selectGrocery(name,rs.getDate("Target"));
             }
-
             rs.close();
             stmt.close();
         }catch (SQLException e) {
@@ -456,70 +430,140 @@ public class DatabaseConnect {
 
     public void insertGrocery(Grocery grocery) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO Grocery VALUES (?,?,?,?,?)");
-            statement.setString(1, grocery.getName());
-            statement.setInt(2, grocery.getAmount());
-            statement.setDate(3, grocery.getBuyingDate());
-            statement.setInt(4, grocery.getDuration());
-            statement.setDate(5, grocery.getExpiryDate());
-            statement.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO Grocery VALUES (?,?,?,?,?)");
+            ps.setString(1, grocery.getName());
+            ps.setInt(2, grocery.getAmount());
+            ps.setDate(3, grocery.getBuyingDate());
+            ps.setInt(4, grocery.getDuration());
+            ps.setDate(5, grocery.getExpiryDate());
+            ps.executeUpdate();
             connection.commit();
-            statement.close();
+            ps.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
     }
 
-    public void updateGrocery(Grocery grocery) { }
+    public void updateGrocery(Grocery grocery) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE Grocery SET Amount=?, Duration=?, ExpiryDate=? WHERE GName='" + grocery.getName() + "'" + " AND BuyingDate='" + grocery.getBuyingDate() + "'");
+            ps.setInt(1, grocery.getAmount());
+            ps.setInt(2, grocery.getDuration());
+            ps.setDate(3, grocery.getExpiryDate());
+            ps.executeUpdate();
+            connection.commit();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
 
-    public Grocery[] selectAllGrocery() { return new Grocery[0]; }
+    public Grocery[] selectAllGrocery() {
+        ArrayList<Grocery> result = new ArrayList<>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Grocery");
+            while (rs.next()) {
+                Grocery temp = new Grocery(rs.getString("GName"),
+                        rs.getInt("Amount"),
+                        rs.getInt("Duration"),
+                        rs.getDate("BuyingDate")
+                );
+                result.add(temp);
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return  result.toArray(new Grocery[result.size()]);
+    }
 
-    public int sumGroceryAmount(String name) {
-        int result=0;
+    public Grocery selectGrocery(String name, Date date) {
+        Grocery result = new Grocery();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Grocery WHERE GName = '"+ name +"'"+ " AND BuyingDate='" + date + "'");
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            result = new Grocery(rs.getString("GName"),
+                    rs.getInt("Amount"),
+                    rs.getInt("Duration"),
+                    rs.getDate("BuyingDate")
+            );
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return result;
+    }
+
+    public Grocery[] orderGroceryByDate() {
+        ArrayList<Grocery> result = new ArrayList<>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Grocery ORDER BY BuyingDate");
+            while (rs.next()) {
+                Grocery temp = new Grocery(rs.getString("GName"),
+                        rs.getInt("Amount"),
+                        rs.getInt("Duration"),
+                        rs.getDate("BuyingDate")
+                );
+                result.add(temp);
+                System.out.println("backend: " + temp.getName() + " " + temp.getBuyingDate());
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return result.toArray(new Grocery[result.size()]);
+    }
+
+    public Grocery[] sumGroceryAmount(String name) {
+        ArrayList<Grocery> result = new ArrayList<>();
         try{
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT GName, SUM(Amount) as TotalAmount FROM Grocery g GROUP BY GName");
+            ResultSet rs = stmt.executeQuery("SELECT GName, SUM(Amount) as Total FROM Grocery g GROUP BY GName");
             while (rs.next()) {
-                System.out.println(rs.getString("GName")+rs.getInt("TotalAmount"));
+                Grocery temp = new Grocery(rs.getString("GName"),
+                        rs.getInt("Total")
+                );
+                result.add(temp);
+//                System.out.println(rs.getString("GName")+rs.getInt("Total"));
             }
-
             rs.close();
             stmt.close();
         }catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
-        return result;
-    }
-    public Grocery[] orderGroceryByDate() {
-        return new Grocery[0];
+        return result.toArray(new Grocery[result.size()]);
     }
 
-    public Grocery selectGrocery(String name, Date d) {
-        Grocery g = new Grocery();
+    public void insertUsage(Recipe recipe, Date date) {
         try {
-            PreparedStatement stmt1 = connection.prepareStatement("SELECT * FROM Grocery WHERE GName = '"+ name +"'"+ "AND ExpiryDate = ?");
-            stmt1.setDate(1, d);
-            ResultSet rs1 = stmt1.executeQuery();
-            //ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Grocery WHERE GName = '"+ name +"'"+ "AND ExpiryDate = ?");
-            while (rs1.next()) {
-                g=new Grocery(rs1.getString("GName"),
-                        rs1.getInt("Amount"),
-                        rs1.getInt("Duration"),
-                        rs1.getDate("BuyingDate")
-                        );
-            }
-            rs1.close();
-            stmt1.close();
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO Usage VALUES (?,?,?,?,?,?,?)");
+            ps.setInt(1, 0); //change this
+            ps.setString(2, recipe.getName());
+            ps.setDate(3, date);
+            ps.setInt(4, recipe.getPearl());
+            ps.setInt(5, recipe.getJelly());
+            ps.setInt(6, recipe.getLemon());
+            ps.setInt(7, recipe.getOrange());
+            ps.executeUpdate();
+            connection.commit();
+            ps.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Failed to select recipe by uname");
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
-        return g;
     }
-
-    public void insertUsage(String name, Date date) { }
 
     //Eric comments
     private DailyReport[] selectReports(String query) {
@@ -568,15 +612,15 @@ public class DatabaseConnect {
 
     public void insertDailReport(DailyReport d) {
         try {
-            PreparedStatement stmt = connection.prepareStatement("INSERT INTO DailyReport VALUES (?,?,?,?,?)");
-            stmt.setObject(1, d.getDate());
-            stmt.setInt(2, d.getPearl());
-            stmt.setInt(3, d.getJelly());
-            stmt.setInt(4, d.getLemon());
-            stmt.setInt(5, d.getOrange());
-            stmt.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO DailyReport VALUES (?,?,?,?,?)");
+            ps.setObject(1, d.getDate());
+            ps.setInt(2, d.getPearl());
+            ps.setInt(3, d.getJelly());
+            ps.setInt(4, d.getLemon());
+            ps.setInt(5, d.getOrange());
+            ps.executeUpdate();
             connection.commit();
-            stmt.close();
+            ps.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "fail to insert daily report");
             rollbackConnection();
@@ -585,16 +629,15 @@ public class DatabaseConnect {
 
     public void updateDailyReport(Date date, int pearl, int jelly, int lemon, int orange) {
         try {
-            PreparedStatement stmt = connection.prepareStatement("UPDATE DailyReport SET reportDay=?, Pearl=?, Jelly=?, Lemon=?, Orange=? WHERE reportDay =" + date.toString());
-            stmt.setDate(1, date);
-            stmt.setInt(2, pearl);
-            stmt.setInt(3, jelly);
-            stmt.setInt(4, lemon);
-            stmt.setInt(5, orange);
-
-            stmt.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement("UPDATE DailyReport SET reportDay=?, Pearl=?, Jelly=?, Lemon=?, Orange=? WHERE reportDay =" + date.toString());
+            ps.setDate(1, date);
+            ps.setInt(2, pearl);
+            ps.setInt(3, jelly);
+            ps.setInt(4, lemon);
+            ps.setInt(5, orange);
+            ps.executeUpdate();
             connection.commit();
-            stmt.close();
+            ps.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
@@ -627,7 +670,6 @@ public class DatabaseConnect {
     }
 
     public void insertShoppingList(ShoppingList list){
-
         try {
             PreparedStatement stmt = connection.prepareStatement("INSERT INTO ShoppingList VALUES (?,?,?)");
             stmt.setString(1, list.getGname());
@@ -644,7 +686,6 @@ public class DatabaseConnect {
     }
 
     public void updateShoppingList(Date date, String Gname, int amount){
-
         try {
             PreparedStatement stmt = connection.prepareStatement("UPDATE ShoppingList SET Gname=?, Amount=?, Date=? WHERE GName =" + Gname + "AND Date =" + date.toString());
             stmt.setString(1, Gname);
