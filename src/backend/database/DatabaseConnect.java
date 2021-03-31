@@ -9,6 +9,7 @@ public class DatabaseConnect {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
     private Connection connection = null;
+    private int usage_index = 0, minAmount = 20;
 
     public void databaseConnect() {
         try {
@@ -16,7 +17,7 @@ public class DatabaseConnect {
             if (connection != null) {
                 connection.close();
             }
-            connection = DriverManager.getConnection(ORACLE_URL, "ora_sunjingy", "a48346902");
+            connection = DriverManager.getConnection(ORACLE_URL, "ora_dmy0604", "a44147163");
             System.out.println("Logged in");
             connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -61,13 +62,13 @@ public class DatabaseConnect {
 //                                    "FOREIGN KEY (GName,ListDate) REFERENCES ShoppingList(GName, ListDate) ON DELETE CASCADE, FOREIGN KEY (UseID) REFERENCES Usage(UseID) ON DELETE CASCADE)");
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage()+"Error: create table error");
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Error: create table error");
         }
         User u1 = new User("Sam", "123", "23rd W Ave", 2341, "Vancouver", "V6S1H6");
         User u2 = new User("Lily", "234", "23rd W Ave", 2341, "Vancouver", "V6S1H6");
         insertUser(u1);
         Recipe r1 = new Recipe("Red tea", "Milk Tea", 20, 0, 0, 0);
-        Recipe r2 = new Recipe("Perl Milk Tea", "Milk Tea", 20, 0, 0, 0);
+        Recipe r2 = new Recipe("Pearl Milk Tea", "Milk Tea", 20, 0, 0, 0);
         insertRecipe(r1);
         insertRecipe(r2);
         insertMakeRecipe("Sam", "Red tea");
@@ -250,14 +251,15 @@ public class DatabaseConnect {
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM Recipe WHERE RName = '" + rname + "'");
-            rs.next();
-            result = new Recipe(rs.getString("RName"),
-                    rs.getString("Kind"),
-                    rs.getInt("Pearl"),
-                    rs.getInt("Jelly"),
-                    rs.getInt("Lemon"),
-                    rs.getInt("Orange")
-            );
+            while (rs.next()) {
+                result = new Recipe(rs.getString("RName"),
+                        rs.getString("Kind"),
+                        rs.getInt("Pearl"),
+                        rs.getInt("Jelly"),
+                        rs.getInt("Lemon"),
+                        rs.getInt("Orange")
+                );
+            }
             rs.close();
             stmt.close();
         } catch (SQLException e) {
@@ -322,12 +324,13 @@ public class DatabaseConnect {
         Grocery lemonStock = findEarliestAmount("Lemon");
         Grocery orangeStock = findEarliestAmount("Orange");
 
-        if (!checkAddToList(recipe.getPearl(), pearlStock.getAmount(), "Pearl", today) &&
-            !checkAddToList(recipe.getJelly(), jellyStock.getAmount(), "Jelly", today) &&
-            !checkAddToList(recipe.getLemon(), lemonStock.getAmount(), "Lemon", today) &&
-            !checkAddToList(recipe.getPearl(), orangeStock.getAmount(), "Orange", today)) {
+        if (checkAddToList(recipe.getPearl(), pearlStock, "Pearl", today) &&
+                checkAddToList(recipe.getJelly(), jellyStock, "Jelly", today) &&
+                checkAddToList(recipe.getLemon(), lemonStock, "Lemon", today) &&
+                checkAddToList(recipe.getPearl(), orangeStock, "Orange", today)) {
             //to Eric:
             pearlStock.setAmount(pearlStock.getAmount() - recipe.getPearl());
+            System.out.println(pearlStock.getAmount() + " " + recipe.getPearl());
             //Grocery pearl = new Grocery("Pearl", pearlStock.getAmount() - recipe.getPearl(), 5, (Date) pearlStock.getExpiryDate());
             updateGrocery(pearlStock);
             //Grocery jelly = new Grocery("Jelly", jellyStock.getAmount() - recipe.getJelly(), 5, (Date) jellyStock[1]);
@@ -340,31 +343,45 @@ public class DatabaseConnect {
             orangeStock.setAmount(orangeStock.getAmount() - recipe.getOrange());
             updateGrocery(orangeStock);
             //insert usage --- daily report
+            insertUsage(recipe, today);
             System.out.println("Success! Enjoy!");
+            Grocery[] rest = {pearlStock,jellyStock,lemonStock,orangeStock};
+            checkCutOff(rest); // if the remaining amount is less than min required, dispose that tuple.
         } else {
             System.out.println("Missing Ingredients, help you add to today's shopping list");
         }
     }
-
-    public boolean checkAddToList(int needAmount,int haveAmount, String gname, Date today){
+    public void checkCutOff(Grocery[] list){
+        for(Grocery g:list){
+            if (g.getAmount()<minAmount){
+                g.setAmount(0);
+                updateGrocery(g);
+            }
+        }
+        deleteWithZero();
+    }
+    public boolean checkAddToList(int needAmount, Grocery stock, String Gname, Date today) {
         boolean enough = false;
-//        if (needAmount <= haveAmount) {
-//            enough = true;
-//        } else {
-//            int shortAmount = needAmount - haveAmount;
-//            //to Eric
-//            DailyReports temp = new DailyReports();
-//            ShoppingList[] glist = temp.selectShoppingListsGrocery(Gname, today);
-//            if (glist.length == 0) {//today we have not buy this grocery yet
-//                ShoppingList list = new ShoppingList(Gname, shortAmount, today);
-//                temp.insertShoppingList(list);
-//            } else {//update today's existing
-//                temp.updateShoppingList(today, Gname, shortAmount + glist[0].getAmount());
-//            }
-//        }
+        if (needAmount <= stock.getAmount()) {
+            enough = true;
+        } else {
+            int shortAmount = needAmount;
+            //to Eric
+            stock.setAmount(0);
+            updateGrocery(stock);
+            deleteWithZero();
+            String cmd = "SELECT * FROM ShoppingList WHERE Gname = '" + Gname + "' AND ListDate = DATE'" + today.toString() + "'";
+            ShoppingList[] glist = selectLists(cmd);
+            if (glist.length == 0) {//today we have not buy this grocery yet
+                ShoppingList list = new ShoppingList(Gname, shortAmount, today);
+                insertShoppingList(list);
+            } else {//update today's existing
+                updateShoppingList(today, Gname, shortAmount + glist[0].getAmount());
+            }
+        }
+        System.out.println(enough);
         return enough;
     }
-
 //    public Recipe[] dietSelection(int toppingNums){
 //        try {
 //            PreparedStatement ps = connection.prepareStatement("SELECT RName, Pearl, Jelly, Orange, Lemon, Pearl+Jelly+Orange+Lemon AS \"Total\" INTO #RecipeSum FROM Recipe");
@@ -417,7 +434,7 @@ public class DatabaseConnect {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT GName, MIN(ExpiryDate) as Target FROM Grocery GROUP BY GName HAVING GName = '" +name+ "'");
             while (rs.next()) {
-                result = selectGrocery(name,rs.getDate("Target"));
+                result = selectGroceryByExpiryDate(name,rs.getDate("Target"));
             }
             rs.close();
             stmt.close();
@@ -447,10 +464,11 @@ public class DatabaseConnect {
 
     public void updateGrocery(Grocery grocery) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE Grocery SET Amount=?, Duration=?, ExpiryDate=? WHERE GName='" + grocery.getName() + "'" + " AND BuyingDate='" + grocery.getBuyingDate() + "'");
+            PreparedStatement ps = connection.prepareStatement("UPDATE Grocery SET Amount=?, Duration=?, ExpiryDate=? WHERE GName='" + grocery.getName() + "'" + " AND BuyingDate=?");
             ps.setInt(1, grocery.getAmount());
             ps.setInt(2, grocery.getDuration());
             ps.setDate(3, grocery.getExpiryDate());
+            ps.setDate(4, grocery.getBuyingDate());
             ps.executeUpdate();
             connection.commit();
             ps.close();
@@ -501,6 +519,28 @@ public class DatabaseConnect {
         }
         return result;
     }
+    public Grocery selectGroceryByExpiryDate(String name, Date date) {
+        Grocery g = new Grocery();
+        try {
+            PreparedStatement stmt1 = connection.prepareStatement("SELECT * FROM Grocery WHERE GName = '" + name + "'" + "AND ExpiryDate = ?");
+            stmt1.setDate(1, date);
+            ResultSet rs1 = stmt1.executeQuery();
+            //ResultSet rs1 = stmt1.executeQuery("SELECT * FROM Grocery WHERE GName = '"+ name +"'"+ "AND ExpiryDate = ?");
+            while (rs1.next()) {
+                g = new Grocery(rs1.getString("GName"),
+                        rs1.getInt("Amount"),
+                        rs1.getInt("Duration"),
+                        rs1.getDate("BuyingDate")
+                );
+            }
+            rs1.close();
+            stmt1.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Failed to select recipe by uname");
+            rollbackConnection();
+        }
+        return g;
+    }
 
     public Grocery[] orderGroceryByDate() {
         ArrayList<Grocery> result = new ArrayList<>();
@@ -532,8 +572,7 @@ public class DatabaseConnect {
             ResultSet rs = stmt.executeQuery("SELECT GName, SUM(Amount) as Total FROM Grocery g GROUP BY GName");
             while (rs.next()) {
                 Grocery temp = new Grocery(rs.getString("GName"),
-                        rs.getInt("Total")
-                );
+                        rs.getInt("Total"));
                 result.add(temp);
 //                System.out.println(rs.getString("GName")+rs.getInt("Total"));
             }
@@ -549,7 +588,7 @@ public class DatabaseConnect {
     public void insertUsage(Recipe recipe, Date date) {
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO Usage VALUES (?,?,?,?,?,?,?)");
-            ps.setInt(1, 0); //change this
+            ps.setInt(1, usage_index); //change this
             ps.setString(2, recipe.getName());
             ps.setDate(3, date);
             ps.setInt(4, recipe.getPearl());
@@ -559,6 +598,7 @@ public class DatabaseConnect {
             ps.executeUpdate();
             connection.commit();
             ps.close();
+            usage_index++;
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
@@ -575,8 +615,8 @@ public class DatabaseConnect {
             while (rs.next()) {
                 DailyReport model = new DailyReport(
                         rs.getDate("Date").toString(),
-                        rs.getInt("Pearl" ),
-                        rs.getInt("Jelly" ),
+                        rs.getInt("Pearl"),
+                        rs.getInt("Jelly"),
                         rs.getInt("Lemon"),
                         rs.getInt("Orange"));
                 result.add(model);
@@ -597,8 +637,8 @@ public class DatabaseConnect {
 
             while (rs.next()) {
                 ShoppingList model = new ShoppingList(
-                        rs.getString("GName" ),
-                        rs.getInt("Amount" ),
+                        rs.getString("GName"),
+                        rs.getInt("Amount"),
                         rs.getDate("Date"));
                 result.add(model);
             }
@@ -648,7 +688,7 @@ public class DatabaseConnect {
         return selectReports("SELECT * FROM DailyReport");
     }
 
-    
+
     public DailyReport[] selectReportByGname(String name) {
         if (name.equals("Pearl")) {
             return selectReports("SELECT * FROM ShoppingList WHERE Pearl > 0");
@@ -669,13 +709,12 @@ public class DatabaseConnect {
         return selectReports(query);
     }
 
-    public void insertShoppingList(ShoppingList list){
+    public void insertShoppingList(ShoppingList list) {
         try {
             PreparedStatement stmt = connection.prepareStatement("INSERT INTO ShoppingList VALUES (?,?,?)");
             stmt.setString(1, list.getGname());
             stmt.setInt(2, list.getAmount());
             stmt.setDate(3, list.getDate());
-
             stmt.executeUpdate();
             connection.commit();
             stmt.close();
@@ -685,7 +724,8 @@ public class DatabaseConnect {
         }
     }
 
-    public void updateShoppingList(Date date, String Gname, int amount){
+    public void updateShoppingList(Date date, String Gname, int amount) {
+
         try {
             PreparedStatement stmt = connection.prepareStatement("UPDATE ShoppingList SET Gname=?, Amount=?, Date=? WHERE GName =" + Gname + "AND Date =" + date.toString());
             stmt.setString(1, Gname);

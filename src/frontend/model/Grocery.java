@@ -1,7 +1,6 @@
 package frontend.model;
-import java.time.LocalDate;
-import java.util.Calendar;
 import java.sql.Date;
+import java.util.Calendar;
 
 public class Grocery {
     private String name;
@@ -39,6 +38,12 @@ public class Grocery {
         return new Date(c.getTimeInMillis());
     }
 
+    public static Date subtractDays(Date date, int days) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, -days);
+        return new Date(c.getTimeInMillis());
+    }
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }

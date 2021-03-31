@@ -33,7 +33,6 @@ public class Teashop {
 //		reportListWindow = new ReportListWindow();
 //		reportListWindow.showFrame();
 	}
-
 	public void test(){
 		database = new DatabaseConnect();
 		database.databaseConnect();
@@ -51,8 +50,8 @@ public class Teashop {
 //		System.out.println("Expected false. Actual "+database.changePassword("seffs", "777","7778"));
 
 		System.out.println("test4: Select recipe by name");
-		Recipe r = getRecipeByName("Perl Milk Tea");
-		System.out.println("Expected Perl Milk Tea, Actual " + r.getName());
+		Recipe r = getRecipeByName("Pearl Milk Tea");
+		System.out.println("Expected Pearl Milk Tea, Actual " + r.getName());
 
 		System.out.println("test5: Select recipe by Uname");
 		Recipe r3 = new Recipe("Orange tea", "Fruit Tea", 0, 0, 0, 50);
@@ -79,22 +78,29 @@ public class Teashop {
 		database.insertGrocery(g3);
 		Grocery g4 = new Grocery("Lemon",200,20,Date.valueOf("2021-06-11"));
 		database.insertGrocery(g4);
-//		System.out.println("Expected 2021-03-30, Actual "
-//				+Grocery.subtractDays(database.findEarliestAmount("Pearl").getExpiryDate(),database.findEarliestAmount("Pearl").getDuration()));
-//		System.out.println("Expected 2021-01-11, Actual "
-//				+Grocery.subtractDays(database.findEarliestAmount("Jelly").getExpiryDate(),database.findEarliestAmount("Jelly").getDuration()));
-//		System.out.println("Expected 2021-03-11, Actual "
-//				+Grocery.subtractDays(database.findEarliestAmount("Orange").getExpiryDate(),database.findEarliestAmount("Orange").getDuration()));
-//		System.out.println("Expected 2021-06-11, Actual "
-//				+Grocery.subtractDays(database.findEarliestAmount("Lemon").getExpiryDate(),database.findEarliestAmount("Lemon").getDuration()));
+		System.out.println("Expected 2021-03-30, Actual "
+				+Grocery.subtractDays(database.findEarliestAmount("Pearl").getExpiryDate(),database.findEarliestAmount("Pearl").getDuration()));
+		System.out.println("Expected 2021-01-11, Actual "
+				+Grocery.subtractDays(database.findEarliestAmount("Jelly").getExpiryDate(),database.findEarliestAmount("Jelly").getDuration()));
+		System.out.println("Expected 2021-03-11, Actual "
+				+Grocery.subtractDays(database.findEarliestAmount("Orange").getExpiryDate(),database.findEarliestAmount("Orange").getDuration()));
+		System.out.println("Expected 2021-06-11, Actual "
+				+Grocery.subtractDays(database.findEarliestAmount("Lemon").getExpiryDate(),database.findEarliestAmount("Lemon").getDuration()));
 
 		System.out.println("test 8: grocery sum");
 		database.sumGroceryAmount("Pearl");
 
 		System.out.println("test 9: nested aggr");
 		System.out.println(database.recommendKind("Pearl"));
-	}
 
+		System.out.println("test 10: make beverage");
+		database.makeRecipe("Pearl Milk Tea", Date.valueOf("2021-3-31")); // enough case
+		database.makeRecipe("Pearl Milk Tea", Date.valueOf("2021-3-31")); // enough case
+		database.makeRecipe("Pearl Milk Tea", Date.valueOf("2021-3-31")); // enough case
+		database.makeRecipe("Pearl Milk Tea", Date.valueOf("2021-3-31")); // enough case
+		database.makeRecipe("Pearl Milk Tea", Date.valueOf("2021-3-31")); // not enough case
+		System.out.println(database.recommendKind("Pearl"));
+	}
 	public static void register(User user) {
 		database.insertUser(user);
 		registerWindow.dispose();
@@ -118,7 +124,8 @@ public class Teashop {
 
 	public static Recipe[] getAllRecipe() { return database.selectAllRecipe(); }
 
-	public static void makeRecipe(Recipe recipe, Date date) { database.insertUsage(recipe, date);}
+	public static void makeRecipe(Recipe recipe, Date date) { database.makeRecipe(recipe.getName(), Date.valueOf("2021-3-31"));}
+	//public static void makeRecipe(String name) { } // need to change
 
 	public static Recipe[] getMyRecipe(String name) { return database.selectRecipeByUname(name);}//database.selectRecipeByUname(name); }
 
@@ -156,7 +163,7 @@ public class Teashop {
 
 	public static void main(String args[]) {
 		Teashop teashop = new Teashop();
-		teashop.start();
-//		teashop.test();
+		//teashop.start();
+		teashop.test();
 	}
 }
