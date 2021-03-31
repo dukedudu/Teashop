@@ -7,7 +7,7 @@ import frontend.ui.*;
 import javax.swing.*;
 import java.sql.Date;
 
-//ssh -l sunjingy -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
+//ssh -l eric369 -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
 
 public class Teashop {
 	public static User user = null;

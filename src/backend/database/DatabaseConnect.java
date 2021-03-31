@@ -12,11 +12,11 @@ public class DatabaseConnect {
 
     public void databaseConnect() {
         try {
-            DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+            DriverManager.registerDriver(new java.sql.oracle.jdbc.driver.OracleDriver());
             if (connection != null) {
                 connection.close();
             }
-            connection = DriverManager.getConnection(ORACLE_URL, "ora_dmy0604", "a44147163");
+            connection = DriverManager.getConnection(ORACLE_URL, "ora_eric369", "a78022084");
             System.out.println("Logged in");
             connection.setAutoCommit(false);
         } catch (SQLException e) {
