@@ -805,7 +805,7 @@ public class DatabaseConnect {
         ArrayList<DailyReport> result = new ArrayList<DailyReport>();
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT D.ReportDay FROM DailyReport D WHERE NOT EXISTS ((SELECT D1.ReportDay FROM DailyReport D1) MINUS (SELECT D2.ReportDay FROM DailyReport D2 WHERE D2.Pearl > 0 AND D2.Jelly > 0 AND D2.Lemon > 0 AND D2.Orange > 0))");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM DailyReport WHERE ReportDay NOT IN ((SELECT ReportDay FROM DailyReport) MINUS (SELECT ReportDay FROM DailyReport WHERE Pearl > 0 AND Jelly > 0 AND Lemon > 0 AND Orange > 0))");
             while (rs.next()) {
                 DailyReport model = new DailyReport(
                         rs.getDate("ReportDay"),
