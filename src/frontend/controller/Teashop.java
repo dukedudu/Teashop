@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.sql.Date;
 
 //ssh -l sunjingy -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
@@ -19,7 +20,7 @@ public class Teashop {
 	public static RegisterWindow registerWindow;
 	public static RecipeWindow recipeWindow;
 	
-	public void start() {
+	public void start() throws IOException {
 		database = new DatabaseConnect();
 		database.databaseConnect();
 		database.setup();
@@ -48,8 +49,8 @@ public class Teashop {
 		System.out.println("Expected Pearl Milk Tea, Actual " + r.getName());
 
 		System.out.println("test5: Select recipe by Uname");
-		Recipe r3 = new Recipe("Orange tea", "Fruit Tea", 0, 0, 0, 50);
-		Recipe r4 = new Recipe("Lemon tea", "Fruit Tea", 50, 0, 30, 0);
+		Recipe r3 = new Recipe("Orange tea", 0, 0, 0, 50);
+		Recipe r4 = new Recipe("Lemon tea", 50, 0, 30, 0);
 		database.insertRecipe(r3);
 		database.insertRecipe(r4);
 		database.insertMakeRecipe("Sam", "Orange tea");
@@ -64,13 +65,13 @@ public class Teashop {
 		database.deleteWithZero();
 
 		System.out.println("test7: findEarliestAmount");
-		Grocery g1 = new Grocery("Pearl",40,20,Date.valueOf("2021-08-11"));
+		Grocery g1 = new Grocery("Pearl",40,Date.valueOf("2021-08-11"), 20);
 		database.insertGrocery(g1);
-		Grocery g2 = new Grocery("Jelly",50,20,Date.valueOf("2021-01-11"));
+		Grocery g2 = new Grocery("Jelly",50,Date.valueOf("2021-01-11"), 20);
 		database.insertGrocery(g2);
-		Grocery g3 = new Grocery("Orange",40,20,Date.valueOf("2021-03-11"));
+		Grocery g3 = new Grocery("Orange",40,Date.valueOf("2021-03-11"), 20);
 		database.insertGrocery(g3);
-		Grocery g4 = new Grocery("Lemon",200,20,Date.valueOf("2021-06-11"));
+		Grocery g4 = new Grocery("Lemon",200,Date.valueOf("2021-06-11"), 20);
 		database.insertGrocery(g4);
 		System.out.println("Expected 2021-03-30, Actual "
 				+Grocery.subtractDays(database.findEarliestAmount("Pearl").getExpiryDate(),database.findEarliestAmount("Pearl").getDuration()));
@@ -104,14 +105,14 @@ public class Teashop {
 		}
 	}
 
-	public static void register(User user) {
+	public static void register(User user) throws IOException {
 		database.insertUser(user);
 		registerWindow.dispose();
 		loginWindow = new LoginWindow();
 		loginWindow.showFrame();
 	}
 
-	public static void login(User user, JPasswordField field) {
+	public static void login(User user, JPasswordField field) throws IOException {
 		boolean correct = database.selectPassword(user);
 		if (correct) {
 			loginWindow.dispose();
@@ -166,13 +167,13 @@ public class Teashop {
 
 	public void finish() { database.close(); }
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 		Teashop teashop = new Teashop();
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 			UIManager.put("nimbusBase", new Color(100,175,47,255));
 		} catch(Exception ignored){ }
 		teashop.start();
-		//teashop.test();
+//		teashop.test();
 	}
 }

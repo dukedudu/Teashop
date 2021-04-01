@@ -3,6 +3,7 @@ package frontend.ui;
 import frontend.controller.Teashop;
 import frontend.model.Grocery;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -10,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.sql.Date;
 
 public class GroceryWindow extends JFrame implements ActionListener, MouseListener, ChangeListener {
@@ -21,7 +23,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
     private JTable table;
     private JTableHeader header;
     private DefaultTableModel model_grocery;
-    private JLabel label_name, label_amount, label_date, label_duration;
+    private JLabel label_name, label_amount, label_date, label_duration, label_recommend;
     private JSpinner spin_name, spin_amount, spin_date, spin_duration;
     private SpinnerListModel model_name;
     private SpinnerNumberModel model_amount, model_duration;
@@ -34,7 +36,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
 
     public GroceryWindow() { super("Grocery"); }
 
-    public void showFrame() {
+    public void showFrame() throws IOException {
         panel = new JSplitPane();
         panel_left = new JPanel();
         panel_right = new JPanel();
@@ -58,6 +60,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         button_report = new JButton("Report");
         button_amount = new JButton("By Amount");
         button_date = new JButton("By Date");
+        label_recommend = new JLabel();
 
         label_name = new JLabel("Name: ");
         model_name = new SpinnerListModel(names);
@@ -108,6 +111,11 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         constraints.insets = new Insets(5, 10, 5, 0);
         layout_left.setConstraints(button_date, constraints);
         panel_left.add(button_date);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 5, 0);
+        layout_left.setConstraints(label_recommend, constraints);
+        panel_left.add(label_recommend);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
@@ -172,18 +180,18 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         button_add.addActionListener(this);
         button_update.addActionListener(this);
 
-        this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-        this.setLocation(600, 400);
-        this.setVisible(true);
+        panel_left.setBackground(Color.WHITE);
+        panel_right.setBackground(Color.WHITE);
+        Image image = ImageIO.read(this.getClass().getResource("/resources/icon.png"));
+        this.setIconImage(new ImageIcon(image).getImage());
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
+        this.setVisible(true);
+        this.setLocationRelativeTo(null);
     }
 
     private void listGrocery(Grocery[] data) {
-        groceries = new Object[data.length][0];
+        groceries = new Object[data.length][5];
         for (int i = 0; i < data.length; i++) {
             groceries[i] = new Object[]{data[i].getName(), data[i].getAmount(), data[i].getBuyingDate(), data[i].getDuration(), data[i].getExpiryDate()};
         }
@@ -204,37 +212,46 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        Grocery grocery = new Grocery();
-        grocery.setName((String)spin_name.getValue());
-        grocery.setAmount((int)spin_amount.getValue());
-        java.util.Date date = (java.util.Date)spin_date.getValue();
-        grocery.setBuyingDate(new Date(date.getTime()));
-        grocery.setDuration((int)spin_duration.getValue());
+        String name = (String)spin_name.getValue();
+        int amount = (int)spin_amount.getValue();
+        java.util.Date utildate = (java.util.Date)spin_date.getValue();
+        Date date = new Date(utildate.getTime());
+        int duration = (int)spin_duration.getValue();
+        Grocery grocery = new Grocery(name, amount, date, duration);
 
         if (event.getSource() == button_recipe) {
             this.dispose();
             RecipeWindow window = new RecipeWindow();
-            window.showFrame();
+            try {
+                window.showFrame();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if (event.getSource() == button_report) {
             this.dispose();
             ReportListWindow window = new ReportListWindow();
-            window.showFrame();
+            try {
+                window.showFrame();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if (event.getSource() == button_date) {
             listGrocery(Teashop.orderGroceryByDate());
         }
         else if (event.getSource() == button_amount) {
-            String name = (String)spin_name.getValue();
             listGrocery(Teashop.getGrocerySum(name));
         }
         else if (event.getSource() == button_add) {
             Teashop.addGrocery(grocery);
             listGrocery(Teashop.getAllGrocery());
+            label_recommend.setText("We recommend you " + Teashop.getRecommendedKind(name));
         }
         else {
             Teashop.updateGrocery(grocery);
             listGrocery(Teashop.getAllGrocery());
+            label_recommend.setText("We recommend you " + Teashop.getRecommendedKind(name));
         }
     }
 

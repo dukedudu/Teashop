@@ -4,6 +4,7 @@ import frontend.controller.Teashop;
 import frontend.model.DailyReport;
 import frontend.model.ShoppingList;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -11,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.sql.Date;
 
 public class ReportListWindow extends JFrame implements ActionListener, ChangeListener {
@@ -36,7 +38,7 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
 
     public ReportListWindow() { super("Daily Report & Shopping List"); }
 
-    public void showFrame() {
+    public void showFrame() throws IOException {
         panel = new JSplitPane();
         panel_left = new JPanel();
         panel_right = new JPanel();
@@ -190,18 +192,18 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
         spin_date2.addChangeListener(this);
         button_date.addActionListener(this);
 
-        this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-        this.setLocation(600, 400);
-        this.setVisible(true);
+        panel_left.setBackground(Color.WHITE);
+        panel_right.setBackground(Color.WHITE);
+        Image image = ImageIO.read(this.getClass().getResource("/resources/icon.png"));
+        this.setIconImage(new ImageIcon(image).getImage());
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
+        this.setVisible(true);
+        this.setLocationRelativeTo(null);
     }
 
     private void listReport(DailyReport[] data) {
-        reports = new Object[data.length][0];
+        reports = new Object[data.length][5];
         for (int i = 0; i < data.length; i++) {
             reports[i] = new Object[]{data[i].getDate(), data[i].getPearl(), data[i].getJelly(), data[i].getLemon(), data[i].getOrange()};
         }
@@ -210,7 +212,7 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
     }
 
     private void listList(ShoppingList[] data) {
-        lists = new Object[data.length][0];
+        lists = new Object[data.length][3];
         for (int i = 0; i < data.length; i++) {
             lists[i] = new Object[]{data[i].getDate(), data[i].getGname(), data[i].getAmount()};
         }
@@ -223,12 +225,20 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
         if (event.getSource() == button_recipe) {
             this.dispose();
             RecipeWindow window = new RecipeWindow();
-            window.showFrame();
+            try {
+                window.showFrame();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if (event.getSource() == button_grocery) {
             this.dispose();
             GroceryWindow window = new GroceryWindow();
-            window.showFrame();
+            try {
+                window.showFrame();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if (event.getSource() == button_name1) {
             String name = (String)spin_name1.getValue();

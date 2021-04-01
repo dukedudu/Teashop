@@ -28,17 +28,12 @@ public class LoginWindow extends JFrame implements ActionListener {
 		super("User Login");
 	}
 
-	public void showFrame() {
+	public void showFrame() throws IOException {
 		user = new User();
 		panel = new JPanel();
 		this.setContentPane(panel);
 		layout = new GridBagLayout();
 		constraints = new GridBagConstraints();
-		panel.setBackground(Color.WHITE);
-		try {
-			Image image = ImageIO.read(this.getClass().getResource("/resources/icon.png"));
-			this.setIconImage(new ImageIcon(image).getImage());
-		} catch (IOException e) { System.out.println("icon not found"); }
 
 		label_name = new JLabel("Name: ");
 		field_name = new JTextField(10);
@@ -85,14 +80,14 @@ public class LoginWindow extends JFrame implements ActionListener {
 
 		button_login.addActionListener(this);
 		button_register.addActionListener(this);
-		this.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
-		this.setLocation(850, 450);
-		this.setVisible(true);
+
+		panel.setBackground(Color.WHITE);
+		Image image = ImageIO.read(this.getClass().getResource("/resources/icon.png"));
+		this.setIconImage(new ImageIcon(image).getImage());
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
+		this.setVisible(true);
+		this.setLocationRelativeTo(null);
 	}
 
 	@Override
@@ -100,12 +95,20 @@ public class LoginWindow extends JFrame implements ActionListener {
 		if (event.getSource() == button_login) {
 			user.setName(field_name.getText());
 			user.setPassword(String.valueOf(field_pwd.getPassword()));
-			Teashop.login(user, field_pwd);
+			try {
+				Teashop.login(user, field_pwd);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		else {
 			this.dispose();
 			RegisterWindow registerWindow = new RegisterWindow();
-			registerWindow.showFrame();
+			try {
+				registerWindow.showFrame();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

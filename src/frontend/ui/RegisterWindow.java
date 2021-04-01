@@ -3,12 +3,14 @@ package frontend.ui;
 import frontend.controller.Teashop;
 import frontend.model.User;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 public class RegisterWindow extends JFrame implements ActionListener {
 	private User user;
@@ -24,7 +26,7 @@ public class RegisterWindow extends JFrame implements ActionListener {
 		super("User Register");
 	}
 
-	public void showFrame() {
+	public void showFrame() throws IOException {
 		panel = new JPanel();
 		this.setContentPane(panel);
 		layout = new GridBagLayout();
@@ -116,14 +118,14 @@ public class RegisterWindow extends JFrame implements ActionListener {
 		panel.add(button);
 
 		button.addActionListener(this);
-		this.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
-		this.setLocation(850, 450);
-		this.setVisible(true);
+
+		panel.setBackground(Color.WHITE);
+		Image image = ImageIO.read(this.getClass().getResource("/resources/icon.png"));
+		this.setIconImage(new ImageIcon(image).getImage());
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
+		this.setVisible(true);
+		this.setLocationRelativeTo(null);
 	}
 
 	@Override
@@ -135,9 +137,17 @@ public class RegisterWindow extends JFrame implements ActionListener {
 		user.setHouseNumber(Integer.parseInt(field_house.getText()));
 		user.setCity(field_city.getText());
 		user.setCode(field_code.getText());
-		Teashop.register(user);
+		try {
+			Teashop.register(user);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		this.dispose();
 		RecipeWindow recipeWindow = new RecipeWindow();
-		recipeWindow.showFrame();
+		try {
+			recipeWindow.showFrame();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

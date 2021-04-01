@@ -13,13 +13,14 @@ public class Recipe {
         this.orange = 0;
     }
 
-    public Recipe(String name, String kind, int pearl, int jelly, int lemon, int orange) {
+    public Recipe(String name, int pearl, int jelly, int lemon, int orange) {
         this.name = name;
-        this.kind = kind;
         this.pearl = pearl;
         this.jelly = jelly;
         this.lemon = lemon;
         this.orange = orange;
+        if (Math.max(pearl, jelly) > Math.max(lemon, orange)) { this.kind = "Milk Tea"; }
+        else { this.kind = "Fruit Tea"; }
     }
 
     public String getName() { return name; }

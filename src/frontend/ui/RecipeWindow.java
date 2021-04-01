@@ -4,6 +4,7 @@ import frontend.controller.Teashop;
 import frontend.model.Recipe;
 import frontend.model.User;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -11,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.sql.Date;
 
 public class RecipeWindow extends JFrame implements ActionListener, MouseListener, ChangeListener {
@@ -23,7 +25,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     private JTableHeader header;
     private DefaultTableModel model_recipe;
     private JTextField field;
-    private JLabel label_make, label_name, label_pearl, label_jelly, label_lemon, label_orange;
+    private JLabel label_name, label_pearl, label_jelly, label_lemon, label_orange, label_make;
     private JSpinner spin_pearl, spin_jelly, spin_lemon, spin_orange;
     private SpinnerNumberModel model_pearl, model_jelly, model_lemon, model_orange;
     private JButton button_grocery, button_report, button_make, button_my, button_add, button_update;
@@ -33,7 +35,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
 
     public RecipeWindow() { super("Recipe"); }
 
-    public void showFrame() {
+    public void showFrame() throws IOException {
         panel = new JSplitPane();
         panel_left = new JPanel();
         panel_right = new JPanel();
@@ -191,14 +193,14 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         button_add.addActionListener(this);
         button_update.addActionListener(this);
 
-        this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-        this.setLocation(600, 400);
-        this.setVisible(true);
+        panel_left.setBackground(Color.WHITE);
+        panel_right.setBackground(Color.WHITE);
+        Image image = ImageIO.read(this.getClass().getResource("/resources/icon.png"));
+        this.setIconImage(new ImageIcon(image).getImage());
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
+        this.setVisible(true);
+        this.setLocationRelativeTo(null);
     }
 
     private void listRecipe(Recipe[] data) {
@@ -224,30 +226,37 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        Recipe recipe = new Recipe();
-        recipe.setName(field.getText());
-        recipe.setPearl((int)spin_pearl.getValue());
-        recipe.setJelly((int)spin_jelly.getValue());
-        recipe.setLemon((int)spin_lemon.getValue());
-        recipe.setOrange((int)spin_orange.getValue());
+        String name = field.getText();
+        int pearl = (int)spin_pearl.getValue();
+        int jelly = (int)spin_jelly.getValue();
+        int lemon = (int)spin_lemon.getValue();
+        int orange = (int)spin_orange.getValue();
+        Recipe recipe = new Recipe(name, pearl, jelly, lemon, orange);
 
         if (event.getSource() == button_grocery) {
             this.dispose();
             GroceryWindow window = new GroceryWindow();
-            window.showFrame();
+            try {
+                window.showFrame();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if (event.getSource() == button_report) {
             this.dispose();
             ReportListWindow window = new ReportListWindow();
-            window.showFrame();
+            try {
+                window.showFrame();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else if (event.getSource() == button_make) {
             java.util.Date date = new java.util.Date();
 //            Teashop.makeRecipe(recipe, new Date(date.getTime()));
             if (Teashop.makeRecipe(recipe, new Date(date.getTime()))) {
                 label_make.setText("Success! Please enjoy your tea!");
-            }
-            else {
+            } else {
                 label_make.setText("Added grocery to shopping list");
             }
         }

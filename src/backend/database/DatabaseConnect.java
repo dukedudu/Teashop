@@ -17,7 +17,7 @@ public class DatabaseConnect {
             if (connection != null) {
                 connection.close();
             }
-            connection = DriverManager.getConnection(ORACLE_URL, "ora_dmy0604", "a44147163");
+            connection = DriverManager.getConnection(ORACLE_URL, "ora_sunjingy", "a48346902");
             System.out.println("Logged in");
             connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -29,7 +29,6 @@ public class DatabaseConnect {
         dropAllTableIfExists();
         try {
             Statement stmt = connection.createStatement();
-
             stmt.executeUpdate("CREATE TABLE Users(UName VARCHAR2(20) PRIMARY KEY, Password VARCHAR2(20), StreetName VARCHAR2(20), HouseNumber INT DEFAULT 0, City VARCHAR2(20), PostalCode VARCHAR2(20))");
 //            System.out.println("Table User created");
             stmt.executeUpdate("CREATE TABLE Recipe(RName VARCHAR2(20) PRIMARY KEY, Kind VARCHAR2(20), Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
@@ -68,13 +67,13 @@ public class DatabaseConnect {
         User u1 = new User("Sam", "123", "23rd W Ave", 2341, "Vancouver", "V6S1H6");
 //        User u2 = new User("Lily", "234", "23rd W Ave", 2341, "Vancouver", "V6S1H6");
         insertUser(u1);
-        Recipe r1 = new Recipe("Red tea", "Milk Tea", 20, 0, 0, 0);
-        Recipe r2 = new Recipe("Pearl Milk Tea", "Milk Tea", 20, 0, 0, 0);
+        Recipe r1 = new Recipe("Red tea", 20, 0, 0, 0);
+        Recipe r2 = new Recipe("Pearl Milk Tea", 20, 0, 0, 0);
         insertRecipe(r1);
         insertRecipe(r2);
-        Grocery g1 = new Grocery("Pearl", 0, 20, Date.valueOf("2021-03-29")); //天的运算
+        Grocery g1 = new Grocery("Pearl", 0, Date.valueOf("2021-03-29"), 20); //天的运算
         insertGrocery(g1);
-        Grocery g2 = new Grocery("Pearl", 50, 20, Date.valueOf("2021-03-30"));
+        Grocery g2 = new Grocery("Pearl", 50, Date.valueOf("2021-03-30"), 20);
         insertGrocery(g2);
         DailyReport d1 = new DailyReport(Date.valueOf("2021-03-29"), 20, 0, 0, 0);
         insertDailyReport(d1);
@@ -236,7 +235,6 @@ public class DatabaseConnect {
             ResultSet rs = stmt.executeQuery("SELECT * FROM Recipe");
             while (rs.next()) {
                 Recipe temp = new Recipe(rs.getString("RName"),
-                        rs.getString("Kind"),
                         rs.getInt("Pearl"),
                         rs.getInt("Jelly"),
                         rs.getInt("Lemon"),
@@ -258,15 +256,13 @@ public class DatabaseConnect {
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM Recipe WHERE RName = '" + rname + "'");
-            while(rs.next()){
-                result = new Recipe(rs.getString("RName"),
-                        rs.getString("Kind"),
-                        rs.getInt("Pearl"),
-                        rs.getInt("Jelly"),
-                        rs.getInt("Lemon"),
-                        rs.getInt("Orange")
-                );
-            }
+            rs.next();
+            result = new Recipe(rs.getString("RName"),
+                    rs.getInt("Pearl"),
+                    rs.getInt("Jelly"),
+                    rs.getInt("Lemon"),
+                    rs.getInt("Orange")
+            );
             rs.close();
             stmt.close();
         } catch (SQLException e) {
@@ -284,7 +280,6 @@ public class DatabaseConnect {
             while (rs.next()) {
                 result.add(new Recipe(
                         rs.getString("RName"),
-                        rs.getString("Kind"),
                         rs.getInt("Pearl"),
                         rs.getInt("Jelly"),
                         rs.getInt("Lemon"),
@@ -514,8 +509,8 @@ public class DatabaseConnect {
             while (rs.next()) {
                 Grocery temp = new Grocery(rs.getString("GName"),
                         rs.getInt("Amount"),
-                        rs.getInt("Duration"),
-                        rs.getDate("BuyingDate")
+                        rs.getDate("BuyingDate"),
+                        rs.getInt("Duration")
                 );
                 result.add(temp);
             }
@@ -536,8 +531,8 @@ public class DatabaseConnect {
             rs.next();
             result = new Grocery(rs.getString("GName"),
                     rs.getInt("Amount"),
-                    rs.getInt("Duration"),
-                    rs.getDate("BuyingDate")
+                    rs.getDate("BuyingDate"),
+                    rs.getInt("Duration")
             );
             rs.close();
             ps.close();
@@ -558,8 +553,8 @@ public class DatabaseConnect {
             while (rs.next()) {
                 result = new Grocery(rs.getString("GName"),
                         rs.getInt("Amount"),
-                        rs.getInt("Duration"),
-                        rs.getDate("BuyingDate")
+                        rs.getDate("BuyingDate"),
+                        rs.getInt("Duration")
                 );
             }
             rs.close();
@@ -579,8 +574,8 @@ public class DatabaseConnect {
             while (rs.next()) {
                 Grocery temp = new Grocery(rs.getString("GName"),
                         rs.getInt("Amount"),
-                        rs.getInt("Duration"),
-                        rs.getDate("BuyingDate")
+                        rs.getDate("BuyingDate"),
+                        rs.getInt("Duration")
                 );
                 result.add(temp);
                 System.out.println("backend: " + temp.getName() + " " + temp.getBuyingDate());
@@ -731,14 +726,14 @@ public class DatabaseConnect {
         }
     }
 
-    public void updateDailyReport(Date date, DailyReport dailyReport) {
+    public void updateDailyReport(Date date, DailyReport report) {
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE DailyReport SET ReportDay=?, Pearl=?, Jelly=?, Lemon=?, Orange=? WHERE ReportDay = DATE'" + date.toString() + "'");
             ps.setDate(1, date);
-            ps.setInt(2, dailyReport.getPearl());
-            ps.setInt(3, dailyReport.getJelly());
-            ps.setInt(4, dailyReport.getLemon());
-            ps.setInt(5, dailyReport.getOrange());
+            ps.setInt(2, report.getPearl());
+            ps.setInt(3, reeport.getJelly());
+            ps.setInt(4, report.getLemon());
+            ps.setInt(5, report.getOrange());
             ps.executeUpdate();
             connection.commit();
             ps.close();

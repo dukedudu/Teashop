@@ -10,24 +10,24 @@ public class Grocery {
     public Grocery() {
         this.name = "";
         this.amount = 0;
-        this.duration = 0;
         this.buyingDate = null;
+        this.duration = 0;
         this.expiryDate = null;
     }
 
     public Grocery(String name, int total) {
         this.name = name;
         this.amount = total;
-        this.duration = 0;
         this.buyingDate = null;
+        this.duration = 0;
         this.expiryDate = null;
     }
 
-    public Grocery(String name, int amount, int duration, Date buyingDate) {
+    public Grocery(String name, int amount, Date buyingDate, int duration) {
         this.name = name;
         this.amount = amount;
-        this.duration = duration;
         this.buyingDate = buyingDate;
+        this.duration = duration;
         this.expiryDate = addDays(buyingDate,duration);//buyingDate + duration;
     }
 
