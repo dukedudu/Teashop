@@ -1,20 +1,14 @@
 package frontend.ui;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import frontend.controller.Teashop;
 import frontend.model.User;
@@ -40,6 +34,11 @@ public class LoginWindow extends JFrame implements ActionListener {
 		this.setContentPane(panel);
 		layout = new GridBagLayout();
 		constraints = new GridBagConstraints();
+		panel.setBackground(Color.WHITE);
+		try {
+			Image image = ImageIO.read(this.getClass().getResource("/resources/icon.png"));
+			this.setIconImage(new ImageIcon(image).getImage());
+		} catch (IOException e) { System.out.println("icon not found"); }
 
 		label_name = new JLabel("Name: ");
 		field_name = new JTextField(10);
@@ -73,7 +72,7 @@ public class LoginWindow extends JFrame implements ActionListener {
 		panel.add(field_pwd);
 
 		constraints.gridwidth = GridBagConstraints.RELATIVE;
-		constraints.insets = new Insets(5, 10, 10, 10);
+		constraints.insets = new Insets(5, 20, 10, 10);
 		constraints.anchor = GridBagConstraints.CENTER;
 		layout.setConstraints(button_login, constraints);
 		panel.add(button_login);

@@ -26,7 +26,7 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
     private JSpinner spin_name1, spin_date1, spin_date2, spin_name2;
     private SpinnerListModel model_name1, model_name2;
     private SpinnerDateModel model_date1, model_date2;
-    private JButton button_name1, button_every, button_date, button_name2;
+    private JButton button_recipe, button_grocery, button_name1, button_every, button_date, button_name2;
 
     private String[] col_report = {"Date", "Pearl", "Jelly", "Lemon", "Orange"};
     private String[] col_list = {"Date", "Name", "Amount"};
@@ -46,6 +46,8 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
         layout_left = new GridBagLayout();
         layout_right = new GridBagLayout();
         constraints = new GridBagConstraints();
+        panel_left.setBackground(Color.WHITE);
+        panel_right.setBackground(Color.WHITE);
 
         model_report = new DefaultTableModel();
         model_report.setDataVector(reports, col_report);
@@ -56,6 +58,8 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
         label_name1 = new JLabel("Name: ");
         model_name1 = new SpinnerListModel(names);
         spin_name1 = new JSpinner(model_name1);
+        button_recipe = new JButton("Recipe");
+        button_grocery = new JButton("Grocery");
         button_name1 = new JButton("By Name");
         button_every = new JButton("With Every");
 
@@ -81,6 +85,16 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
         panel_left.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         panel_right.setLayout(layout_right);
         panel_right.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+
+        constraints.gridwidth = GridBagConstraints.RELATIVE;
+        constraints.insets = new Insets(5, 80, 5, 0);
+        layout_left.setConstraints(button_recipe, constraints);
+        panel_left.add(button_recipe);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 5, 0);
+        layout_left.setConstraints(button_grocery, constraints);
+        panel_left.add(button_grocery);
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.insets = new Insets(5, 10, 0, 0);
@@ -153,7 +167,7 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
         panel_right.add(spin_name2);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(5, 50, 5, 0);
+        constraints.insets = new Insets(5, 40, 5, 0);
         layout_right.setConstraints(button_name2, constraints);
         panel_right.add(button_name2);
 
@@ -166,12 +180,14 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
         listList(Teashop.getAllList());
         spin_name1.addChangeListener(this);
         button_name1.addActionListener(this);
-        spin_date1.addChangeListener(this);
-        spin_date2.addChangeListener(this);
-        button_date.addActionListener(this);
         button_every.addActionListener(this);
+        button_recipe.addActionListener(this);
+        button_grocery.addActionListener(this);
+
         spin_name2.addChangeListener(this);
         button_name2.addActionListener(this);
+        spin_date1.addChangeListener(this);
+        spin_date2.addChangeListener(this);
         button_date.addActionListener(this);
 
         this.addWindowListener(new WindowAdapter() {
@@ -179,7 +195,7 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
                 System.exit(0);
             }
         });
-        this.setLocation(550, 450);
+        this.setLocation(600, 400);
         this.setVisible(true);
         this.pack();
     }
@@ -204,7 +220,17 @@ public class ReportListWindow extends JFrame implements ActionListener, ChangeLi
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        if (event.getSource() == button_name1) {
+        if (event.getSource() == button_recipe) {
+            this.dispose();
+            RecipeWindow window = new RecipeWindow();
+            window.showFrame();
+        }
+        else if (event.getSource() == button_grocery) {
+            this.dispose();
+            GroceryWindow window = new GroceryWindow();
+            window.showFrame();
+        }
+        else if (event.getSource() == button_name1) {
             String name = (String)spin_name1.getValue();
             listReport(Teashop.getReportByName(name));
         }

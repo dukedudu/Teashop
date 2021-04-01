@@ -4,8 +4,8 @@ import java.sql.*;
 
 public class ShoppingList {
     private String gname;
-    private Date date;
     private int amount;
+    private Date date;
 
     public ShoppingList(String gname, int amount, Date date) {
         this.gname = gname;

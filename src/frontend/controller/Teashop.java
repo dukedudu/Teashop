@@ -5,6 +5,9 @@ import frontend.model.*;
 import frontend.ui.*;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.Date;
 
 //ssh -l sunjingy -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
@@ -15,24 +18,15 @@ public class Teashop {
 	public static LoginWindow loginWindow;
 	public static RegisterWindow registerWindow;
 	public static RecipeWindow recipeWindow;
-	public static GroceryWindow groceryWindow;
-	public static ReportListWindow reportListWindow;
 	
 	public void start() {
 		database = new DatabaseConnect();
 		database.databaseConnect();
 		database.setup();
-//		loginWindow = new LoginWindow();
-//		loginWindow.showFrame();
-//		registerWindow = new RegisterWindow();
-//		registerWindow.showFrame();
-		recipeWindow = new RecipeWindow();
-		recipeWindow.showFrame();
-//		groceryWindow = new GroceryWindow();
-//		groceryWindow.showFrame();
-//		reportListWindow = new ReportListWindow();
-//		reportListWindow.showFrame();
+		loginWindow = new LoginWindow();
+		loginWindow.showFrame();
 	}
+
 	public void test(){
 		database = new DatabaseConnect();
 		database.databaseConnect();
@@ -101,9 +95,11 @@ public class Teashop {
 		database.makeRecipe("Pearl Milk Tea", Date.valueOf("2021-3-31")); // not enough case
 		System.out.println(database.recommendKind("Pearl"));
 	}
+
 	public static void register(User user) {
 		database.insertUser(user);
 		registerWindow.dispose();
+		loginWindow = new LoginWindow();
 		loginWindow.showFrame();
 	}
 
@@ -111,6 +107,7 @@ public class Teashop {
 		boolean correct = database.selectPassword(user);
 		if (correct) {
 			loginWindow.dispose();
+			recipeWindow = new RecipeWindow();
 			recipeWindow.showFrame();
 		}
 		else { failed(field); }
@@ -124,7 +121,7 @@ public class Teashop {
 
 	public static Recipe[] getAllRecipe() { return database.selectAllRecipe(); }
 
-	public static void makeRecipe(Recipe recipe, Date date) { database.makeRecipe(recipe.getName(), Date.valueOf("2021-3-31"));}
+	public static boolean makeRecipe(Recipe recipe, Date date) { return database.makeRecipe(recipe.getName(), date);}
 	//public static void makeRecipe(String name) { } // need to change
 
 	public static Recipe[] getMyRecipe(String name) { return database.selectRecipeByUname(name);}//database.selectRecipeByUname(name); }
@@ -163,7 +160,11 @@ public class Teashop {
 
 	public static void main(String args[]) {
 		Teashop teashop = new Teashop();
-		//teashop.start();
-		teashop.test();
+		try {
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+			UIManager.put("nimbusBase", new Color(100,175,47,255));
+		} catch(Exception ignored){ }
+		teashop.start();
+//		teashop.test();
 	}
 }

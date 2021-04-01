@@ -29,6 +29,7 @@ public class RegisterWindow extends JFrame implements ActionListener {
 		this.setContentPane(panel);
 		layout = new GridBagLayout();
 		constraints = new GridBagConstraints();
+		panel.setBackground(Color.WHITE);
 
 		label_name = new JLabel("Name: ");
 		field_name = new JTextField(10);

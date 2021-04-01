@@ -23,12 +23,11 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
     private JTableHeader header;
     private DefaultTableModel model_recipe;
     private JTextField field;
-    private JLabel label_name, label_pearl, label_jelly, label_lemon, label_orange;
+    private JLabel label_make, label_name, label_pearl, label_jelly, label_lemon, label_orange;
     private JSpinner spin_pearl, spin_jelly, spin_lemon, spin_orange;
     private SpinnerNumberModel model_pearl, model_jelly, model_lemon, model_orange;
-    private JButton button_make, button_my, button_add, button_update;
+    private JButton button_grocery, button_report, button_make, button_my, button_add, button_update;
 
-    private String[] windows = {"Recipe", "Grocery", "Reports"};
     private String[] columns = {"Name", "Pearl", "Jelly", "Lemon", "Orange"};
     private Object[][] recipes = {};
 
@@ -44,6 +43,8 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         layout_left = new GridBagLayout();
         layout_right = new GridBagLayout();
         constraints = new GridBagConstraints();
+        panel_left.setBackground(Color.WHITE);
+        panel_right.setBackground(Color.WHITE);
 
         model_recipe = new DefaultTableModel();
         model_recipe.setDataVector(recipes, columns);
@@ -52,8 +53,11 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         header.addMouseListener(this);
         table.setRowSelectionAllowed(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        button_grocery = new JButton("Grocery");
+        button_report = new JButton("Report");
         button_make = new JButton("Make This");
         button_my = new JButton("My Recipes");
+        label_make = new JLabel();
 
         label_name = new JLabel("Name: ");
         field = new JTextField(10);
@@ -77,6 +81,16 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         panel_right.setLayout(layout_right);
         panel_right.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
+        constraints.gridwidth = GridBagConstraints.RELATIVE;
+        constraints.insets = new Insets(5, 80, 5, 0);
+        layout_left.setConstraints(button_grocery, constraints);
+        panel_left.add(button_grocery);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 5, 0);
+        layout_left.setConstraints(button_report, constraints);
+        panel_left.add(button_report);
+
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.insets = new Insets(5, 10, 0, 0);
         layout_left.setConstraints(header, constraints);
@@ -96,6 +110,11 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         constraints.insets = new Insets(5, 10, 5, 0);
         layout_left.setConstraints(button_my, constraints);
         panel_left.add(button_my);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 5, 0);
+        layout_left.setConstraints(label_make, constraints);
+        panel_left.add(label_make);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
         constraints.insets = new Insets(5, 10, 5, 0);
@@ -148,7 +167,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         panel_right.add(spin_orange);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(5, 20, 5, 0);
+        constraints.insets = new Insets(5, 40, 5, 0);
         layout_right.setConstraints(button_add, constraints);
         panel_right.add(button_add);
 
@@ -161,6 +180,8 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         table.addMouseListener(this);
         button_make.addActionListener(this);
         button_my.addActionListener(this);
+        button_grocery.addActionListener(this);
+        button_report.addActionListener(this);
 
         spin_pearl.addChangeListener(this);
         spin_jelly.addChangeListener(this);
@@ -175,7 +196,7 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
                 System.exit(0);
             }
         });
-        this.setLocation(700, 400);
+        this.setLocation(600, 400);
         this.setVisible(true);
         this.pack();
     }
@@ -210,9 +231,25 @@ public class RecipeWindow extends JFrame implements ActionListener, MouseListene
         recipe.setLemon((int)spin_lemon.getValue());
         recipe.setOrange((int)spin_orange.getValue());
 
-        if (event.getSource() == button_make) {
+        if (event.getSource() == button_grocery) {
+            this.dispose();
+            GroceryWindow window = new GroceryWindow();
+            window.showFrame();
+        }
+        else if (event.getSource() == button_report) {
+            this.dispose();
+            ReportListWindow window = new ReportListWindow();
+            window.showFrame();
+        }
+        else if (event.getSource() == button_make) {
             java.util.Date date = new java.util.Date();
-            Teashop.makeRecipe(recipe, new Date(date.getTime()));
+//            Teashop.makeRecipe(recipe, new Date(date.getTime()));
+            if (Teashop.makeRecipe(recipe, new Date(date.getTime()))) {
+                label_make.setText("Success! Please enjoy your tea!");
+            }
+            else {
+                label_make.setText("Added grocery to shopping list");
+            }
         }
         else if (event.getSource() == button_my) {
             User user = LoginWindow.getUser();

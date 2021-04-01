@@ -26,7 +26,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
     private SpinnerListModel model_name;
     private SpinnerNumberModel model_amount, model_duration;
     private SpinnerDateModel model_date;
-    private JButton button_add, button_update, button_amount, button_date;
+    private JButton button_recipe, button_report, button_add, button_update, button_amount, button_date;
 
     private String[] columns = {"Name", "Amount", "Bought", "Duration", "Expiry"};
     private String[] names = {"Pearl", "Jelly", "Lemon", "Orange"};
@@ -44,6 +44,8 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         layout_left = new GridBagLayout();
         layout_right = new GridBagLayout();
         constraints = new GridBagConstraints();
+        panel_left.setBackground(Color.WHITE);
+        panel_right.setBackground(Color.WHITE);
 
         model_grocery = new DefaultTableModel();
         model_grocery.setDataVector(groceries, columns);
@@ -52,6 +54,8 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         header.addMouseListener(this);
         table.setRowSelectionAllowed(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        button_recipe = new JButton("Recipe");
+        button_report = new JButton("Report");
         button_amount = new JButton("By Amount");
         button_date = new JButton("By Date");
 
@@ -74,6 +78,16 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         panel_left.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         panel_right.setLayout(layout_right);
         panel_right.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+
+        constraints.gridwidth = GridBagConstraints.RELATIVE;
+        constraints.insets = new Insets(5, 80, 5, 0);
+        layout_left.setConstraints(button_recipe, constraints);
+        panel_left.add(button_recipe);
+
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.insets = new Insets(5, 10, 5, 0);
+        layout_left.setConstraints(button_report, constraints);
+        panel_left.add(button_report);
 
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.insets = new Insets(5, 10, 0, 0);
@@ -136,7 +150,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         panel_right.add(spin_duration);
 
         constraints.gridwidth = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(5, 20, 5, 0);
+        constraints.insets = new Insets(5, 40, 5, 0);
         layout_right.setConstraints(button_add, constraints);
         panel_right.add(button_add);
 
@@ -149,6 +163,9 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         table.addMouseListener(this);
         button_amount.addActionListener(this);
         button_date.addActionListener(this);
+        button_recipe.addActionListener(this);
+        button_report.addActionListener(this);
+
         spin_name.addChangeListener(this);
         spin_amount.addChangeListener(this);
         spin_date.addChangeListener(this);
@@ -160,7 +177,7 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
                 System.exit(0);
             }
         });
-        this.setLocation(700, 450);
+        this.setLocation(600, 400);
         this.setVisible(true);
         this.pack();
     }
@@ -194,7 +211,17 @@ public class GroceryWindow extends JFrame implements ActionListener, MouseListen
         grocery.setBuyingDate(new Date(date.getTime()));
         grocery.setDuration((int)spin_duration.getValue());
 
-        if (event.getSource() == button_date) {
+        if (event.getSource() == button_recipe) {
+            this.dispose();
+            RecipeWindow window = new RecipeWindow();
+            window.showFrame();
+        }
+        else if (event.getSource() == button_report) {
+            this.dispose();
+            ReportListWindow window = new ReportListWindow();
+            window.showFrame();
+        }
+        else if (event.getSource() == button_date) {
             listGrocery(Teashop.orderGroceryByDate());
         }
         else if (event.getSource() == button_amount) {
