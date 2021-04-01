@@ -30,4 +30,24 @@ public class DailyReport {
     public int getLemon() { return lemon; }
 
     public int getOrange() { return orange; }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setPearl(int pearl) {
+        this.pearl = pearl;
+    }
+
+    public void setJelly(int jelly) {
+        this.jelly = jelly;
+    }
+
+    public void setLemon(int lemon) {
+        this.lemon = lemon;
+    }
+
+    public void setOrange(int orange) {
+        this.orange = orange;
+    }
 }

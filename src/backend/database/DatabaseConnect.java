@@ -17,7 +17,7 @@ public class DatabaseConnect {
             if (connection != null) {
                 connection.close();
             }
-            connection = DriverManager.getConnection(ORACLE_URL, "ora_sunjingy", "a48346902");
+            connection = DriverManager.getConnection(ORACLE_URL, "ora_dmy0604", "a44147163");
             System.out.println("Logged in");
             connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -608,54 +608,70 @@ public class DatabaseConnect {
             connection.commit();
             ps.close();
             usage_index++;
+            dailyReportUpdate(recipe,date);
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
     }
-
+    public void dailyReportUpdate(Recipe recipe, Date date){
+        String cmd = "SELECT * FROM DailyReport WHERE reportDay = DATE'"+date.toString()+"'";
+        DailyReport[] r = selectReports(cmd);
+        if (r.length == 0){
+            DailyReport d1 = new DailyReport(date,recipe.getPearl(),recipe.getJelly(),recipe.getLemon(),recipe.getOrange());
+            insertDailyReport(d1);
+        }
+        else {
+            DailyReport target = r[0];
+            target.setPearl(target.getPearl()+recipe.getPearl());
+            target.setJelly(target.getJelly()+recipe.getJelly());
+            target.setOrange(target.getOrange()+recipe.getOrange());
+            target.setLemon(target.getLemon()+recipe.getLemon());
+            updateDailyReport(date,target.getPearl(),target.getJelly(),target.getOrange(),target.getLemon());
+        }
+    }
     //Eric comments
-//    private DailyReport[] selectReports(String query) {
-//        ArrayList<DailyReport> result = new ArrayList<DailyReport>();
-//        try {
-//            Statement stmt = connection.createStatement();
-//            ResultSet rs = stmt.executeQuery(query);
-//            while (rs.next()) {
-//                DailyReport model = new DailyReport(
-//                        rs.getDate("ReportDay"),
-//                        rs.getInt("Pearl" ),
-//                        rs.getInt("Jelly" ),
-//                        rs.getInt("Lemon"),
-//                        rs.getInt("Orange"));
-//                result.add(model);
-//            }
-//            rs.close();
-//            stmt.close();
-//        } catch (SQLException e) {
-//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-//        }
-//        return result.toArray(new DailyReport[result.size()]);
-//    }
+    private DailyReport[] selectReports(String query) {
+        ArrayList<DailyReport> result = new ArrayList<DailyReport>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                DailyReport model = new DailyReport(
+                        rs.getDate("ReportDay"),
+                        rs.getInt("Pearl" ),
+                        rs.getInt("Jelly" ),
+                        rs.getInt("Lemon"),
+                        rs.getInt("Orange"));
+                result.add(model);
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result.toArray(new DailyReport[result.size()]);
+    }
 
-//    private ShoppingList[] selectLists(String query) {
-//        ArrayList<ShoppingList> result = new ArrayList<ShoppingList>();
-//        try {
-//            Statement stmt = connection.createStatement();
-//            ResultSet rs = stmt.executeQuery(query);
-//            while (rs.next()) {
-//                ShoppingList model = new ShoppingList(
-//                        rs.getString("GName" ),
-//                        rs.getInt("Amount" ),
-//                        rs.getDate("ListDate"));
-//                result.add(model);
-//            }
-//            rs.close();
-//            stmt.close();
-//        } catch (SQLException e) {
-//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-//        }
-//        return result.toArray(new ShoppingList[result.size()]);
-//    }
+    private ShoppingList[] selectLists(String query) {
+        ArrayList<ShoppingList> result = new ArrayList<ShoppingList>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                ShoppingList model = new ShoppingList(
+                        rs.getString("GName" ),
+                        rs.getInt("Amount" ),
+                        rs.getDate("ListDate"));
+                result.add(model);
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result.toArray(new ShoppingList[result.size()]);
+    }
 
     public void insertDailyReport(DailyReport d) {
         try {
@@ -676,7 +692,7 @@ public class DatabaseConnect {
 
     public void updateDailyReport(Date date, int pearl, int jelly, int lemon, int orange) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE DailyReport SET ReportDay=?, Pearl=?, Jelly=?, Lemon=?, Orange=? WHERE ReportDay =" + date);
+            PreparedStatement ps = connection.prepareStatement("UPDATE DailyReport SET ReportDay=?, Pearl=?, Jelly=?, Lemon=?, Orange=? WHERE ReportDay = DATE'" + date.toString() +"'");
             ps.setDate(1, date);
             ps.setInt(2, pearl);
             ps.setInt(3, jelly);
