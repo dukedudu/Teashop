@@ -164,7 +164,7 @@ public class Teashop {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 			UIManager.put("nimbusBase", new Color(100,175,47,255));
 		} catch(Exception ignored){ }
-		teashop.start();
-//		teashop.test();
+//		teashop.start();
+		teashop.test();
 	}
 }
