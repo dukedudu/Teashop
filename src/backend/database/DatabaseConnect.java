@@ -17,7 +17,7 @@ public class DatabaseConnect {
             if (connection != null) {
                 connection.close();
             }
-            connection = DriverManager.getConnection(ORACLE_URL, "ora_sunjingy", "a48346902");
+            connection = DriverManager.getConnection(ORACLE_URL, "ora_dmy0604", "a44147163");
             System.out.println("Logged in");
             connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -29,6 +29,7 @@ public class DatabaseConnect {
         dropAllTableIfExists();
         try {
             Statement stmt = connection.createStatement();
+
             stmt.executeUpdate("CREATE TABLE Users(UName VARCHAR2(20) PRIMARY KEY, Password VARCHAR2(20), StreetName VARCHAR2(20), HouseNumber INT DEFAULT 0, City VARCHAR2(20), PostalCode VARCHAR2(20))");
 //            System.out.println("Table User created");
             stmt.executeUpdate("CREATE TABLE Recipe(RName VARCHAR2(20) PRIMARY KEY, Kind VARCHAR2(20), Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
@@ -54,10 +55,10 @@ public class DatabaseConnect {
             stmt.executeUpdate("CREATE TABLE Supplies(SupplierId INT, GName VARCHAR2(20), BuyingDate DATE, PRIMARY KEY (SupplierId))");
 //                                    "FOREIGN KEY(SupplierId) REFERENCES Supplier(SupplierId), FOREIGN KEY(GName, BuyingDate) REFERENCES Grocery(GName, BuyingDate))");
 //            System.out.println("Table Supplies created");
-            stmt.executeUpdate("CREATE TABLE ShoppingList(GName CHAR(20), Amount INT NOT NULL, ListDate DATE, PRIMARY KEY (GName,ListDate))");
+            stmt.executeUpdate("CREATE TABLE ShoppingList(GName VARCHAR2(20), Amount INT NOT NULL, ListDate DATE, PRIMARY KEY (GName,ListDate))");
 //            System.out.println("Table ShoppingList created");
             //                    "FOREIGN KEY(UserId) REFERENCES User ON DELETE CASCADE, FOREIGN KEY(GName,ListDate) REFERENCES Grocery ON DELETE CASCADE);");
-            stmt.executeUpdate("CREATE TABLE Lists(GName CHAR(20), ListDate DATE, UseID INT, PRIMARY KEY (UseID, GName, ListDate))");
+            stmt.executeUpdate("CREATE TABLE Lists(GName VARCHAR2(20), ListDate DATE, UseID INT, PRIMARY KEY (UseID, GName, ListDate))");
 //            System.out.println("Table List created");
 //                                    "FOREIGN KEY (GName,ListDate) REFERENCES ShoppingList(GName, ListDate) ON DELETE CASCADE, FOREIGN KEY (UseID) REFERENCES Usage(UseID) ON DELETE CASCADE)");
             stmt.close();
@@ -257,14 +258,15 @@ public class DatabaseConnect {
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM Recipe WHERE RName = '" + rname + "'");
-            rs.next();
-            result = new Recipe(rs.getString("RName"),
-                    rs.getString("Kind"),
-                    rs.getInt("Pearl"),
-                    rs.getInt("Jelly"),
-                    rs.getInt("Lemon"),
-                    rs.getInt("Orange")
-            );
+            while(rs.next()){
+                result = new Recipe(rs.getString("RName"),
+                        rs.getString("Kind"),
+                        rs.getInt("Pearl"),
+                        rs.getInt("Jelly"),
+                        rs.getInt("Lemon"),
+                        rs.getInt("Orange")
+                );
+            }
             rs.close();
             stmt.close();
         } catch (SQLException e) {
@@ -323,6 +325,8 @@ public class DatabaseConnect {
 
     public boolean makeRecipe(String name, Date today) {
         boolean result = false;
+        System.out.println(today.toString());
+        today = Date.valueOf(today.toString());
         Recipe recipe = selectRecipeByRname(name); //
         deleteWithZero();
         Grocery pearlStock = findEarliestAmount("Pearl");
@@ -333,7 +337,7 @@ public class DatabaseConnect {
         if (checkAddToList(recipe.getPearl(), pearlStock, "Pearl", today) &&
                 checkAddToList(recipe.getJelly(), jellyStock, "Jelly", today) &&
                 checkAddToList(recipe.getLemon(), lemonStock, "Lemon", today) &&
-                checkAddToList(recipe.getPearl(), orangeStock, "Orange", today)) {
+                checkAddToList(recipe.getOrange(), orangeStock, "Orange", today)) {
             //to Eric:
             pearlStock.setAmount(pearlStock.getAmount() - recipe.getPearl());
 //            System.out.println(pearlStock.getAmount() + " " + recipe.getPearl());
@@ -407,7 +411,7 @@ public class DatabaseConnect {
             deleteWithZero();
             try {
                 Statement stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM ShoppingList WHERE Gname = '" + gname + "' AND ListDate='" + today + "'");
+                ResultSet rs = stmt.executeQuery("SELECT * FROM ShoppingList WHERE Gname = '" + gname + "' AND ListDate= DATE'" + today + "'");
                 while (rs.next()) {
                     ShoppingList temp = new ShoppingList(rs.getString("Gname"),
                             rs.getInt("Amount"),
@@ -527,7 +531,7 @@ public class DatabaseConnect {
     public Grocery selectGrocery(String name, Date date) {
         Grocery result = new Grocery();
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Grocery WHERE GName = '"+ name +"'"+ " AND BuyingDate='" + date + "'");
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Grocery WHERE GName = '"+ name +"'"+ " AND BuyingDate= DATE'" + date.toString() + "'");
             ResultSet rs = ps.executeQuery();
             rs.next();
             result = new Grocery(rs.getString("GName"),
@@ -624,13 +628,49 @@ public class DatabaseConnect {
             connection.commit();
             ps.close();
             usage_index++;
-            updateDailyReport(date, recipe);
+            dailyReportUpdate(recipe, date);
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
     }
-
+    public void dailyReportUpdate(Recipe recipe, Date date){
+        String cmd = "SELECT * FROM DailyReport WHERE reportDay = DATE'"+date.toString()+"'";
+        DailyReport[] r = selectReports(cmd);
+        if (r.length == 0){
+            DailyReport d1 = new DailyReport(date,recipe.getPearl(),recipe.getJelly(),recipe.getLemon(),recipe.getOrange());
+            insertDailyReport(d1);
+        }
+        else {
+            DailyReport target = r[0];
+            target.setPearl(target.getPearl()+recipe.getPearl());
+            target.setJelly(target.getJelly()+recipe.getJelly());
+            target.setOrange(target.getOrange()+recipe.getOrange());
+            target.setLemon(target.getLemon()+recipe.getLemon());
+            updateDailyReport(date,target);
+        }
+    }
+    private DailyReport[] selectReports(String query) {
+        ArrayList<DailyReport> result = new ArrayList<DailyReport>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                DailyReport model = new DailyReport(
+                        rs.getDate("ReportDay"),
+                        rs.getInt("Pearl" ),
+                        rs.getInt("Jelly" ),
+                        rs.getInt("Lemon"),
+                        rs.getInt("Orange"));
+                result.add(model);
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result.toArray(new DailyReport[result.size()]);
+    }
     //Eric comments
 //    private DailyReport[] selectReports(String query) {
 //        ArrayList<DailyReport> result = new ArrayList<DailyReport>();
@@ -691,14 +731,14 @@ public class DatabaseConnect {
         }
     }
 
-    public void updateDailyReport(Date date, Recipe recipe) {
+    public void updateDailyReport(Date date, DailyReport dailyReport) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE DailyReport SET ReportDay=?, Pearl=?, Jelly=?, Lemon=?, Orange=? WHERE ReportDay ='" + date + "'");
+            PreparedStatement ps = connection.prepareStatement("UPDATE DailyReport SET ReportDay=?, Pearl=?, Jelly=?, Lemon=?, Orange=? WHERE ReportDay = DATE'" + date.toString() + "'");
             ps.setDate(1, date);
-            ps.setInt(2, recipe.getPearl());
-            ps.setInt(3, recipe.getJelly());
-            ps.setInt(4, recipe.getLemon());
-            ps.setInt(5, recipe.getOrange());
+            ps.setInt(2, dailyReport.getPearl());
+            ps.setInt(3, dailyReport.getJelly());
+            ps.setInt(4, dailyReport.getLemon());
+            ps.setInt(5, dailyReport.getOrange());
             ps.executeUpdate();
             connection.commit();
             ps.close();
@@ -770,7 +810,7 @@ public class DatabaseConnect {
         ArrayList<DailyReport> result = new ArrayList<DailyReport>();
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM DailyReport D WHERE NOT EXISTS ((SELECT * FROM DailyReport D1) MINUS (SELECT * FROM DailyReport D2 WHERE D2.Pearl > 0 AND D2.Jelly > 0 AND D2.Lemon > 0 AND D2.Orange > 0))");
+            ResultSet rs = stmt.executeQuery("SELECT D.ReportDay FROM DailyReport D WHERE NOT EXISTS ((SELECT D1.ReportDay FROM DailyReport D1) MINUS (SELECT D2.ReportDay FROM DailyReport D2 WHERE D2.Pearl > 0 AND D2.Jelly > 0 AND D2.Lemon > 0 AND D2.Orange > 0))");
             while (rs.next()) {
                 DailyReport model = new DailyReport(
                         rs.getDate("ReportDay"),

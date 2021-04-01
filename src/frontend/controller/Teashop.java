@@ -94,6 +94,14 @@ public class Teashop {
 		database.makeRecipe("Pearl Milk Tea", Date.valueOf("2021-3-31")); // enough case
 		database.makeRecipe("Pearl Milk Tea", Date.valueOf("2021-3-31")); // not enough case
 		System.out.println(database.recommendKind("Pearl"));
+
+		System.out.println("test 11: division");
+		DailyReport dAll = new DailyReport(Date.valueOf("2021-4-1"),20,20,20,20);
+		database.insertDailyReport(dAll);
+		DailyReport[] dd1 = database.selectReportWithEvery();
+		for(DailyReport d: dd1){
+			System.out.println(d.getDate().toString()+d.getPearl());
+		}
 	}
 
 	public static void register(User user) {
@@ -164,7 +172,7 @@ public class Teashop {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 			UIManager.put("nimbusBase", new Color(100,175,47,255));
 		} catch(Exception ignored){ }
-//		teashop.start();
-		teashop.test();
+		teashop.start();
+		//teashop.test();
 	}
 }
