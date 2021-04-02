@@ -37,11 +37,6 @@ public class Teashop {
 
 		System.out.println("test2: insert user (already test on database.setup) PASSED");
 
-//		System.out.println("test3: Update Password");
-//		System.out.println("Expected true. Actual "+database.changePassword("Sam", "777","777")); //view results in db
-//		System.out.println("Expected false. Actual "+database.changePassword("seffs", "777","777"));
-//		System.out.println("Expected false. Actual "+database.changePassword("seffs", "777","7778"));
-
 		System.out.println("test4: Select recipe by name");
 		Recipe r = getRecipeByName("Pearl Milk Tea");
 		System.out.println("Expected Pearl Milk Tea, Actual " + r.getName());
@@ -51,8 +46,6 @@ public class Teashop {
 		Recipe r4 = new Recipe("Lemon tea", 50, 0, 30, 0);
 		database.insertRecipe(r3);
 		database.insertRecipe(r4);
-//		stmt.executeQuery("INSERT INTO MakeRecipe(UName,RName) VALUES ('Sam', 'Orange tea')");
-//		stmt.executeQuery("INSERT INTO MakeRecipe(UName,RName) VALUES ('Sam', 'Lemon tea')");
 		Recipe[] t5Results = getMyRecipe("Sam");
 		System.out.println("Expected Red tea, Orange tea and lemon tea.");
 		for (Recipe tmp:t5Results){
@@ -134,13 +127,10 @@ public class Teashop {
 	public static Recipe[] getAllRecipe() { return database.selectAllRecipe(); }
 
 	public static boolean makeRecipe(Recipe recipe, Date date) { return database.makeRecipe(recipe.getName(), date);}
-	//public static void makeRecipe(String name) { } // need to change
 
-	public static Recipe[] getMyRecipe(String name) { return database.selectRecipeByUname(name);}//database.selectRecipeByUname(name); }
+	public static Recipe[] getMyRecipe(String name) { return database.selectRecipeByUname(name);}
 
 	public static Recipe getRecipeByName(String name) { return database.selectRecipeByRname(name); }
-
-//	public static Recipe[] getRecipeByKind(String kind) { return database.selectRecipeByKind(kind); }
 
 	public static String getRecommendedKind(String gname) { return database.recommendKind(gname); }
 
@@ -176,7 +166,7 @@ public class Teashop {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 			UIManager.put("nimbusBase", new Color(100,175,47,255));
 		} catch(Exception ignored){ }
-		//teashop.start();
-		teashop.test();
+		teashop.start();
+		//teashop.test();
 	}
 }
