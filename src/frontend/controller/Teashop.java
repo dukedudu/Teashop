@@ -23,6 +23,8 @@ public class Teashop {
 		database.databaseConnect();
 		database.setup();
 		loginWindow = new LoginWindow();
+		registerWindow = new RegisterWindow();
+		recipeWindow = new RecipeWindow();
 		loginWindow.showFrame();
 	}
 
