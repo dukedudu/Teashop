@@ -21,8 +21,10 @@ public class Teashop {
 	public void start() throws IOException {
 		database = new DatabaseConnect();
 		database.databaseConnect();
-		database.setup();
+		//database.setup();
 		loginWindow = new LoginWindow();
+		recipeWindow = new RecipeWindow();
+		registerWindow = new RegisterWindow();
 		loginWindow.showFrame();
 	}
 

@@ -9,7 +9,7 @@ public class DatabaseConnect {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
     private Connection connection = null;
-    private int usage_index = 1, minAmount = 20;
+    private int usage_index = 6, minAmount = 20;
 
     public void databaseConnect() {
         try {
@@ -35,7 +35,8 @@ public class DatabaseConnect {
             stmt.executeUpdate("CREATE TABLE Recipe(RName VARCHAR2(20) PRIMARY KEY, Kind VARCHAR2(20), Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)");
             stmt.executeUpdate("CREATE TABLE MakeRecipe(UName VARCHAR2(20), RName VARCHAR2(20), PRIMARY KEY(UName,RName), FOREIGN KEY(UName) REFERENCES Users, FOREIGN KEY(RName) REFERENCES Recipe)");
             stmt.executeUpdate("CREATE TABLE Usage(UseID INT PRIMARY KEY, RName VARCHAR2(20), UsingDate DATE NOT NULL, Pearl INT DEFAULT 0, Jelly INT DEFAULT 0, Lemon INT DEFAULT 0, Orange INT DEFAULT 0)"); //foreign key RName?
-            stmt.executeUpdate("CREATE TABLE Generates(RName VARCHAR2(20), UseID INT, PRIMARY KEY(RName, UseID), FOREIGN KEY(RName) REFERENCES Recipe ON DELETE CASCADE, FOREIGN KEY(UseId) REFERENCES Usage(UseID) ON DELETE CASCADE)");
+
+            stmt.executeUpdate("CREATE TABLE Generates(RName VARCHAR2(20), UseID INT, PRIMARY KEY(RName, UseID), FOREIGN KEY(RName) REFERENCES Recipe ON DELETE CASCADE, FOREIGN KEY(UseID) REFERENCES Usage ON DELETE CASCADE)");
             stmt.executeUpdate("CREATE TABLE GroceryDate(BuyingDate DATE, Duration INT, ExpiryDate DATE, PRIMARY KEY(BuyingDate, Duration))");
             stmt.executeUpdate("CREATE TABLE Grocery(GName VARCHAR2(20), Amount INT DEFAULT 0, BuyingDate DATE, Duration INT, PRIMARY KEY (GName, BuyingDate), FOREIGN KEY(BuyingDate, Duration) REFERENCES GroceryDate(BuyingDate, Duration) ON DELETE CASCADE)"); //ExpiryDate in GroceryDate?
             stmt.executeUpdate("CREATE TABLE Buys(UName VARCHAR2(20), GName VARCHAR2(20), BuyingDate DATE, PRIMARY KEY(UName, GName, BuyingDate), FOREIGN KEY(UName) REFERENCES Users, FOREIGN KEY(GName, BuyingDate) REFERENCES Grocery(GName, BuyingDate) ON DELETE CASCADE)");
@@ -43,26 +44,128 @@ public class DatabaseConnect {
             stmt.executeUpdate("CREATE TABLE Supplier(SupplierId INT PRIMARY KEY, CompanyName VARCHAR2(20) NOT NULL)");;
             stmt.executeUpdate("CREATE TABLE Supplies(SupplierId INT, GName VARCHAR2(20), PRIMARY KEY(SupplierId, GName), FOREIGN KEY(SupplierId) REFERENCES Supplier(SupplierId))");
             stmt.executeUpdate("CREATE TABLE ShoppingList(GName VARCHAR2(20), ListDate DATE, Amount INT NOT NULL, PRIMARY KEY (GName, ListDate))"); //UseId?);
-            stmt.executeUpdate("CREATE TABLE Lists(GName VARCHAR2(20), ListDate DATE, UseID INT, PRIMARY KEY (UseID, GName, ListDate), FOREIGN KEY (GName,ListDate) REFERENCES ShoppingList(GName, ListDate) ON DELETE CASCADE)");
+            stmt.executeUpdate("CREATE TABLE Lists(GName VARCHAR2(20), ListDate DATE, UseID INT, PRIMARY KEY (UseID, GName, ListDate), FOREIGN KEY (UseID) REFERENCES Usage ON DELETE CASCADE, FOREIGN KEY (GName,ListDate) REFERENCES ShoppingList(GName, ListDate) ON DELETE CASCADE)");
+
+//            stmt.executeQuery("INSERT INTO Address(StreetName, HouseNumber, City, PostalCode) VALUES ('23rd W Ave', '2341', 'Vancouver', 'V6S1H6')");
+//            stmt.executeQuery("INSERT INTO Users(UName, Password, StreetName, HouseNumber, PostalCode) VALUES ('test', '123123', '23rd W Ave', '2341', 'V6S1H6')");
+//            User u2 = new User("Lily", "234", "3rd W Ave", 2341, "Richmond", "V321H4");
+//            insertUser(u2);
+//            stmt.executeQuery("INSERT INTO Recipe(RName, Kind, Pearl, Jelly, Lemon, Orange) VALUES ('Red tea', 'Milk Tea', '20', '0', '0', '0')");
+//            stmt.executeQuery("INSERT INTO MakeRecipe(UName,RName) VALUES ('test', 'Red tea')");
+//            stmt.executeQuery("INSERT INTO Usage(UseID, RName, UsingDate, Pearl, Jelly, Lemon, Orange) VALUES ('0', 'Red tea', DATE'2021-03-29', '20', '0', '0', '0')");
+//            stmt.executeQuery("INSERT INTO Generates(RNamupe, UseID) VALUES ('Red tea', '0')");
+//            stmt.executeQuery("INSERT INTO GroceryDate(BuyingDate, Duration, ExpiryDate) VALUES (DATE'2021-03-29', '20', DATE'2021-04-17')");
+//            stmt.executeQuery("INSERT INTO Grocery(GName, Amount, BuyingDate, Duration) VALUES ('Pearl', '0', DATE'2021-03-29', '20')");
+//            Grocery g2 = new Grocery("Jelly", 200, Date.valueOf("2021-02-16"), 10);
+//            insertGrocery(g2);
+//            stmt.executeQuery("INSERT INTO Buys(UName, GName, BuyingDate) VALUES ('test', 'Pearl', DATE'2021-03-29')");
+//            stmt.executeQuery("INSERT INTO DailyReport(ReportDay, Pearl, Jelly, Lemon, Orange) VALUES (DATE'2021-03-29', '20','0','0','0')");
+//            stmt.executeQuery("INSERT INTO Supplier(SupplierId,CompanyName) VALUES ('0', 'T&T')");
+//            stmt.executeQuery("INSERT INTO Supplies(SupplierId, GName) VALUES ('0', 'Pearl')");
+//            stmt.executeQuery("INSERT INTO ShoppingList(GName, ListDate, Amount) VALUES ('Pearl', DATE'2021-03-29', '20')");
+//            stmt.executeQuery("INSERT INTO Lists(GName, ListDate, UseID) VALUES ('Pearl', DATE'2021-03-29', '0')");
             stmt.executeQuery("INSERT INTO Address(StreetName, HouseNumber, City, PostalCode) VALUES ('23rd W Ave', '2341', 'Vancouver', 'V6S1H6')");
-            stmt.executeQuery("INSERT INTO Users(UName, Password, StreetName, HouseNumber, PostalCode) VALUES ('test', '123123', '23rd W Ave', '2341', 'V6S1H6')");
-            User u2 = new User("Lily", "234", "3rd W Ave", 2341, "Richmond", "V321H4");
-            insertUser(u2);
-            stmt.executeQuery("INSERT INTO Recipe(RName, Kind, Pearl, Jelly, Lemon, Orange) VALUES ('Red tea', 'Milk Tea', '20', '0', '0', '0')");
-            stmt.executeQuery("INSERT INTO MakeRecipe(UName,RName) VALUES ('test', 'Red tea')");
-            stmt.executeQuery("INSERT INTO Usage(UseID, RName, UsingDate, Pearl, Jelly, Lemon, Orange) VALUES ('0', 'Red tea', DATE'2021-03-29', '20', '0', '0', '0')");
-            stmt.executeQuery("INSERT INTO Generates(RName, UseID) VALUES ('Red tea', '0')");
-            stmt.executeQuery("INSERT INTO GroceryDate(BuyingDate, Duration, ExpiryDate) VALUES (DATE'2021-03-29', '20', DATE'2021-04-17')");
-            stmt.executeQuery("INSERT INTO Grocery(GName, Amount, BuyingDate, Duration) VALUES ('Pearl', '0', DATE'2021-03-29', '20')");
-            Grocery g2 = new Grocery("Jelly", 200, Date.valueOf("2021-02-16"), 10);
-            insertGrocery(g2);
-            stmt.executeQuery("INSERT INTO Buys(UName, GName, BuyingDate) VALUES ('test', 'Pearl', DATE'2021-03-29')");
-            stmt.executeQuery("INSERT INTO DailyReport(ReportDay, Pearl, Jelly, Lemon, Orange) VALUES (DATE'2021-03-29', '20','0','0','0')");
-            stmt.executeQuery("INSERT INTO Supplier(SupplierId,CompanyName) VALUES ('0', 'T&T')");
-            stmt.executeQuery("INSERT INTO Supplies(SupplierId, GName) VALUES ('0', 'Pearl')");
-            stmt.executeQuery("INSERT INTO ShoppingList(GName, ListDate, Amount) VALUES ('Pearl', DATE'2021-03-29', '20')");
-            stmt.executeQuery("INSERT INTO Lists(GName, ListDate, UseID) VALUES ('Pearl', DATE'2021-03-29', '0')");
+            stmt.executeQuery("INSERT INTO Address(StreetName, HouseNumber, City, PostalCode) VALUES ('Binary Ave', 482, 'Richmond', 'V3T1K4')");
+            stmt.executeQuery("INSERT INTO Address(StreetName, HouseNumber, City, PostalCode) VALUES ('78th S Ave', 4562, 'Richmond', 'V4Z2T3')");
+            stmt.executeQuery("INSERT INTO Address(StreetName, HouseNumber, City, PostalCode) VALUES ('King St', 6753, 'Burnaby', 'H3K2B8')");
+            stmt.executeQuery("INSERT INTO Address(StreetName, HouseNumber, City, PostalCode) VALUES ('Queen St', 2413,\t'Vancouver', 'H3M2N9')");
             connection.commit();
+            System.out.println("Address inserted");
+            stmt.executeQuery("INSERT INTO Users(UName, Password, StreetName, HouseNumber, PostalCode) VALUES ('Sam', '123', '23rd W Ave', 2341, 'V6S1H6')");
+            stmt.executeQuery("INSERT INTO Users(UName, Password, StreetName, HouseNumber, PostalCode) VALUES ('Lily', '234', 'Binary Ave', 482, 'V3T1K4')");
+            stmt.executeQuery("INSERT INTO Users(UName, Password, StreetName, HouseNumber, PostalCode) VALUES ('Amy', '456', '78th S Ave', 4562, 'V4Z2T3')");
+            stmt.executeQuery("INSERT INTO Users(UName, Password, StreetName, HouseNumber, PostalCode) VALUES ('Frank', '567', 'King St', 6753, 'H3K2B8')");
+            stmt.executeQuery("INSERT INTO Users(UName, Password, StreetName, HouseNumber, PostalCode) VALUES ('Jasmine', '678', 'Queen St', 2413, 'H3M2N9')");
+            connection.commit();
+            System.out.println("User inserted");
+            stmt.executeQuery("INSERT INTO Recipe(RName, Kind, Pearl, Jelly, Lemon, Orange) VALUES ('Pearl Milk Tea', 'Milk Tea', 20, 0, 0, 0)");
+            stmt.executeQuery("INSERT INTO Recipe(RName, Kind, Pearl, Jelly, Lemon, Orange) VALUES ('Jelly Milk Tea', 'Milk Tea', 0, 20, 0, 0)");
+            stmt.executeQuery("INSERT INTO Recipe(RName, Kind, Pearl, Jelly, Lemon, Orange) VALUES ('Milk Tea', 'Milk Tea', 20, 20, 0, 0)");
+            stmt.executeQuery("INSERT INTO Recipe(RName, Kind, Pearl, Jelly, Lemon, Orange) VALUES ('Lemon Tea', 'Fruit Tea', 0, 0, 20, 0)");
+            stmt.executeQuery("INSERT INTO Recipe(RName, Kind, Pearl, Jelly, Lemon, Orange) VALUES ('Orange Tea', 'Fruit Tea', 0, 0, 0, 20)");
+            connection.commit();
+            System.out.println("Recipe inserted");
+            stmt.executeQuery("INSERT INTO MakeRecipe(UName,RName) VALUES ('Sam', 'Pearl Milk Tea')");
+            stmt.executeQuery("INSERT INTO MakeRecipe(UName,RName) VALUES ('Lily', 'Pearl Milk Tea')");
+            stmt.executeQuery("INSERT INTO MakeRecipe(UName,RName) VALUES ('Amy', 'Lemon Tea')");
+            stmt.executeQuery("INSERT INTO MakeRecipe(UName,RName) VALUES ('Frank', 'Orange Tea')");
+            stmt.executeQuery("INSERT INTO MakeRecipe(UName,RName) VALUES ('Jasmine', 'Milk Tea')");
+            connection.commit();
+            System.out.println("MakeRecipe inserted");
+            stmt.executeQuery("INSERT INTO Usage(UseID, RName, UsingDate, Pearl, Jelly, Lemon, Orange) VALUES (1, 'Pearl Milk Tea', DATE'2021-02-01', 20, 0, 0, 0)");
+            stmt.executeQuery("INSERT INTO Usage(UseID, RName, UsingDate, Pearl, Jelly, Lemon, Orange) VALUES (2, 'Pearl Milk Tea', DATE'2021-02-01', 20, 0, 0, 0)");
+            stmt.executeQuery("INSERT INTO Usage(UseID, RName, UsingDate, Pearl, Jelly, Lemon, Orange) VALUES (3, 'Jelly Milk Tea', DATE'2021-02-03', 0, 20, 0, 0)");
+            stmt.executeQuery("INSERT INTO Usage(UseID, RName, UsingDate, Pearl, Jelly, Lemon, Orange) VALUES (4, 'Milk Tea', DATE'2021-02-04',10, 10, 0, 0)");
+            stmt.executeQuery("INSERT INTO Usage(UseID, RName, UsingDate, Pearl, Jelly, Lemon, Orange) VALUES (5, 'Orange Tea', DATE'2021-02-05', 0, 0, 2, 0)");
+            connection.commit();
+            System.out.println("Usage inserted");
+            stmt.executeQuery("INSERT INTO Generates(RName, UseID) VALUES ('Pearl Milk Tea', 1)");
+            stmt.executeQuery("INSERT INTO Generates(RName, UseID) VALUES ('Pearl Milk Tea', 2)");
+            stmt.executeQuery("INSERT INTO Generates(RName, UseID) VALUES ('Jelly Milk Tea', 3)");
+            stmt.executeQuery("INSERT INTO Generates(RName, UseID) VALUES ('Milk Tea', 4)");
+            stmt.executeQuery("INSERT INTO Generates(RName, UseID) VALUES ('Orange Tea', 5)");
+            connection.commit();
+            System.out.println("Generates inserted");
+            stmt.executeQuery("INSERT INTO GroceryDate(BuyingDate, Duration, ExpiryDate) VALUES (DATE'2021-02-14', 10, DATE'2021-02-24')");
+            stmt.executeQuery("INSERT INTO GroceryDate(BuyingDate, Duration, ExpiryDate) VALUES (DATE'2021-02-16', 10, DATE'2021-02-24')");
+            stmt.executeQuery("INSERT INTO GroceryDate(BuyingDate, Duration, ExpiryDate) VALUES (DATE'2021-02-05', 20, DATE'2021-02-25')");
+            stmt.executeQuery("INSERT INTO GroceryDate(BuyingDate, Duration, ExpiryDate) VALUES (DATE'2021-02-01', 20, DATE'2021-02-21')");
+            stmt.executeQuery("INSERT INTO GroceryDate(BuyingDate, Duration, ExpiryDate) VALUES (DATE'2021-02-04', 20, DATE'2021-02-24')");
+            connection.commit();
+            System.out.println("GroceryDate inserted");
+            stmt.executeQuery("INSERT INTO Grocery(GName, Amount, BuyingDate, Duration) VALUES ('Pearl', 300, DATE'2021-02-14', 10)");
+            stmt.executeQuery("INSERT INTO Grocery(GName, Amount, BuyingDate, Duration) VALUES ('Jelly', 200, DATE'2021-02-16', 10)");
+            stmt.executeQuery("INSERT INTO Grocery(GName, Amount, BuyingDate, Duration) VALUES ('Orange', 10, DATE'2021-02-05', 20)");
+            stmt.executeQuery("INSERT INTO Grocery(GName, Amount, BuyingDate, Duration) VALUES ('Lemon', 50, DATE'2021-02-01', 20)");
+            stmt.executeQuery("INSERT INTO Grocery(GName, Amount, BuyingDate, Duration) VALUES ('Orange', 20, DATE'2021-02-04', 20)");
+            connection.commit();
+            System.out.println("Grocery inserted");
+            stmt.executeQuery("INSERT INTO Buys(UName, GName, BuyingDate) VALUES ('Sam', 'Pearl', DATE'2021-02-14')");
+            stmt.executeQuery("INSERT INTO Buys(UName, GName, BuyingDate) VALUES ('Sam', 'Jelly', DATE'2021-02-16')");
+            stmt.executeQuery("INSERT INTO Buys(UName, GName, BuyingDate) VALUES ('Amy', 'Orange', DATE'2021-02-05')");
+            stmt.executeQuery("INSERT INTO Buys(UName, GName, BuyingDate) VALUES ('Frank', 'Lemon', DATE'2021-02-01')");
+            stmt.executeQuery("INSERT INTO Buys(UName, GName, BuyingDate) VALUES ('Jasmine', 'Orange', DATE'2021-02-04')");
+            connection.commit();
+            System.out.println("Buys inserted");
+            stmt.executeQuery("INSERT INTO DailyReport(ReportDay, Pearl, Jelly, Lemon, Orange) VALUES (DATE'2021-01-01', 20, 0, 0, 0)");
+            stmt.executeQuery("INSERT INTO DailyReport(ReportDay, Pearl, Jelly, Lemon, Orange) VALUES (DATE'2021-01-02', 0, 0, 0, 0)");
+            stmt.executeQuery("INSERT INTO DailyReport(ReportDay, Pearl, Jelly, Lemon, Orange) VALUES (DATE'2021-01-03', 40, 20, 0, 0)");
+            stmt.executeQuery("INSERT INTO DailyReport(ReportDay, Pearl, Jelly, Lemon, Orange) VALUES (DATE'2021-01-04', 40, 40, 20, 20)");
+            stmt.executeQuery("INSERT INTO DailyReport(ReportDay, Pearl, Jelly, Lemon, Orange) VALUES (DATE'2021-01-05', 0, 0, 0, 0)");
+            connection.commit();
+            System.out.println("DailyReport inserted");
+            stmt.executeQuery("INSERT INTO Supplier(SupplierId,CompanyName) VALUES (1, 'Costco')");
+            stmt.executeQuery("INSERT INTO Supplier(SupplierId,CompanyName) VALUES (2, 'T&T Supermarket')");
+            stmt.executeQuery("INSERT INTO Supplier(SupplierId,CompanyName) VALUES (3, 'No Frills')");
+            stmt.executeQuery("INSERT INTO Supplier(SupplierId,CompanyName) VALUES (4, 'Safeway')");
+            stmt.executeQuery("INSERT INTO Supplier(SupplierId,CompanyName) VALUES (5, 'SaveOnFoods')");
+            connection.commit();
+            System.out.println("Supplier inserted");
+            stmt.executeQuery("INSERT INTO Supplies(SupplierId, GName) VALUES (1, 'Pearl')");
+            stmt.executeQuery("INSERT INTO Supplies(SupplierId, GName) VALUES (2, 'Jelly')");
+            stmt.executeQuery("INSERT INTO Supplies(SupplierId, GName) VALUES (3, 'Orange')");
+            stmt.executeQuery("INSERT INTO Supplies(SupplierId, GName) VALUES (4, 'Lemon')");
+            stmt.executeQuery("INSERT INTO Supplies(SupplierId, GName) VALUES (5, 'Pearl')");
+            connection.commit();
+            System.out.println("Supplies inserted");
+            stmt.executeQuery("INSERT INTO ShoppingList(GName, ListDate, Amount) VALUES ('Pearl', DATE'2021-01-01', 300)");
+            stmt.executeQuery("INSERT INTO ShoppingList(GName, ListDate, Amount) VALUES ('Jelly', DATE'2021-01-01', 200)");
+            stmt.executeQuery("INSERT INTO ShoppingList(GName, ListDate, Amount) VALUES ('Orange', DATE'2021-01-03', 300)");
+            stmt.executeQuery("INSERT INTO ShoppingList(GName, ListDate, Amount) VALUES ('Lemon', DATE'2021-01-04', 60)");
+            stmt.executeQuery("INSERT INTO ShoppingList(GName, ListDate, Amount) VALUES ('Pearl', DATE'2021-01-04', 300)");
+            connection.commit();
+            System.out.println("ShoppingList inserted");
+
+
+            stmt.executeQuery("INSERT INTO Lists(GName, ListDate, UseID) VALUES ('Pearl', DATE'2021-01-01', 1)");
+            stmt.executeQuery("INSERT INTO Lists(GName, ListDate, UseID) VALUES ('Jelly', DATE'2021-01-01', 2)");
+            stmt.executeQuery("INSERT INTO Lists(GName, ListDate, UseID) VALUES ('Orange', DATE'2021-01-03', 3)");
+            stmt.executeQuery("INSERT INTO Lists(GName, ListDate, UseID) VALUES ('Lemon', DATE'2021-01-04', 4)");
+            stmt.executeQuery("INSERT INTO Lists(GName, ListDate, UseID) VALUES ('Pearl', DATE'2021-01-04', 5)");
+            connection.commit();
+            System.out.println("Lists inserted");
+
+            //connection.commit();
             stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage() + "Error: create table error");
@@ -220,7 +323,6 @@ public class DatabaseConnect {
     }
     public boolean makeRecipe(String name, Date today) {
         boolean result = false;
-        System.out.println(today.toString());
         today = Date.valueOf(today.toString());
         Recipe recipe = selectRecipeByRname(name);
         deleteWithZero();
@@ -302,7 +404,7 @@ public class DatabaseConnect {
                     result.add(temp);
                 }
             } catch (SQLException e) {
-                System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+                System.out.println(EXCEPTION_TAG + "2 " + e.getMessage());
                 rollbackConnection();
             }
             if (result.size() == 0) {//today we have not buy this grocery yet
@@ -312,7 +414,6 @@ public class DatabaseConnect {
                 updateShoppingList(today, gname, shortAmount + result.get(0).getAmount());
             }
         }
-        System.out.println(enough);
         return enough;
     }
     public void checkCutOff(Grocery[] list){
@@ -402,7 +503,6 @@ public class DatabaseConnect {
             ps.executeUpdate();
             connection.commit();
             ps.close();
-            System.out.println(123123);
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
@@ -525,7 +625,7 @@ public class DatabaseConnect {
             usage_index++;
             dailyReportUpdate(recipe, date);
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            System.out.println(EXCEPTION_TAG + "3 " + e.getMessage());
             rollbackConnection();
         }
     }
