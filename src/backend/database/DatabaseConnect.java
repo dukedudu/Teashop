@@ -353,7 +353,7 @@ public class DatabaseConnect {
         }
         return result;
     }
-
+    //delete
     public void deleteWithZero() {
         try {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM Grocery WHERE amount = 0");
